@@ -1,8 +1,8 @@
-from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QStyle, QHBoxLayout, QVBoxLayout, QSlider
-from PyQt5.QtGui import QIcon, QPalette
-from PyQt5.QtMultimedia import QMediaPlayer
+from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QStyle, \
+    QHBoxLayout, QVBoxLayout, QSlider, QFileDialog
+from PyQt5.QtMultimedia import QMediaPlayer, QMediaContent
 from PyQt5.QtMultimediaWidgets import QVideoWidget
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QUrl
 import sys
 
 
@@ -18,7 +18,10 @@ class Window(QWidget):
     def create_player(self):
         self.mediaPlayer = QMediaPlayer(None, QMediaPlayer.VideoSurface)
 
+        videowidget = QVideoWidget()
+
         self.openBtn = QPushButton('Open Video')
+        self.openBtn.clicked.connect(self.open_file)
 
         self.playBtn = QPushButton()
         self.playBtn.setEnabled(False)
@@ -36,9 +39,17 @@ class Window(QWidget):
 
         vbox = QVBoxLayout()
 
+        vbox.addWidget(videowidget)
         vbox.addLayout(hbox)
 
         self.setLayout(vbox)
+
+    def open_file(self):
+        filename, _ = QFileDialog.getOpenFileName(self, 'Open Video')
+
+        if filename != '':
+            self.mediaPlayer.setMedia(QMediaContent(QUrl.fromLocalFile(filename)))
+            self.playBtn.setEnabled(True)
 
 
 app = QApplication(sys.argv)
