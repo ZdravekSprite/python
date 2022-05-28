@@ -12,6 +12,7 @@ class Window(QWidget):
 
         self.setWindowIcon(self.style().standardIcon(QStyle.SP_MediaPlay))
         self.setWindowTitle('PyQt5Player')
+        self.setGeometry(350, 100, 700, 500)
 
         self.create_player()
 
@@ -26,6 +27,7 @@ class Window(QWidget):
         self.playBtn = QPushButton()
         self.playBtn.setEnabled(False)
         self.playBtn.setIcon(self.style().standardIcon(QStyle.SP_MediaPlay))
+        self.playBtn.clicked.connect(self.play_video)
 
         self.slider = QSlider(Qt.Horizontal)
         self.slider.setRange(0, 0)
@@ -42,14 +44,33 @@ class Window(QWidget):
         vbox.addWidget(videowidget)
         vbox.addLayout(hbox)
 
+        self.mediaPlayer.setVideoOutput(videowidget)
+
         self.setLayout(vbox)
+
+        self.mediaPlayer.stateChanged.connect(self.mediastate_changed)
 
     def open_file(self):
         filename, _ = QFileDialog.getOpenFileName(self, 'Open Video')
 
         if filename != '':
-            self.mediaPlayer.setMedia(QMediaContent(QUrl.fromLocalFile(filename)))
+            self.mediaPlayer.setMedia(
+                QMediaContent(QUrl.fromLocalFile(filename)))
             self.playBtn.setEnabled(True)
+
+    def play_video(self):
+        if self.mediaPlayer.state() == QMediaPlayer.PlayingState:
+            self.mediaPlayer.pause()
+        else:
+            self.mediaPlayer.play()
+
+    def mediastate_changed(self, state):
+        if self.mediaPlayer.state() == QMediaPlayer.PlayingState:
+            self.playBtn.setIcon(
+                self.style().standardIcon(QStyle.SP_MediaPause))
+        else:
+            self.playBtn.setIcon(
+                self.style().standardIcon(QStyle.SP_MediaPlay))
 
 
 app = QApplication(sys.argv)
