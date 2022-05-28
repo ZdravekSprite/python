@@ -31,6 +31,7 @@ class Window(QWidget):
 
         self.slider = QSlider(Qt.Horizontal)
         self.slider.setRange(0, 0)
+        self.slider.sliderMoved.connect(self.set_position)
 
         hbox = QHBoxLayout()
         hbox.setContentsMargins(0, 0, 0, 0)
@@ -49,6 +50,8 @@ class Window(QWidget):
         self.setLayout(vbox)
 
         self.mediaPlayer.stateChanged.connect(self.mediastate_changed)
+        self.mediaPlayer.positionChanged.connect(self.position_changed)
+        self.mediaPlayer.durationChanged.connect(self.duration_changed)
 
     def open_file(self):
         filename, _ = QFileDialog.getOpenFileName(self, 'Open Video')
@@ -71,6 +74,15 @@ class Window(QWidget):
         else:
             self.playBtn.setIcon(
                 self.style().standardIcon(QStyle.SP_MediaPlay))
+
+    def position_changed(self, position):
+        self.slider.setValue(position)
+
+    def duration_changed(self, duration):
+        self.slider.setRange(0, duration)
+
+    def set_position(self, position):
+        self.mediaPlayer.setPosition(position)
 
 
 app = QApplication(sys.argv)
