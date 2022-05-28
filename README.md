@@ -12,5 +12,5 @@ pip install wheel
 pip install pyinstaller
 git init
 git add .
-git commit -am "PyQt6Player 0.0.8"
+git commit -am "PyQt5MultiPlayer 0.0.9"
 ```

@@ -1,6 +1,7 @@
 from PyQt6.QtWidgets import QApplication, QWidget, QStyle, QPushButton, QSlider, \
-     QHBoxLayout, QVBoxLayout
+    QHBoxLayout, QVBoxLayout
 from PyQt6.QtMultimedia import QMediaPlayer
+from PyQt6.QtMultimediaWidgets import QVideoWidget
 from PyQt6.QtCore import Qt
 import sys
 
@@ -18,6 +19,7 @@ class Window(QWidget):
 
     def create_player(self):
         self.mediaPlayer = QMediaPlayer()
+        videoWidget = QVideoWidget()
 
         self.openBtn = QPushButton('Open Video')
 
@@ -37,10 +39,12 @@ class Window(QWidget):
         hbox.addWidget(self.slider)
 
         vbox = QVBoxLayout()
+        vbox.addWidget(videoWidget)
         vbox.addLayout(hbox)
 
         self.setLayout(vbox)
 
+        self.mediaPlayer.setVideoOutput(videoWidget)
 
 
 app = QApplication(sys.argv)
