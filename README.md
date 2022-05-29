@@ -20,5 +20,5 @@ pip install Fiona-1.8.21-cp310-cp310-win_amd64.whl
 
 git init
 git add .
-git commit -am "PyQt5Player 0.0.12"
+git commit -am "PyQt5MultiPlayer 0.0.13"
 ```

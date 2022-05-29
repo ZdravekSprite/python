@@ -1,8 +1,9 @@
 from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QStyle, \
-    QHBoxLayout, QVBoxLayout, QSlider, QFileDialog
+    QHBoxLayout, QVBoxLayout, QSlider, QFileDialog, QLabel
 from PyQt5.QtMultimedia import QMediaPlayer, QMediaContent
 from PyQt5.QtMultimediaWidgets import QVideoWidget
 from PyQt5.QtCore import Qt, QUrl
+from datetime import datetime
 import sys
 import gpmf
 import gpxpy
@@ -14,7 +15,7 @@ class Window(QWidget):
 
         self.setWindowIcon(self.style().standardIcon(QStyle.SP_MediaPlay))
         self.setWindowTitle('PyQt5MultiPlayer')
-        self.setGeometry(100, 100, 1450, 450)
+        self.setGeometry(100, 100, 1500, 490)
 
         self.create_player()
 
@@ -59,8 +60,38 @@ class Window(QWidget):
         videoBox.addWidget(videoWidget1)
         videoBox.addWidget(videoWidget2)
 
+        self.labelStart1 = QLabel('start', self)
+        self.labelStart1.setFixedHeight(15)
+        self.labelStart1.setAlignment(Qt.AlignmentFlag.AlignLeft)
+        self.labelNow1 = QLabel('now', self)
+        self.labelNow1.setFixedHeight(15)
+        self.labelNow1.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.labelEnd1 = QLabel('end', self)
+        self.labelEnd1.setFixedHeight(15)
+        self.labelEnd1.setAlignment(Qt.AlignmentFlag.AlignRight)
+
+        self.labelStart2 = QLabel('start', self)
+        self.labelStart2.setFixedHeight(15)
+        self.labelStart2.setAlignment(Qt.AlignmentFlag.AlignLeft)
+        self.labelNow2 = QLabel('now', self)
+        self.labelNow2.setFixedHeight(15)
+        self.labelNow2.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.labelEnd2 = QLabel('end', self)
+        self.labelEnd2.setFixedHeight(15)
+        self.labelEnd2.setAlignment(Qt.AlignmentFlag.AlignRight)
+
+        labelBox = QHBoxLayout()
+        labelBox.setContentsMargins(0, 0, 0, 0)
+        labelBox.addWidget(self.labelStart1)
+        labelBox.addWidget(self.labelNow1)
+        labelBox.addWidget(self.labelEnd1)
+        labelBox.addWidget(self.labelStart2)
+        labelBox.addWidget(self.labelNow2)
+        labelBox.addWidget(self.labelEnd2)
+
         vbox = QVBoxLayout()
 
+        vbox.addLayout(labelBox)
         vbox.addLayout(videoBox)
         vbox.addLayout(hbox)
 
@@ -78,7 +109,7 @@ class Window(QWidget):
         filename, _ = QFileDialog.getOpenFileName(self, 'Open Video 1')
 
         if filename != '':
-            self.print_gps_data(filename)
+            self.print_gps_data(filename, self.labelStart1, self.labelEnd1)
             self.mediaPlayer1.setMedia(
                 QMediaContent(QUrl.fromLocalFile(filename)))
             self.playBtn1.setEnabled(True)
@@ -87,7 +118,7 @@ class Window(QWidget):
         filename, _ = QFileDialog.getOpenFileName(self, 'Open Video 2')
 
         if filename != '':
-            self.print_gps_data(filename)
+            self.print_gps_data(filename, self.labelStart2, self.labelEnd2)
             self.mediaPlayer2.setMedia(
                 QMediaContent(QUrl.fromLocalFile(filename)))
             self.playBtn2.setEnabled(True)
@@ -117,6 +148,22 @@ class Window(QWidget):
                 self.style().standardIcon(QStyle.SP_MediaPlay))
 
     def position_changed(self, position):
+        if self.playBtn1.isEnabled():
+            start1 = self.labelStart1.text()
+            dt_obj1 = datetime.strptime(start1, '%Y-%m-%d %H:%M:%S.%f')
+            millisec1 = int(dt_obj1.timestamp() * 1000)
+            now1 = datetime.fromtimestamp((millisec1 + position)/1000)
+            now1_string = now1.strftime('%Y-%m-%d %H:%M:%S.%f')
+            self.labelNow1.setText(now1_string[:-3])
+
+        if self.playBtn2.isEnabled():
+            start2 = self.labelStart2.text()
+            dt_obj2 = datetime.strptime(start2, '%Y-%m-%d %H:%M:%S.%f')
+            millisec2 = int(dt_obj2.timestamp() * 1000)
+            now2 = datetime.fromtimestamp((millisec2 + position)/1000)
+            now2_string = now2.strftime('%Y-%m-%d %H:%M:%S.%f')
+            self.labelNow2.setText(now2_string[:-3])
+
         self.slider.setValue(position)
 
     def duration_changed(self, duration):
@@ -126,7 +173,7 @@ class Window(QWidget):
         self.mediaPlayer1.setPosition(position)
         self.mediaPlayer2.setPosition(position)
 
-    def print_gps_data(self, filename):
+    def print_gps_data(self, filename, labelStart, labelEnd):
         print(filename)
         # Read the binary stream from the file
         stream = gpmf.io.extract_gpmf_stream(filename)
@@ -137,8 +184,10 @@ class Window(QWidget):
         gps_data = list(map(gpmf.gps.parse_gps_block, gps_blocks))
         print(f"first timestamp {gps_data[0].timestamp}")
         # print(gps_data[0])
+        labelStart.setText(gps_data[0].timestamp)
         print(f"last timestamp {gps_data[len(gps_data)-1].timestamp}")
         # print(gps_data[len(gps_data)-1])
+        labelEnd.setText(gps_data[len(gps_data)-1].timestamp)
         print(f"GPSData {len(gps_data)}")
         gpx = gpxpy.gpx.GPX()
         gpx_track = gpxpy.gpx.GPXTrack()
