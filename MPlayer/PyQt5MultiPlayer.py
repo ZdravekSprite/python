@@ -9,6 +9,12 @@ import gpmf
 import gpxpy
 
 
+class VideoSpec:
+    def __init__(self, start, end):
+        self.start = start
+        self.end = end
+
+
 class Window(QWidget):
     def __init__(self):
         super().__init__()
@@ -25,6 +31,9 @@ class Window(QWidget):
 
         videoWidget1 = QVideoWidget()
         videoWidget2 = QVideoWidget()
+
+        self.v1 = VideoSpec(0, 0)
+        self.v2 = VideoSpec(0, 0)
 
         self.openBtn1 = QPushButton('Open Video 1')
         self.openBtn1.clicked.connect(self.open_file1)
@@ -109,7 +118,7 @@ class Window(QWidget):
         filename, _ = QFileDialog.getOpenFileName(self, 'Open Video 1')
 
         if filename != '':
-            self.print_gps_data(filename, self.labelStart1, self.labelEnd1)
+            self.print_gps_data(filename, self.v1, self.labelStart1, self.labelEnd1)
             self.mediaPlayer1.setMedia(
                 QMediaContent(QUrl.fromLocalFile(filename)))
             self.playBtn1.setEnabled(True)
@@ -118,7 +127,7 @@ class Window(QWidget):
         filename, _ = QFileDialog.getOpenFileName(self, 'Open Video 2')
 
         if filename != '':
-            self.print_gps_data(filename, self.labelStart2, self.labelEnd2)
+            self.print_gps_data(filename, self.v2, self.labelStart2, self.labelEnd2)
             self.mediaPlayer2.setMedia(
                 QMediaContent(QUrl.fromLocalFile(filename)))
             self.playBtn2.setEnabled(True)
@@ -149,18 +158,18 @@ class Window(QWidget):
 
     def position_changed(self, position):
         if self.playBtn1.isEnabled():
-            start1 = self.labelStart1.text()
-            dt_obj1 = datetime.strptime(start1, '%Y-%m-%d %H:%M:%S.%f')
-            millisec1 = int(dt_obj1.timestamp() * 1000)
-            now1 = datetime.fromtimestamp((millisec1 + position)/1000)
+            #start1 = self.labelStart1.text()
+            #dt_obj1 = datetime.strptime(start1, '%Y-%m-%d %H:%M:%S.%f')
+            #millisec1 = int(dt_obj1.timestamp() * 1000)
+            now1 = datetime.fromtimestamp((self.v1.start + position)/1000)
             now1_string = now1.strftime('%Y-%m-%d %H:%M:%S.%f')
             self.labelNow1.setText(now1_string[:-3])
 
         if self.playBtn2.isEnabled():
-            start2 = self.labelStart2.text()
-            dt_obj2 = datetime.strptime(start2, '%Y-%m-%d %H:%M:%S.%f')
-            millisec2 = int(dt_obj2.timestamp() * 1000)
-            now2 = datetime.fromtimestamp((millisec2 + position)/1000)
+            #start2 = self.labelStart2.text()
+            #dt_obj2 = datetime.strptime(start2, '%Y-%m-%d %H:%M:%S.%f')
+            #millisec2 = int(dt_obj2.timestamp() * 1000)
+            now2 = datetime.fromtimestamp((self.v2.start + position)/1000)
             now2_string = now2.strftime('%Y-%m-%d %H:%M:%S.%f')
             self.labelNow2.setText(now2_string[:-3])
 
@@ -173,7 +182,7 @@ class Window(QWidget):
         self.mediaPlayer1.setPosition(position)
         self.mediaPlayer2.setPosition(position)
 
-    def print_gps_data(self, filename, labelStart, labelEnd):
+    def print_gps_data(self, filename, video, labelStart, labelEnd):
         print(filename)
         # Read the binary stream from the file
         stream = gpmf.io.extract_gpmf_stream(filename)
@@ -184,10 +193,20 @@ class Window(QWidget):
         gps_data = list(map(gpmf.gps.parse_gps_block, gps_blocks))
         print(f"first timestamp {gps_data[0].timestamp}")
         # print(gps_data[0])
+
         labelStart.setText(gps_data[0].timestamp)
+        start = gps_data[0].timestamp
+        dt_start = datetime.strptime(start, '%Y-%m-%d %H:%M:%S.%f')
+        video.start = int(dt_start.timestamp() * 1000)
+
         print(f"last timestamp {gps_data[len(gps_data)-1].timestamp}")
         # print(gps_data[len(gps_data)-1])
+
         labelEnd.setText(gps_data[len(gps_data)-1].timestamp)
+        end = gps_data[0].timestamp
+        dt_end = datetime.strptime(end, '%Y-%m-%d %H:%M:%S.%f')
+        video.end = int(dt_end.timestamp() * 1000)
+
         print(f"GPSData {len(gps_data)}")
         gpx = gpxpy.gpx.GPX()
         gpx_track = gpxpy.gpx.GPXTrack()

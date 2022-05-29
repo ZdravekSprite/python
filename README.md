@@ -6,6 +6,10 @@
 [wheel](https://pypi.org/project/wheel/)
 
 ```bash
+git remote add origin https://github.com/ZdravekSprite/python.git
+git branch -M main
+git push -u origin main
+
 C:/Python310/python.exe -m pip install --upgrade pip
 pip install PyQt5
 pip install wheel
@@ -20,5 +24,5 @@ pip install Fiona-1.8.21-cp310-cp310-win_amd64.whl
 
 git init
 git add .
-git commit -am "PyQt5MultiPlayer 0.0.13"
+git commit -am "PyQt5MultiPlayer 0.0.14"
 ```
