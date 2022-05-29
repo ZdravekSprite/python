@@ -6,7 +6,6 @@ from PyQt5.QtCore import Qt, QUrl
 import sys
 import gpmf
 import gpxpy
-import ffmpeg
 
 
 class Window(QWidget):

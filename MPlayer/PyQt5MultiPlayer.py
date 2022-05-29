@@ -4,6 +4,8 @@ from PyQt5.QtMultimedia import QMediaPlayer, QMediaContent
 from PyQt5.QtMultimediaWidgets import QVideoWidget
 from PyQt5.QtCore import Qt, QUrl
 import sys
+import gpmf
+import gpxpy
 
 
 class Window(QWidget):
@@ -11,8 +13,8 @@ class Window(QWidget):
         super().__init__()
 
         self.setWindowIcon(self.style().standardIcon(QStyle.SP_MediaPlay))
-        self.setWindowTitle('PyQt5Player')
-        self.setGeometry(100, 100, 1000, 500)
+        self.setWindowTitle('PyQt5MultiPlayer')
+        self.setGeometry(100, 100, 1450, 450)
 
         self.create_player()
 
@@ -32,12 +34,12 @@ class Window(QWidget):
         self.playBtn1 = QPushButton()
         self.playBtn1.setEnabled(False)
         self.playBtn1.setIcon(self.style().standardIcon(QStyle.SP_MediaPlay))
-        self.playBtn1.clicked.connect(self.play_video1)
+        self.playBtn1.clicked.connect(self.play_video)
 
         self.playBtn2 = QPushButton()
         self.playBtn2.setEnabled(False)
         self.playBtn2.setIcon(self.style().standardIcon(QStyle.SP_MediaPlay))
-        self.playBtn2.clicked.connect(self.play_video2)
+        self.playBtn2.clicked.connect(self.play_video)
 
         self.slider = QSlider(Qt.Horizontal)
         self.slider.setRange(0, 0)
@@ -68,6 +70,7 @@ class Window(QWidget):
         self.setLayout(vbox)
 
         self.mediaPlayer1.stateChanged.connect(self.mediastate_changed)
+        self.mediaPlayer2.stateChanged.connect(self.mediastate_changed)
         self.mediaPlayer1.positionChanged.connect(self.position_changed)
         self.mediaPlayer1.durationChanged.connect(self.duration_changed)
 
@@ -75,6 +78,7 @@ class Window(QWidget):
         filename, _ = QFileDialog.getOpenFileName(self, 'Open Video 1')
 
         if filename != '':
+            self.print_gps_data(filename)
             self.mediaPlayer1.setMedia(
                 QMediaContent(QUrl.fromLocalFile(filename)))
             self.playBtn1.setEnabled(True)
@@ -83,17 +87,16 @@ class Window(QWidget):
         filename, _ = QFileDialog.getOpenFileName(self, 'Open Video 2')
 
         if filename != '':
+            self.print_gps_data(filename)
             self.mediaPlayer2.setMedia(
                 QMediaContent(QUrl.fromLocalFile(filename)))
             self.playBtn2.setEnabled(True)
 
-    def play_video1(self):
+    def play_video(self):
         if self.mediaPlayer1.state() == QMediaPlayer.PlayingState:
             self.mediaPlayer1.pause()
         else:
             self.mediaPlayer1.play()
-
-    def play_video2(self):
         if self.mediaPlayer2.state() == QMediaPlayer.PlayingState:
             self.mediaPlayer2.pause()
         else:
@@ -113,7 +116,6 @@ class Window(QWidget):
             self.playBtn2.setIcon(
                 self.style().standardIcon(QStyle.SP_MediaPlay))
 
-
     def position_changed(self, position):
         self.slider.setValue(position)
 
@@ -123,6 +125,26 @@ class Window(QWidget):
     def set_position(self, position):
         self.mediaPlayer1.setPosition(position)
         self.mediaPlayer2.setPosition(position)
+
+    def print_gps_data(self, filename):
+        print(filename)
+        # Read the binary stream from the file
+        stream = gpmf.io.extract_gpmf_stream(filename)
+        # Extract GPS low level data from the stream
+        gps_blocks = gpmf.gps.extract_gps_blocks(stream)
+        # print(gps_blocks)
+        # Parse low level data into more usable format
+        gps_data = list(map(gpmf.gps.parse_gps_block, gps_blocks))
+        print(f"first timestamp {gps_data[0].timestamp}")
+        # print(gps_data[0])
+        print(f"last timestamp {gps_data[len(gps_data)-1].timestamp}")
+        # print(gps_data[len(gps_data)-1])
+        print(f"GPSData {len(gps_data)}")
+        gpx = gpxpy.gpx.GPX()
+        gpx_track = gpxpy.gpx.GPXTrack()
+        gpx.tracks.append(gpx_track)
+        gpx_track.segments.append(gpmf.gps.make_pgx_segment(gps_data))
+        # print(gpx.to_xml())
 
 
 app = QApplication(sys.argv)
