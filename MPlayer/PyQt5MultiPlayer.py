@@ -10,9 +10,10 @@ import gpxpy
 
 
 class VideoSpec:
-    def __init__(self, start, end):
+    def __init__(self, start=0, end=0, corection=0):
         self.start = start
         self.end = end
+        self.corection = corection
 
 
 class Window(QWidget):
@@ -32,8 +33,8 @@ class Window(QWidget):
         videoWidget1 = QVideoWidget()
         videoWidget2 = QVideoWidget()
 
-        self.v1 = VideoSpec(0, 0)
-        self.v2 = VideoSpec(0, 0)
+        self.v1 = VideoSpec()
+        self.v2 = VideoSpec()
 
         self.openBtn1 = QPushButton('Open Video 1')
         self.openBtn1.clicked.connect(self.open_file1)
@@ -111,23 +112,31 @@ class Window(QWidget):
 
         self.mediaPlayer1.stateChanged.connect(self.mediastate_changed)
         self.mediaPlayer2.stateChanged.connect(self.mediastate_changed)
-        self.mediaPlayer1.positionChanged.connect(self.position_changed)
+        self.mediaPlayer1.positionChanged.connect(self.position1_changed)
+        self.mediaPlayer2.positionChanged.connect(self.position2_changed)
         self.mediaPlayer1.durationChanged.connect(self.duration_changed)
+        self.mediaPlayer2.durationChanged.connect(self.duration_changed)
 
     def open_file1(self):
+        self.mediaPlayer1.pause()
+        self.mediaPlayer2.pause()
         filename, _ = QFileDialog.getOpenFileName(self, 'Open Video 1')
 
         if filename != '':
-            self.print_gps_data(filename, self.v1, self.labelStart1, self.labelEnd1)
+            self.print_gps_data(filename, self.v1,
+                                self.labelStart1, self.labelEnd1)
             self.mediaPlayer1.setMedia(
                 QMediaContent(QUrl.fromLocalFile(filename)))
             self.playBtn1.setEnabled(True)
 
     def open_file2(self):
+        self.mediaPlayer1.pause()
+        self.mediaPlayer2.pause()
         filename, _ = QFileDialog.getOpenFileName(self, 'Open Video 2')
 
         if filename != '':
-            self.print_gps_data(filename, self.v2, self.labelStart2, self.labelEnd2)
+            self.print_gps_data(filename, self.v2,
+                                self.labelStart2, self.labelEnd2)
             self.mediaPlayer2.setMedia(
                 QMediaContent(QUrl.fromLocalFile(filename)))
             self.playBtn2.setEnabled(True)
@@ -156,31 +165,53 @@ class Window(QWidget):
             self.playBtn2.setIcon(
                 self.style().standardIcon(QStyle.SP_MediaPlay))
 
-    def position_changed(self, position):
-        if self.playBtn1.isEnabled():
-            #start1 = self.labelStart1.text()
-            #dt_obj1 = datetime.strptime(start1, '%Y-%m-%d %H:%M:%S.%f')
-            #millisec1 = int(dt_obj1.timestamp() * 1000)
-            now1 = datetime.fromtimestamp((self.v1.start + position)/1000)
+    def position1_changed(self, position):
+        if self.v1.start != 0:
+            now1 = datetime.fromtimestamp(
+                (self.v1.start + self.mediaPlayer1.position())/1000)
             now1_string = now1.strftime('%Y-%m-%d %H:%M:%S.%f')
             self.labelNow1.setText(now1_string[:-3])
 
-        if self.playBtn2.isEnabled():
-            #start2 = self.labelStart2.text()
-            #dt_obj2 = datetime.strptime(start2, '%Y-%m-%d %H:%M:%S.%f')
-            #millisec2 = int(dt_obj2.timestamp() * 1000)
-            now2 = datetime.fromtimestamp((self.v2.start + position)/1000)
+        self.slider.setValue(position + self.v1.corection)
+
+    def position2_changed(self, position):
+        if self.v2.start != 0:
+            now2 = datetime.fromtimestamp(
+                (self.v2.start + self.mediaPlayer2.position())/1000)
             now2_string = now2.strftime('%Y-%m-%d %H:%M:%S.%f')
             self.labelNow2.setText(now2_string[:-3])
 
-        self.slider.setValue(position)
+        self.slider.setValue(position + self.v2.corection)
 
     def duration_changed(self, duration):
-        self.slider.setRange(0, duration)
+        if self.v1.start >= self.v2.start and self.v2.start != 0:
+            theStart = self.v2.start
+        else:
+            theStart = self.v1.start
+
+        if self.v1.end > self.v2.end:
+            theEnd = self.v1.end
+        else:
+            theEnd = self.v2.end
+
+        if self.v1.start != 0 and self.v2.start == 0:
+            print(f"v1.end {self.v1.end}")
+            self.slider.setRange(0, self.mediaPlayer1.duration())
+        if self.v1.start == 0 and self.v2.start != 0:
+            print(f"v1.end {self.v2.end}")
+            self.slider.setRange(0, self.mediaPlayer2.duration())
+        if self.v1.start != 0 and self.v2.start != 0:
+            print(f"theEnd-theStart {theEnd-theStart}")
+            self.slider.setRange(0, theEnd-theStart)
+
+        self.mediaPlayer1.setPosition(self.slider.sliderPosition() - self.v1.corection)
+        self.mediaPlayer2.setPosition(self.slider.sliderPosition() - self.v2.corection)
+
+    #    self.slider.setRange(0, duration)
 
     def set_position(self, position):
-        self.mediaPlayer1.setPosition(position)
-        self.mediaPlayer2.setPosition(position)
+        self.mediaPlayer1.setPosition(position - self.v1.corection)
+        self.mediaPlayer2.setPosition(position - self.v2.corection)
 
     def print_gps_data(self, filename, video, labelStart, labelEnd):
         print(filename)
@@ -203,9 +234,20 @@ class Window(QWidget):
         # print(gps_data[len(gps_data)-1])
 
         labelEnd.setText(gps_data[len(gps_data)-1].timestamp)
-        end = gps_data[0].timestamp
+        end = gps_data[len(gps_data)-1].timestamp
         dt_end = datetime.strptime(end, '%Y-%m-%d %H:%M:%S.%f')
         video.end = int(dt_end.timestamp() * 1000)
+
+        if self.v1.start != 0 and self.v2.start != 0:
+            if self.v1.start > self.v2.start:
+                self.v1.corection = self.v1.start - self.v2.start
+                self.v2.corection = 0
+            elif self.v1.start <= self.v2.start:
+                self.v1.corection = 0
+                self.v2.corection = self.v2.start - self.v1.start
+
+        print(f"v1.corection {self.v1.corection}")
+        print(f"v2.corection {self.v2.corection}")
 
         print(f"GPSData {len(gps_data)}")
         gpx = gpxpy.gpx.GPX()
