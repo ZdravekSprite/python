@@ -1,9 +1,13 @@
 from PyQt6.QtWidgets import QApplication, QWidget, QStyle, QPushButton, QSlider, \
-    QHBoxLayout, QVBoxLayout, QGraphicsView, QGraphicsScene, QGraphicsProxyWidget
+    QHBoxLayout, QVBoxLayout, QGraphicsView, QGraphicsScene, QGraphicsProxyWidget, \
+    QFileDialog
 from PyQt6.QtMultimedia import QMediaPlayer
 from PyQt6.QtMultimediaWidgets import QVideoWidget
-from PyQt6.QtCore import Qt, QRectF
+from PyQt6.QtCore import Qt, QUrl
 import sys
+
+from matplotlib.pyplot import show
+
 
 class RotatableContainer(QGraphicsView):
     def __init__(self, widget: QWidget):
@@ -15,6 +19,7 @@ class RotatableContainer(QGraphicsView):
         self.proxy = QGraphicsProxyWidget()
         self.proxy.setWidget(widget)
         scene.addItem(self.proxy)
+
 
 class Window(QWidget):
     def __init__(self):
@@ -32,11 +37,13 @@ class Window(QWidget):
         container = RotatableContainer(videoWidget)
 
         self.openBtn = QPushButton('Open Video')
+        self.openBtn.clicked.connect(self.open_file)
 
         self.playBtn = QPushButton()
         self.playBtn.setEnabled(False)
         self.playBtn.setIcon(self.style().standardIcon(
             QStyle.StandardPixmap.SP_MediaPlay))
+        self.playBtn.clicked.connect(self.play_video)
 
         self.slider = QSlider(Qt.Orientation.Horizontal)
         self.slider.setRange(0, 0)
@@ -55,6 +62,18 @@ class Window(QWidget):
         self.setLayout(vbox)
 
         self.mediaPlayer.setVideoOutput(videoWidget)
+        videoWidget.show()
+
+    def open_file(self):
+        filename, _ = QFileDialog.getOpenFileName(self, 'Open Video')
+
+        if filename != '':
+            self.mediaPlayer.setSource(QUrl.fromLocalFile(filename))
+            self.playBtn.setEnabled(True)
+
+    def play_video(self):
+        self.mediaPlayer.play()
+        print(f"Now playing")
 
 
 app = QApplication(sys.argv)
