@@ -1,10 +1,20 @@
 from PyQt6.QtWidgets import QApplication, QWidget, QStyle, QPushButton, QSlider, \
-    QHBoxLayout, QVBoxLayout
+    QHBoxLayout, QVBoxLayout, QGraphicsView, QGraphicsScene, QGraphicsProxyWidget
 from PyQt6.QtMultimedia import QMediaPlayer
 from PyQt6.QtMultimediaWidgets import QVideoWidget
-from PyQt6.QtCore import Qt
+from PyQt6.QtCore import Qt, QRectF
 import sys
 
+class RotatableContainer(QGraphicsView):
+    def __init__(self, widget: QWidget):
+        super(QGraphicsView, self).__init__()
+
+        scene = QGraphicsScene(self)
+        self.setScene(scene)
+
+        self.proxy = QGraphicsProxyWidget()
+        self.proxy.setWidget(widget)
+        scene.addItem(self.proxy)
 
 class Window(QWidget):
     def __init__(self):
@@ -13,13 +23,13 @@ class Window(QWidget):
         self.setWindowIcon(self.style().standardIcon(
             QStyle.StandardPixmap.SP_MediaPlay))
         self.setWindowTitle('PyQt6Player')
-        self.setGeometry(350, 100, 700, 500)
 
         self.create_player()
 
     def create_player(self):
         self.mediaPlayer = QMediaPlayer()
         videoWidget = QVideoWidget()
+        container = RotatableContainer(videoWidget)
 
         self.openBtn = QPushButton('Open Video')
 
@@ -39,7 +49,7 @@ class Window(QWidget):
         hbox.addWidget(self.slider)
 
         vbox = QVBoxLayout()
-        vbox.addWidget(videoWidget)
+        vbox.addWidget(container)
         vbox.addLayout(hbox)
 
         self.setLayout(vbox)

@@ -1,13 +1,34 @@
 from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QStyle, \
-    QHBoxLayout, QVBoxLayout, QSlider, QFileDialog, QLabel
+    QHBoxLayout, QVBoxLayout, QSlider, QFileDialog, QLabel, \
+    QGraphicsView, QGraphicsScene, QGraphicsProxyWidget
 from PyQt5.QtMultimedia import QMediaPlayer, QMediaContent, QMediaMetaData
 from PyQt5.QtMultimediaWidgets import QVideoWidget
-from PyQt5.QtCore import Qt, QUrl
+from PyQt5.QtCore import Qt, QUrl, QRectF
 from datetime import datetime
 import sys
 import gpmf
 import gpxpy
 
+
+class RotatableContainer(QGraphicsView):
+    def __init__(self, widget: QWidget, rotation: float, width: float, height: float):
+        super(QGraphicsView, self).__init__()
+
+        scene = QGraphicsScene(self)
+        self.setScene(scene)
+
+        self.proxy = QGraphicsProxyWidget()
+        self.proxy.setWidget(widget)
+        self.proxy.setTransformOriginPoint(self.proxy.boundingRect().center())
+        self.proxy.setRotation(rotation)
+        self.proxy.setGeometry(QRectF(0,0,width,height))
+        scene.addItem(self.proxy)
+
+    def rotate(self, rotation: float):
+        self.proxy.setRotation(rotation)
+
+    def size(self, width: float, height: float):
+        self.proxy.setGeometry(QRectF(0,0,width,height))
 
 class Window(QWidget):
     def __init__(self):
@@ -22,7 +43,8 @@ class Window(QWidget):
     def create_player(self):
         self.mediaPlayer = QMediaPlayer(None, QMediaPlayer.VideoSurface)
 
-        videowidget = QVideoWidget()
+        videoWidget = QVideoWidget()
+        container = RotatableContainer(videoWidget, 0, 848, 480)
 
         self.openBtn = QPushButton('Open Video')
         self.openBtn.clicked.connect(self.open_file)
@@ -35,6 +57,15 @@ class Window(QWidget):
         self.slider = QSlider(Qt.Horizontal)
         self.slider.setRange(0, 0)
         self.slider.sliderMoved.connect(self.set_position)
+
+        self.rotationBtnUp = QPushButton('Rotate Up')
+        self.rotationBtnUp.clicked.connect(lambda: container.rotate(0))
+
+        self.rotationBtnDown = QPushButton('Rotate Down')
+        self.rotationBtnDown.clicked.connect(lambda: container.rotate(180))
+
+        self.sizeBtn = QPushButton('Resize')
+        self.sizeBtn.clicked.connect(lambda: container.size(600,400))
 
         hbox = QHBoxLayout()
         hbox.setContentsMargins(0, 0, 0, 0)
@@ -57,15 +88,18 @@ class Window(QWidget):
         labelBox.setContentsMargins(0, 0, 0, 0)
         labelBox.addWidget(self.labelStart)
         labelBox.addWidget(self.labelNow)
+        labelBox.addWidget(self.rotationBtnUp)
+        labelBox.addWidget(self.rotationBtnDown)
+        labelBox.addWidget(self.sizeBtn)
         labelBox.addWidget(self.labelEnd)
 
         vbox = QVBoxLayout()
 
         vbox.addLayout(labelBox)
-        vbox.addWidget(videowidget)
+        vbox.addWidget(container)
         vbox.addLayout(hbox)
 
-        self.mediaPlayer.setVideoOutput(videowidget)
+        self.mediaPlayer.setVideoOutput(videoWidget)
 
         self.setLayout(vbox)
 
