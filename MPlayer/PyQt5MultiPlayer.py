@@ -1,5 +1,7 @@
 from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QStyle, \
-    QHBoxLayout, QVBoxLayout, QSlider, QFileDialog, QLabel
+    QHBoxLayout, QVBoxLayout, QSlider, QFileDialog, QLabel, \
+    QGraphicsView,  QGraphicsScene, QGraphicsProxyWidget
+
 from PyQt5.QtMultimedia import QMediaPlayer, QMediaContent
 from PyQt5.QtMultimediaWidgets import QVideoWidget
 from PyQt5.QtCore import Qt, QUrl
@@ -15,6 +17,21 @@ class VideoSpec:
         self.end = end
         self.corection = corection
 
+class RotatableContainer(QGraphicsView):
+    def __init__(self, widget: QWidget, rotation: float):
+        super(QGraphicsView, self).__init__()
+
+        scene = QGraphicsScene(self)
+        self.setScene(scene)
+
+        self.proxy = QGraphicsProxyWidget()
+        self.proxy.setWidget(widget)
+        self.proxy.setTransformOriginPoint(self.proxy.boundingRect().center())
+        self.proxy.setRotation(rotation)
+        scene.addItem(self.proxy)
+
+    def rotate(self, rotation: float):
+        self.proxy.setRotation(rotation)
 
 class Window(QWidget):
     def __init__(self):
@@ -31,16 +48,26 @@ class Window(QWidget):
         self.mediaPlayer2 = QMediaPlayer(None, QMediaPlayer.VideoSurface)
 
         videoWidget1 = QVideoWidget()
+        container1 = RotatableContainer(widget=videoWidget1, rotation=0)
         videoWidget2 = QVideoWidget()
+        container2 = RotatableContainer(widget=videoWidget2, rotation=0)
 
         self.v1 = VideoSpec()
         self.v2 = VideoSpec()
 
         self.openBtn1 = QPushButton('Open Video 1')
         self.openBtn1.clicked.connect(self.open_file1)
+        self.rotationBtn1up = QPushButton('Rotate 1up')
+        self.rotationBtn1up.clicked.connect(lambda: container1.rotate(0))
+        self.rotationBtn1down = QPushButton('Rotate 1down')
+        self.rotationBtn1down.clicked.connect(lambda: container1.rotate(180))
 
         self.openBtn2 = QPushButton('Open Video 2')
         self.openBtn2.clicked.connect(self.open_file2)
+        self.rotationBtn2up = QPushButton('Rotate 2up')
+        self.rotationBtn2up.clicked.connect(lambda: container2.rotate(0))
+        self.rotationBtn2down = QPushButton('Rotate 2down')
+        self.rotationBtn2down.clicked.connect(lambda: container2.rotate(180))
 
         self.playBtn1 = QPushButton()
         self.playBtn1.setEnabled(False)
@@ -67,8 +94,10 @@ class Window(QWidget):
 
         videoBox = QHBoxLayout()
 
-        videoBox.addWidget(videoWidget1)
-        videoBox.addWidget(videoWidget2)
+        #videoBox.addWidget(videoWidget1)
+        videoBox.addWidget(container1)
+        #videoBox.addWidget(videoWidget2)
+        videoBox.addWidget(container2)
 
         self.labelStart1 = QLabel('start', self)
         self.labelStart1.setFixedHeight(15)
@@ -94,9 +123,13 @@ class Window(QWidget):
         labelBox.setContentsMargins(0, 0, 0, 0)
         labelBox.addWidget(self.labelStart1)
         labelBox.addWidget(self.labelNow1)
+        labelBox.addWidget(self.rotationBtn1up)
+        labelBox.addWidget(self.rotationBtn1down)
         labelBox.addWidget(self.labelEnd1)
         labelBox.addWidget(self.labelStart2)
         labelBox.addWidget(self.labelNow2)
+        labelBox.addWidget(self.rotationBtn2up)
+        labelBox.addWidget(self.rotationBtn2down)
         labelBox.addWidget(self.labelEnd2)
 
         vbox = QVBoxLayout()
