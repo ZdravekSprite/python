@@ -34,10 +34,11 @@ git commit -am "PyQt5MultiPlayer 0.0.18x"
 ## OpenCV
 
 [Build your OBJECT DETECTION SOFTWARE - Crash course | with Opencv and Python (2022)](https://www.youtube.com/watch?v=bUoWTPaKUi4)
+[crash_course_ods.zip](https://pysource.com/download/crash_course_ods.zip)
 
 ```bash
 pip install opencv-contrib-python
 
 git add .
-git commit -am "OpenCV 0.0.2"
+git commit -am "OpenCV 0.0.3"
 ```

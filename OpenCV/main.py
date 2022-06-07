@@ -1,15 +1,15 @@
 import cv2
 
-def rescale_frame(frame_input, percent=75):
+def rescale_frame(frame_input, percent=50):
     width = int(frame_input.shape[1] * percent / 100)
     height = int(frame_input.shape[0] * percent / 100)
     dim = (width, height)
     return cv2.resize(frame_input, dim, interpolation=cv2.INTER_AREA)
 
-cap = cv2.VideoCapture('./../temp/test.mp4')
+cap = cv2.VideoCapture('./OpenCV/test.mp4')
 
 while not cap.isOpened():
-    cap = cv2.VideoCapture("./../temp/test.mp4")
+    cap = cv2.VideoCapture("./OpenCV/test.mp4")
     cv2.waitKey(1000)
     print(f"Wait for the header")
 
