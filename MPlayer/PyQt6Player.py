@@ -68,6 +68,7 @@ class Window(QWidget):
         filename, _ = QFileDialog.getOpenFileName(self, 'Open Video')
 
         if filename != '':
+            print(f"Now open {filename}")
             self.mediaPlayer.setSource(QUrl.fromLocalFile(filename))
             self.playBtn.setEnabled(True)
 

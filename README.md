@@ -1,5 +1,7 @@
 # python
 
+## MPlayer
+
 [python.org](https://www.python.org/)
 [PyQt5](https://pypi.org/project/PyQt5/)
 [pyinstaller](https://pypi.org/project/pyinstaller/)
@@ -27,4 +29,15 @@ pip install ffmpeg-python # install ffmpeg https://www.wikihow.com/Install-FFmpe
 git init
 git add .
 git commit -am "PyQt5MultiPlayer 0.0.18x"
+```
+
+## OpenCV
+
+[Build your OBJECT DETECTION SOFTWARE - Crash course | with Opencv and Python (2022)](https://www.youtube.com/watch?v=bUoWTPaKUi4)
+
+```bash
+pip install opencv-contrib-python
+
+git add .
+git commit -am "OpenCV 0.0.1"
 ```
