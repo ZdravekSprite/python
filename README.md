@@ -39,5 +39,5 @@ git commit -am "PyQt5MultiPlayer 0.0.18x"
 pip install opencv-contrib-python
 
 git add .
-git commit -am "OpenCV 0.0.1"
+git commit -am "OpenCV 0.0.2"
 ```

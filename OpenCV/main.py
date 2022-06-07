@@ -1,5 +1,11 @@
 import cv2
 
+def rescale_frame(frame_input, percent=75):
+    width = int(frame_input.shape[1] * percent / 100)
+    height = int(frame_input.shape[0] * percent / 100)
+    dim = (width, height)
+    return cv2.resize(frame_input, dim, interpolation=cv2.INTER_AREA)
+
 cap = cv2.VideoCapture('./../temp/test.mp4')
 
 while not cap.isOpened():
@@ -11,8 +17,9 @@ pos_frame = cap.get(cv2.CAP_PROP_POS_FRAMES)
 while True:
     flag, frame = cap.read()
     if flag:
+        rescaled_frame = rescale_frame(frame)
         # The frame is ready and already captured
-        cv2.imshow('video', frame)
+        cv2.imshow('video', rescaled_frame)
         pos_frame = cap.get(cv2.CAP_PROP_POS_FRAMES)
         print(f"{str(pos_frame)} frames")
     else:
