@@ -52,6 +52,7 @@ git push
 ## TrafficSignNet
 
 [Traffic Sign Classification with Keras and Deep Learning](https://pyimagesearch.com/2019/11/04/traffic-sign-classification-with-keras-and-deep-learning/)
+[gtsrb-german-traffic-sign](https://www.kaggle.com/meowmeowmeowmeowmeow/gtsrb-german-traffic-sign/)
 
 ### Configuring your development environment
 
@@ -73,7 +74,10 @@ pip install matplotlib
 pip install tensorflow==2.0.0 # or tensorflow-gpu
 pip install tensorflow_cpu-2.9.0-cp310-cp310-win_amd64.whl
 
+pip install --upgrade pip
+pip install tensorflow
+
 git add .
-git commit -am "TrafficSignNet 0.0.1x"
+git commit -am "TrafficSignNet 0.0.2x"
 git push
 ```
