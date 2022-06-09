@@ -46,4 +46,34 @@ pip install --upgrade opencv-contrib-python
 
 git add .
 git commit -am "OpenCV 0.0.6"
+git push
+```
+
+## TrafficSignNet
+
+[Traffic Sign Classification with Keras and Deep Learning](https://pyimagesearch.com/2019/11/04/traffic-sign-classification-with-keras-and-deep-learning/)
+
+### Configuring your development environment
+
+- OpenCV
+- NumPy
+- scikit-learn
+- scikit-image
+- imutils
+- matplotlib
+- TensorFlow 2.0 (CPU or GPU) [](https://www.tensorflow.org/install/pip#windows)
+
+```bash
+pip install opencv-contrib-python
+pip install numpy
+pip install scikit-learn
+pip install scikit-image
+pip install imutils
+pip install matplotlib
+pip install tensorflow==2.0.0 # or tensorflow-gpu
+pip install tensorflow_cpu-2.9.0-cp310-cp310-win_amd64.whl
+
+git add .
+git commit -am "TrafficSignNet 0.0.1x"
+git push
 ```
