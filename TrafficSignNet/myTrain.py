@@ -59,3 +59,16 @@ testY = tf.keras.utils.to_categorical(testY, numLabels)
 #print(f"numLabels: {numLabels}")
 #print(f"trainY: {trainY}")
 #print(f"testY: {testY}")
+
+print("[INFO] calculating the total number of images in each class")
+classTotals = trainY.sum(axis=0)
+print(f"classTotals: {classTotals}")
+
+#print("[INFO] initializing a dictionary to store the class weights")
+classWeight = dict()
+#print(f"classWeight: {classWeight}")
+
+print("[INFO] looping over all classes and calculating the class weight")
+for i in range(0, len(classTotals)):
+    classWeight[i] = classTotals.max() / classTotals[i]
+print(f"classWeight: {classWeight}")
