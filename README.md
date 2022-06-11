@@ -77,14 +77,17 @@ pip install tensorflow_cpu-2.9.0-cp310-cp310-win_amd64.whl
 pip install --upgrade pip
 pip install tensorflow
 
-python train.py --dataset gtsrb-german-traffic-sign \
+python train.py --dataset dataset/gtsrb-german-traffic-sign \
  --model output/trafficsignnet.model --plot output/plot.png
 
 python predict.py --model output/trafficsignnet.model \
- --images gtsrb-german-traffic-sign/Test \
+ --images dataset/gtsrb-german-traffic-sign/Test \
  --examples examples
 
+python train.py --dataset dataset/my-traffic-sign \
+ --model output/mytrafficsignnet.model --plot output/myplot.png
+
 git add .
-git commit -am "TrafficSignNet 0.0.3"
+git commit -am "TrafficSignNet 0.0.4"
 git push
 ```
