@@ -1,5 +1,9 @@
 import argparse
 import os
+# to suppress warnings caused by cuda version
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
+import tensorflow as tf
+print(tf.__version__)
 from Loader import *
 
 #print("[INFO] constructing the argument parser and parse the arguments")
@@ -40,4 +44,18 @@ print("[INFO] loading training and testing data...")
 #print(f"trainX: {trainX}")
 #print(f"trainY: {trainY}")
 #print(f"testX: {testX}")
+#print(f"testY: {testY}")
+
+#print("[INFO] scale data to the range of [0, 1]")
+scaleTrainX = trainX.astype("float32") / 255.0
+scaleTestX = testX.astype("float32") / 255.0
+#print(f"trainX: {trainX}")
+#print(f"testX: {testX}")
+
+#print("[INFO] one-hot encode the training and testing labels")
+numLabels = len(np.unique(trainY))
+trainY = tf.keras.utils.to_categorical(trainY, numLabels)
+testY = tf.keras.utils.to_categorical(testY, numLabels)
+#print(f"numLabels: {numLabels}")
+#print(f"trainY: {trainY}")
 #print(f"testY: {testY}")

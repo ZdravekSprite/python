@@ -1,7 +1,6 @@
 # set the matplotlib backend so figures can be saved in the background
 import matplotlib
 from pyimagesearch.trafficsignnet import TrafficSignNet
-import tensorflow as tf
 from sklearn.metrics import classification_report
 from skimage import transform
 from skimage import exposure
@@ -13,6 +12,7 @@ import random
 import os
 # to suppress warnings caused by cuda version
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
+import tensorflow as tf
 print(tf.__version__)
 matplotlib.use("Agg")
 
