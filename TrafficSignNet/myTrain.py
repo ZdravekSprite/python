@@ -21,7 +21,7 @@ args = vars(ap.parse_args())
 #print(f"args: {args}")
 
 #print("[INFO] initializing the number of epochs to train for, base learning rate, and batch size")
-NUM_EPOCHS = 50#30
+NUM_EPOCHS = 100#30
 INIT_LR = 1e-3
 BS = 64
 #print(f"NUM_EPOCHS: {NUM_EPOCHS}")
@@ -59,6 +59,9 @@ scaleTestX = testX.astype("float32") / 255.0
 
 #print("[INFO] one-hot encode the training and testing labels")
 numLabels = len(np.unique(trainY))
+print(f"numLabels: {numLabels}")
+print(f"trainY: {len(trainY)}")
+print(f"testY: {len(testY)}")
 trainY = tf.keras.utils.to_categorical(trainY, numLabels)
 testY = tf.keras.utils.to_categorical(testY, numLabels)
 #print(f"numLabels: {numLabels}")

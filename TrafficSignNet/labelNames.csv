@@ -5,3 +5,37 @@ a03,Raskrižje s kružnim tokom prometa
 a04,Raskrižje sa sporednom cestom pod odreðenim kutom (lijevo i desno okomito)
 a04-1,Raskrižje sa sporednom cestom pod odreðenim kutom (lijevo okomito)
 a04-2,Raskrižje sa sporednom cestom pod odreðenim kutom (desno okomito)
+a04-3,Raskrižje sa sporednom cestom pod odreðenim kutom (lijevo oštro)
+a04-4,Raskrižje sa sporednom cestom pod odreðenim kutom (desno oštro)
+a05,Opasan zavoj ili nekoliko uzastopnih zavoja (lijevo)
+a05-1,Opasan zavoj ili nekoliko uzastopnih zavoja (desno)
+a05-2,Opasan zavoj ili nekoliko uzastopnih zavoja (prvi lijevo)
+a05-3,Opasan zavoj ili nekoliko uzastopnih zavoja (prvi desno)
+a06,Opasna nizbrdica
+a07,Opasna uzbrdica
+a08,Suženje kolnika (lijevo i desno)
+a08-1,Suženje kolnika (lijevo)
+a08-2,Suženje kolnika (desno)
+a09,Neravan kolnik zbog izboèine na cesti
+a09-1,Neravan kolnik zbog ulegnuæa kolnika
+a09-2,Neravan kolnik zbog uzastopnih izboèina i ulegnuæa na kolniku
+a09-3,Neravan kolnik zbog kolotraga
+a10,Sklizak kolnik
+a11,Poledica
+a12,Kamenje pršti
+a13,Kamenje pada (s desna)
+a13-1,Kamenje pada (s lijeva)
+a14,Nailazak na prometna svjetla (uspravna)
+a14-1,Nailazak na prometna svjetla (vodoravna)
+a15,Radovi na cesti
+a16,Promet u oba smjera
+a17,Prometna nesreæa
+a18,Kolona zaustavljenih vozila
+a19,Neutvrðena bankina
+a20,Pješaci na cesti
+a21,Približavanje obilježenom pješaèkom prijelazu
+a22,Djeca na cesti
+a22-1,Djeca na cesti (bijela pozadina)
+a22-2,Djeca na cesti (žuta pozadina)
+a23,Blizina zrakoplovne piste
+a24,Tunel (galerija)
