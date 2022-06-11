@@ -1,4 +1,7 @@
 SignId,SignName
 a01,Opasnost na cesti
-a02,RaskriÅ¾je cesta iste vaÅ¾nosti
-a03,RaskriÅ¾je s kruÅ¾nim tokom prometa
+a02,Raskrije cesta iste vanosti
+a03,Raskrije s krunim tokom prometa
+a04,Raskrije sa sporednom cestom pod odreğenim kutom (lijevo i desno okomito)
+a04-1,Raskrije sa sporednom cestom pod odreğenim kutom (lijevo okomito)
+a04-2,Raskrije sa sporednom cestom pod odreğenim kutom (desno okomito)
