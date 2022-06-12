@@ -11,7 +11,7 @@ def main():
     configPath2 = os.path.join("OpenCV/dnn_model", "yolov4-tiny.cfg")
     modelPath2 = os.path.join("OpenCV/dnn_model", "yolov4-tiny.weights")
     classesPath2 = os.path.join("OpenCV/dnn_model", "classes.txt")
-    modelType2 = "yolov"
+    modelType2 = "yolo"
 
     detector = Detector(videoPath, configPath2, modelPath2, classesPath2, modelType2)
     detector.onVideo()

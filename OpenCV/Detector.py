@@ -3,9 +3,11 @@ import cv2
 import numpy as np
 import time
 
+np.random.seed(20)
+
 
 class Detector:
-    def __init__(self, videoPath, configPath, modelPath, classesPath, modelType = 'mobilenet'):
+    def __init__(self, videoPath, configPath, modelPath, classesPath, modelType='mobilenet'):
         self.videoPath = videoPath
         self.configPath = configPath
         self.modelPath = modelPath
@@ -20,7 +22,7 @@ class Detector:
             self.net.setInputScale(1.0/127.5)
             self.net.setInputMean((127.5, 127.5, 127.5))
             self.net.setInputSwapRB(True)
-        if self.modelType == 'yolov':
+        if self.modelType == 'yolo':
             self.net.setInputScale(1.0/255.0)
 
         self.readClasses()
@@ -31,7 +33,7 @@ class Detector:
 
         if self.modelType == 'mobilenet':
             self.classesList.insert(0, '__Background__')
-    
+
         self.colorList = np.random.uniform(
             low=0, high=255, size=(len(self.classesList), 3))
 
@@ -46,7 +48,13 @@ class Detector:
 
         (success, image) = cap.read()
 
+        startTime = 0
+
         while success:
+            currentTime = time.time()
+            fps = 1/(currentTime - startTime)
+            startTime = currentTime
+
             classLabelIDs, confidences, bboxs = self.net.detect(
                 image, confThreshold=0.5)
 
@@ -67,7 +75,7 @@ class Detector:
                     classLabel = self.classesList[classLabelID]
                     classColor = [int(c) for c in self.colorList[classLabelID]]
 
-                    displayText = "{}:{:.4f}".format(
+                    displayText = "{}:{:.2f}".format(
                         classLabel, classConfidence)
 
                     x, y, w, h = bbox
@@ -77,6 +85,8 @@ class Detector:
                     cv2.putText(image, displayText, (x, y-10),
                                 cv2.FONT_HERSHEY_PLAIN, 1, classColor, 2)
 
+            cv2.putText(image, "FPS: " + str(int(fps)), (20, 70),
+                        cv2.FONT_HERSHEY_PLAIN, 1, (0, 255, 0), 2)
             cv2.imshow(self.modelType, image)
 
             key = cv2.waitKey(1) & 0xFF
