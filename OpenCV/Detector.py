@@ -26,7 +26,9 @@ class Detector:
         
         self.classesList.insert(0, '__Background__')
         
-        print(self.classesList)
+        self.colorList = np.random.uniform(low=0, high=255, size=(len(self.classesList), 3))
+
+        #print(self.classesList)
     
     def onVideo(self):
         cap = cv2.VideoCapture(self.videoPath)
@@ -53,10 +55,11 @@ class Detector:
                     classConfidence = confidences[np.squeeze(bboxIdx[i])]
                     classLabelID = np.squeeze(classLabelIDs[np.squeeze(bboxIdx[i])])
                     classLabel = self.classesList[classLabelID]
+                    classColor = [int(c) for c in self.colorList[classLabelID]]
 
                     x,y,w,h = bbox
 
-                    cv2.rectangle(image, (x,y), (x+w, y+h), color=(255,255,255), thickness=1)
+                    cv2.rectangle(image, (x,y), (x+w, y+h), color=classColor, thickness=1)
             
             cv2.imshow("Result", image)
 

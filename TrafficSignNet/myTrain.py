@@ -21,9 +21,9 @@ args = vars(ap.parse_args())
 #print(f"args: {args}")
 
 #print("[INFO] initializing the number of epochs to train for, base learning rate, and batch size")
-NUM_EPOCHS = 100#30
+NUM_EPOCHS = 10#30
 INIT_LR = 1e-3
-BS = 64
+BS = 8#64
 #print(f"NUM_EPOCHS: {NUM_EPOCHS}")
 #print(f"INIT_LR: {INIT_LR}")
 #print(f"BS: {BS}")
