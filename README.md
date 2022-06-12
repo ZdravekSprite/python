@@ -88,6 +88,6 @@ python train.py --dataset dataset/my-traffic-sign \
  --model output/mytrafficsignnet.model --plot output/myplot.png
 
 git add .
-git commit -am "TrafficSignNet 0.0.9"
+git commit -am "TrafficSignNet 0.0.10"
 git push
 ```

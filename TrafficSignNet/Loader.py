@@ -61,6 +61,7 @@ def load_dir(base):
     #rows = open(csvPath).read().strip().split("\n")[1:]
     #random.shuffle(rows)
     path = os.path.sep.join([os.getcwd(), "dataset"])
+    path = os.path.sep.join([path, "images"])
     path = os.path.sep.join([path, base])
     dirpath, dirnames, filenames = next(os.walk(path), (None, [], []))  # [] if no file
     #print(f"dirpath: {dirpath}")
@@ -84,7 +85,7 @@ def load_dir(base):
     for (i, row) in enumerate(rows):
         # check to see if we should show a status update
         if i > 0 and i % 1000 == 0:
-            print("[INFO] processed {} total train images".format(i))
+            print(f"[INFO] processed {i} total {base} images")
 
         # split the row into components and then grab the class ID
         # and image path
