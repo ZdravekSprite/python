@@ -55,7 +55,8 @@ class Detector:
         }
         print(info)
 
-        (success, image) = cap.read()
+        (success, frame) = cap.read()
+        image = np.array(frame)
 
         startTime = 0
 
@@ -98,8 +99,7 @@ class Detector:
                         cv2.FONT_HERSHEY_PLAIN, 1, (0, 255, 0), 2)
             cv2.imshow(self.modelType, image)
 
-            key = cv2.waitKey(1) & 0xFF
-            if key == ord("q"):
+            if cv2.waitKey(1) & 0xFF == ord('q'):
                 break
 
             (success, image) = cap.read()
