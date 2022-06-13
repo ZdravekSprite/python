@@ -55,7 +55,7 @@ class Detector:
         }
         print(info)
 
-        (success, frame) = cap.read()
+        success, frame = cap.read()
         image = np.array(frame)
 
         startTime = 0
