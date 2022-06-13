@@ -13,7 +13,7 @@ def main():
     classesPath2 = os.path.join("OpenCV/dnn_model", "classes.txt")
     modelType2 = "yolo"
 
-    detector = Detector(videoPath, configPath2, modelPath2, classesPath2, modelType2)
+    detector = Detector(videoPath, configPath1, modelPath1, classesPath1, modelType1)
     detector.onVideo()
 
 if __name__ == '__main__':

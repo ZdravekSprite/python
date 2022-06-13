@@ -46,6 +46,15 @@ class Detector:
             print("Error opening file...")
             return
 
+        info = {
+            "framecount": cap.get(cv2.CAP_PROP_FRAME_COUNT),
+            "fps": cap.get(cv2.CAP_PROP_FPS),
+            "width": int(cap.get(cv2.CAP_PROP_FRAME_WIDTH)),
+            "height": int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT)),
+            "codec": int(cap.get(cv2.CAP_PROP_FOURCC))
+        }
+        print(info)
+
         (success, image) = cap.read()
 
         startTime = 0
