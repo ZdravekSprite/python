@@ -5,11 +5,18 @@ import os
 
 np.random.seed(20)
 
+def saveBox(box,name,frame):
+    imagesPath = "../datasets/test/"
+    dirpath, dirnames, filenames = next(os.walk(imagesPath), (None, [], []))
+    cv2.imwrite(imagesPath+name+"_"+str(frame)+"_"+str(len(filenames))+".png", box)
+
 cap = cv2.VideoCapture('OpenCV/test.mp4')
 configPath = os.path.join("OpenCV/dnn_model", "yolov4-tiny.cfg")
 modelPath = os.path.join("OpenCV/dnn_model", "yolov4-tiny.weights")
 classesPath = os.path.join("OpenCV/dnn_model", "classes.txt")
 framecount = cap.get(cv2.CAP_PROP_FRAME_COUNT)
+width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
 
 info = {
     "framecount": framecount,
@@ -59,6 +66,24 @@ while cap.isOpened():
                 displayText = "{}:{:.2f}".format(
                     classLabel, classConfidence)
                 x, y, w, h = bbox
+                a=y-10
+                if a<0: a=0
+                b=y+h+10
+                if b>height: b=height
+                c=x-10
+                if c<0: c=0
+                d=x+w+10
+                if d>width: d=width
+
+                box_image = image[a:b,c:d]
+
+                if classLabel == 'traffic light': 
+                    saveBox(box_image,classLabel,frameNo)
+                if classLabel == 'street sign': 
+                    saveBox(box_image,classLabel,frameNo)
+                if classLabel == 'stop sign': 
+                    saveBox(box_image,classLabel,frameNo)
+
                 cv2.rectangle(image, (x, y), (x+w, y+h),
                               color=classColor, thickness=1)
                 cv2.putText(image, displayText, (x, y-10),
