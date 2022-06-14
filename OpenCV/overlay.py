@@ -1,6 +1,20 @@
 import cv2
 import os
 
+import numpy as np
+
+def get_random_crop(image, crop_height, crop_width):
+
+    max_x = image.shape[1] - crop_width
+    max_y = image.shape[0] - crop_height
+
+    x = np.random.randint(0, max_x)
+    y = np.random.randint(0, max_y)
+
+    crop = image[y: y + crop_height, x: x + crop_width]
+
+    return crop
+
 imagesPath = "../datasets/test/"
 
 _, _, background_files = next(os.walk(imagesPath+"background"), (None, [], []))
@@ -15,6 +29,9 @@ for (o, overlay_file) in enumerate(overlay_files):
         background = cv2.imread(imagesPath+"background/"+background_file)
 
         height, width = overlay.shape[:2]
+
+        random_crop = get_random_crop(background, height, width)
+
         for y in range(height):
             for x in range(width):
                 # first three elements are color (RGB)
@@ -23,13 +40,15 @@ for (o, overlay_file) in enumerate(overlay_files):
                 overlay_alpha = overlay[y, x, 3] / 255
 
                 # get the color from the background image
-                background_color = background[y, x]
+                background_color = random_crop[y, x]
 
                 # combine the background color and the overlay color weighted by alpha
                 composite_color = background_color * \
                     (1 - overlay_alpha) + overlay_color * overlay_alpha
 
                 # update the background image in place
-                background[y, x] = composite_color
+                random_crop[y, x] = composite_color
 
-        cv2.imwrite(imagesPath+"combined/"+overlay_file+background_file, background)
+        back_name, _ = background_file.split(".")[-2:]
+        over_name, _ = overlay_file.split(".")[-2:]
+        cv2.imwrite(imagesPath+"combined/"+over_name+back_name+".png", random_crop)
