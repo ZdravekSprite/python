@@ -15,6 +15,7 @@ def get_random_crop(image, crop_height, crop_width, padding):
 
 
 def combine_images(overlay, background):
+    combine_image = background
     overlay_height, overlay_width = overlay.shape[:2]
     background_height, background_width = background.shape[:2]
     # background_padding_y
@@ -26,19 +27,31 @@ def combine_images(overlay, background):
             overlay_color = overlay[y, x, :3]
             # 4th element is the alpha channel, convert from 0-255 to 0.0-1.0
             overlay_alpha = overlay[y, x, 3] / 255
-            background_color = random_crop[bpy+y, bpx+x]
+            background_color = background[bpy+y, bpx+x]
             combine_color = background_color * \
                 (1 - overlay_alpha)+overlay_color*overlay_alpha
             # update the background image in place
-            background[bpy+y, bpx+x] = combine_color
-    return background
+            combine_image[bpy+y, bpx+x] = combine_color
+    return combine_image
 
 
-def rotate_image(image, angle):
+def rotate_image(image_to_rotate, angle):
     deg = random.random()*angle
     pos = random.random()-0.5
-    rotated = ndimage.rotate(image, deg*pos)
-    return rotated
+    rotated = ndimage.rotate(image_to_rotate, deg*pos)
+    return crop_alpha(rotated)
+
+
+def crop_alpha(image_to_crop):
+    # axis 0 is the row(y) and axis(x) 1 is the column
+    # get the nonzero alpha coordinates
+    y, x = image_to_crop[:, :, 3].nonzero()
+    minx = np.min(x)
+    miny = np.min(y)
+    maxx = np.max(x)
+    maxy = np.max(y)
+    cropImg = image_to_crop[miny:maxy, minx:maxx]
+    return cropImg
 
 
 rootPath = "../datasets/"
@@ -60,20 +73,19 @@ for (o, overlay_file) in enumerate(overlay_files):
     #print("overlay file: " + overlay_name)
 
     for (b, background_file) in enumerate(background_files):
-        background = cv2.imread(orginalBackgrounds+background_file)
         background_name, _ = background_file.split(".")[-2:]
-        #print("background file: " + background_name)
-
         targetPath = rootPath+"test/combined/"
         targetName = overlay_name+"_"+background_name
 
         height, width = overlay.shape[:2]
-        random_crop = get_random_crop(background, height, width, 5)
-        version = combine_images(overlay, random_crop)
+        random_crop_v01 = get_random_crop(cv2.imread(
+            orginalBackgrounds+background_file), height, width, 5)
+        version = combine_images(overlay, random_crop_v01)
         cv2.imwrite(targetPath+targetName+"_v01.png", version)
 
-        rotate = rotate_image(overlay, 10)
+        rotate = rotate_image(overlay, 20)
         height, width = rotate.shape[:2]
-        random_crop = get_random_crop(background, height, width, 5)
-        version = combine_images(rotate, random_crop)
+        random_crop_v02 = get_random_crop(cv2.imread(
+            orginalBackgrounds+background_file), height, width, 5)
+        version = combine_images(rotate, random_crop_v02)
         cv2.imwrite(targetPath+targetName+"_v02.png", version)
