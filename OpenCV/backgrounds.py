@@ -42,6 +42,14 @@ def rotate_image(image_to_rotate, angle):
     return crop_alpha(rotated)
 
 
+def resize_image(image_to_resize, proc):
+    procent = 1-random.random()*proc/100
+    height, width = image_to_resize.shape[:2]
+    dim = (int(width*procent), height)
+    resized = cv2.resize(image_to_resize, dim, interpolation = cv2.INTER_AREA)
+    return crop_alpha(resized)
+
+
 def crop_alpha(image_to_crop):
     # axis 0 is the row(y) and axis(x) 1 is the column
     # get the nonzero alpha coordinates
@@ -89,3 +97,39 @@ for (o, overlay_file) in enumerate(overlay_files):
             orginalBackgrounds+background_file), height, width, 5)
         version = combine_images(rotate, random_crop_v02)
         cv2.imwrite(targetPath+targetName+"_v02.png", version)
+
+        resize = resize_image(overlay, 20)
+        height, width = resize.shape[:2]
+        random_crop_v03 = get_random_crop(cv2.imread(
+            orginalBackgrounds+background_file), height, width, 5)
+        version = combine_images(resize, random_crop_v03)
+        cv2.imwrite(targetPath+targetName+"_v03.png", version)
+
+        rotate = rotate_image(overlay, 40)
+        height, width = rotate.shape[:2]
+        random_crop_v04 = get_random_crop(cv2.imread(
+            orginalBackgrounds+background_file), height, width, 5)
+        version = combine_images(rotate, random_crop_v04)
+        cv2.imwrite(targetPath+targetName+"_v04.png", version)
+
+        resize = resize_image(overlay, 40)
+        height, width = resize.shape[:2]
+        random_crop_v05 = get_random_crop(cv2.imread(
+            orginalBackgrounds+background_file), height, width, 5)
+        version = combine_images(resize, random_crop_v05)
+        cv2.imwrite(targetPath+targetName+"_v05.png", version)
+
+        rotate = rotate_image(resize_image(overlay, 30), 30)
+        height, width = rotate.shape[:2]
+        random_crop_v06 = get_random_crop(cv2.imread(
+            orginalBackgrounds+background_file), height, width, 5)
+        version = combine_images(rotate, random_crop_v06)
+        cv2.imwrite(targetPath+targetName+"_v06.png", version)
+
+        resize = resize_image(rotate_image(overlay, 30), 30)
+        height, width = resize.shape[:2]
+        random_crop_v07 = get_random_crop(cv2.imread(
+            orginalBackgrounds+background_file), height, width, 5)
+        version = combine_images(resize, random_crop_v07)
+        cv2.imwrite(targetPath+targetName+"_v07.png", version)
+

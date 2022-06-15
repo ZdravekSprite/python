@@ -3,8 +3,10 @@ import os
 
 
 #dirpath, dirnames, filenames = next(os.walk(os.getcwd()), (None, [], []))
-path = os.path.sep.join([os.getcwd(), "TrafficSignNet"])
-datasetPath = os.path.sep.join([path, "dataset"])
+#path = os.path.sep.join([os.getcwd(), "TrafficSignNet"])
+path = "C:\git\datasets"
+#datasetPath = os.path.sep.join([path, "dataset"])
+datasetPath = os.path.sep.join([path, "proba"])
 images = os.path.sep.join([datasetPath, "images"])
 labels = os.path.sep.join([datasetPath, "labels"])
 
@@ -26,16 +28,19 @@ def create_label(classID, filePath):
 
 
 def mtt(images, labels):
-    #print(f"path: {path}")
+    print(f"images: {images}")
+    print(f"labels: {labels}")
     metaImagesPath = os.path.sep.join([images, "Meta"])
     metaLabelsPath = os.path.sep.join([labels, "Meta"])
-    ##labels_print(metaImagesPath, metaLabelsPath)
+    #labels_print(metaImagesPath, metaLabelsPath)
+    train_print(metaImagesPath, metaLabelsPath)
     testImagesPath = os.path.sep.join([images, "Test"])
     testLabelsPath = os.path.sep.join([labels, "Test"])
-    test_print(testImagesPath,testLabelsPath)
+    #test_print(testImagesPath,testLabelsPath)
+    train_print(testImagesPath, testLabelsPath)
     trainImagesPath = os.path.sep.join([images, "Train"])
     trainLabelsPath = os.path.sep.join([labels, "Train"])
-    ##train_print(trainImagesPath, trainLabelsPath)
+    train_print(trainImagesPath, trainLabelsPath)
 
 
 def test_print(imagesPath, labelsPath):
