@@ -39,6 +39,7 @@ frameNo = 0
 
 while cap.isOpened():
     ret, image = cap.read()
+    image = cv2.rotate(image, cv2.ROTATE_180)
     #image = np.array(frame)
 
 
@@ -91,6 +92,7 @@ while cap.isOpened():
 
         cv2.putText(image, "frame: " + str(int(frameNo)), (20, 70),
                     cv2.FONT_HERSHEY_PLAIN, 1, (0, 255, 0), 2)
+        image = cv2.resize(image, [768,432])
         cv2.imshow('play', image)
 
         key = cv2.waitKey(1) & 0xFF
