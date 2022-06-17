@@ -94,10 +94,11 @@ git push
 
 ## Custom Dataset
 
+
+[](https://blog.paperspace.com/train-yolov5-custom-data)
+
 ```bash
 git add .
-git commit -am "Custom Dataset 0.0.1"
+git commit -am "Custom Dataset 0.0.2"
 git push
 ```
-
-https://blog.paperspace.com/train-yolov5-custom-data
