@@ -4,7 +4,7 @@ import os
 
 #dirpath, dirnames, filenames = next(os.walk(os.getcwd()), (None, [], []))
 #path = os.path.sep.join([os.getcwd(), "TrafficSignNet"])
-path = "C:\git\datasets"
+path = "C:\\temp\\datasets"
 #datasetPath = os.path.sep.join([path, "dataset"])
 datasetPath = os.path.sep.join([path, "proba"])
 images = os.path.sep.join([datasetPath, "images"])
@@ -75,6 +75,8 @@ def test_print(imagesPath, labelsPath):
 
 
 def train_print(imagesPath, labelsPath):
+    print(f"imagesPath: {imagesPath}")
+    print(f"labelsPath: {labelsPath}")
     dirpath, dirnames, filenames = next(os.walk(imagesPath), (None, [], []))
     print(f"dirpath: {dirpath}")
     #print(f"dirnames: {len(dirnames)}")

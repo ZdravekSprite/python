@@ -91,3 +91,13 @@ git add .
 git commit -am "TrafficSignNet 0.0.10"
 git push
 ```
+
+## Custom Dataset
+
+```bash
+git add .
+git commit -am "Custom Dataset 0.0.1"
+git push
+```
+
+https://blog.paperspace.com/train-yolov5-custom-data
