@@ -1,3 +1,4 @@
+import errno
 import os
 from tqdm import tqdm
 import xml.etree.ElementTree as ET
@@ -6,6 +7,17 @@ import xml.etree.ElementTree as ET
 path = "C:\\git\\python"
 datasetPath = os.path.sep.join([path, "Road_Sign_Dataset"])
 annotationsPath = os.path.sep.join([datasetPath, "annotations"])
+labelsPath = os.path.sep.join([datasetPath, "labels"])
+
+def mkdir_p(path):
+    try:
+        os.makedirs(path)
+    except OSError as exc:  # Python ≥ 2.5
+        if exc.errno == errno.EEXIST and os.path.isdir(path):
+            pass
+        # possibly handle other errno cases here, otherwise finally:
+        else:
+            raise
 
 # Function to get the data from XML Annotation
 def extract_info_from_xml(xml_file):
@@ -77,7 +89,7 @@ def convert_to_yolov5(info_dict):
         print_buffer.append("{} {:.3f} {:.3f} {:.3f} {:.3f}".format(class_id, b_center_x, b_center_y, b_width, b_height))
         
     # Name of the file which we have to save 
-    save_file_name = os.path.join(annotationsPath, info_dict["filename"].replace("png", "txt"))
+    save_file_name = os.path.join(labelsPath, info_dict["filename"].replace("png", "txt"))
     
     # Save the annotation to disk
     print("\n".join(print_buffer), file= open(save_file_name, "w"))
@@ -86,6 +98,7 @@ def convert_to_yolov5(info_dict):
 annotations = [os.path.join(annotationsPath, x) for x in os.listdir(annotationsPath) if x[-3:] == "xml"]
 annotations.sort()
 
+mkdir_p(labelsPath)
 # Convert and save the annotations
 for ann in tqdm(annotations):
     info_dict = extract_info_from_xml(ann)
