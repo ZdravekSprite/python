@@ -149,8 +149,9 @@ def plot_bounding_box(image, annotation_list):
     plt.imshow(np.array(image))
     plt.show()
 
-# Get any random annotation file 
 
+"""
+# Get any random annotation file 
 annotations = [os.path.join(annotationsPath, x)
                for x in os.listdir(annotationsPath) if x[-3:] == "txt"]
 #print(annotations)
@@ -171,3 +172,32 @@ image = Image.open(image_file)
 
 #Plot the Bounding Box
 plot_bounding_box(image, annotation_list)
+"""
+
+# Read images and annotations
+images = [os.path.join(imagesPath, x) for x in os.listdir(imagesPath) if x[-3:] == "png"]
+annotations = [os.path.join(annotationsPath, x) for x in os.listdir(annotationsPath) if x[-3:] == "txt"]
+
+images.sort()
+annotations.sort()
+
+# Split the dataset into train-valid-test splits 
+train_images, val_images, train_annotations, val_annotations = train_test_split(images, annotations, test_size = 0.2, random_state = 1)
+val_images, test_images, val_annotations, test_annotations = train_test_split(val_images, val_annotations, test_size = 0.5, random_state = 1)
+
+#Utility function to move images 
+def move_files_to_folder(list_of_files, destination_folder):
+    for f in list_of_files:
+        try:
+            shutil.move(f, destination_folder)
+        except:
+            print(f)
+            assert False
+
+# Move the splits into their folders
+move_files_to_folder(train_images, os.path.join(imagesPath, 'train'))
+move_files_to_folder(val_images, os.path.join(imagesPath, 'val'))
+move_files_to_folder(test_images, os.path.join(imagesPath, 'test'))
+move_files_to_folder(train_annotations, os.path.join(annotationsPath, 'train'))
+move_files_to_folder(val_annotations, os.path.join(annotationsPath, 'val'))
+move_files_to_folder(test_annotations, os.path.join(annotationsPath, 'test'))
