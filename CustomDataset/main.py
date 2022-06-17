@@ -14,7 +14,7 @@ import matplotlib.pyplot as plt
 #random.seed(108)
 
 
-path = "C:\\temp\\python"
+path = "C:\\git\\python"
 datasetPath = os.path.sep.join([path, "Road_Sign_Dataset"])
 annotationsPath = os.path.sep.join([datasetPath, "annotations"])
 imagesPath = os.path.sep.join([datasetPath, "images"])
