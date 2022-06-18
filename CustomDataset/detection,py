@@ -1,0 +1,16 @@
+# python detect.py --source ../Road_Sign_Dataset/images/test/ --weights runs/train/exp9/weights/best.pt --conf 0.25 --name yolo_road_det
+import os
+from PIL import Image
+import random
+import numpy as np
+import matplotlib.pyplot as plt
+
+path = "C:\\git\\python\\yolov5"
+detections_dir = os.path.sep.join([path, "runs\\detect\\yolo_road_det"])
+#print(detections_dir)
+detection_images = [os.path.join(detections_dir, x) for x in os.listdir(detections_dir)]
+#print(detection_images)
+random_detection_image = Image.open(random.choice(detection_images))
+#print(random_detection_image)
+plt.imshow(np.array(random_detection_image))
+plt.show()
