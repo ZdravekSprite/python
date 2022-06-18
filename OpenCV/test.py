@@ -11,12 +11,16 @@ def saveBox(box,name,frame):
     cv2.imwrite(imagesPath+name+"_"+str(frame)+"_"+str(len(filenames))+".png", box)
 
 cap = cv2.VideoCapture('OpenCV/test.mp4')
+"""
+"""
+configPath = os.path.join("OpenCV/test", "best.pbtxt")
+modelPath = os.path.join("OpenCV/test", "best.pb")
+classesPath = os.path.join("OpenCV/test", "best.txt")
+"""
 configPath = os.path.join("OpenCV/dnn_model", "yolov4-tiny.cfg")
-#modelPath = os.path.join("OpenCV/dnn_model", "yolov4-tiny.weights")
+modelPath = os.path.join("OpenCV/dnn_model", "yolov4-tiny.weights")
 classesPath = os.path.join("OpenCV/dnn_model", "classes.txt")
-#configPath = os.path.join("OpenCV/model", "yolov5s.cfg")
-modelPath = os.path.join("OpenCV/model", "best.weights")
-#classesPath = os.path.join("OpenCV/model", "classes.txt")
+"""
 framecount = cap.get(cv2.CAP_PROP_FRAME_COUNT)
 width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
 height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
@@ -42,7 +46,7 @@ frameNo = 0
 
 while cap.isOpened():
     ret, image = cap.read()
-    image = cv2.rotate(image, cv2.ROTATE_180)
+    #image = cv2.rotate(image, cv2.ROTATE_180)
     #image = np.array(frame)
 
 
