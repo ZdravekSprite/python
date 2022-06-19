@@ -98,6 +98,6 @@ git push
 
 ```bash
 git add .
-git commit -am "Custom Dataset 0.0.7"
+git commit -am "Custom Dataset 0.0.8"
 git push
 ```

@@ -24,6 +24,14 @@ configPath = os.path.join("OpenCV/dnn_model", "yolov4-tiny.cfg")
 modelPath = os.path.join("OpenCV/dnn_model", "yolov4-tiny.weights")
 classesPath = os.path.join("OpenCV/dnn_model", "classes.txt")
 
+configPath = os.path.join("OpenCV/dnn_model", "cifar_small.cfg")
+modelPath = os.path.join("OpenCV/dnn_model", "cifar_small.weights")
+classesPath = os.path.join("OpenCV/dnn_model", "cifar_small.txt")
+
+configPath = os.path.join("OpenCV/test", "road_sign_cfg.yaml")
+modelPath = os.path.join("OpenCV/test", "road_signt_weights.pt")
+classesPath = os.path.join("OpenCV/test", "road_sign_data.yaml")
+
 framecount = cap.get(cv2.CAP_PROP_FRAME_COUNT)
 width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
 height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))

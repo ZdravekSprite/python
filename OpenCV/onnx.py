@@ -3,7 +3,7 @@ import numpy as np
 import os
 
 cap = cv2.VideoCapture('OpenCV/test.mp4')
-modelPath = os.path.join("OpenCV/test", "best.onnx")
+modelPath = 'yolov5/runs/train/yolo_road_det3/weights/best.onnx'
 classesPath = os.path.join("OpenCV/test", "best.txt")
 
 # Constants.
@@ -11,7 +11,7 @@ INPUT_WIDTH = 640
 INPUT_HEIGHT = 640
 SCORE_THRESHOLD = 0.5
 NMS_THRESHOLD = 0.45
-CONFIDENCE_THRESHOLD = 0.25 #0.45
+CONFIDENCE_THRESHOLD = 0.45 #0.45
 
 # Text parameters.
 FONT_FACE = cv2.FONT_HERSHEY_SIMPLEX
@@ -96,6 +96,10 @@ classes = None
 with open(classesPath, 'rt') as f: classes = f.read().rstrip('\n').split('\n')
 
 net = cv2.dnn.readNet(modelPath)
+net.setPreferableBackend(cv2.dnn.DNN_BACKEND_OPENCV)
+net.setPreferableTarget(cv2.dnn.DNN_TARGET_CPU)
+
+#print(net.getLayerNames())
 
 while cap.isOpened():
     ret, frame = cap.read()
