@@ -38,6 +38,7 @@ def combine_images(overlay, background):
 def adjust_image(image_to_adjust, gmin=0.5, gmax=1.5, smin=0.5, smax=1.0):
     saturation = random.uniform(smin, smax)
     gamma = random.uniform(gmin, gmax)
+    #print(saturation,gamma)
     # convert to HSV
     hsv = cv2.cvtColor(image_to_adjust, cv2.COLOR_BGR2HSV)
     h, s, v = cv2.split(hsv)
@@ -73,6 +74,22 @@ def resize_image(image_to_resize, max, min=0):
     return crop_alpha(resized)
 
 
+def resize_if_big(image_to_resize):
+    height, width = image_to_resize.shape[:2]
+    dim = (width, height)
+    if height >= width:
+        if width > 100:
+            dim = (100, int(100*height/width))
+    if height < width:
+        if height > 100:
+            dim = (int(100*width/height), 100)
+    #print(dim)
+    if dim == (width, height):
+        return image_to_resize
+    resized = cv2.resize(image_to_resize, dim, interpolation=cv2.INTER_AREA)
+    return resized
+
+
 def crop_alpha(image_to_crop):
     # axis 0 is the row(y) and axis(x) 1 is the column
     # get the nonzero alpha coordinates
@@ -106,7 +123,7 @@ def write_combine(targetName, overlay, background_file, v, classID):
     #print("background_file,v: "+background_file+","+v)
     #print("height, width: "+str(height)+","+str(width))
     random_crop = get_random_crop(cv2.imread(
-        orginalBackgrounds+background_file), height, width, 5)
+        orginalBackgrounds+background_file), height, width, 1)
     version = combine_images(overlay, random_crop)
     filename = targetName+"-v"+v
     cv2.imwrite(targetPath+filename+".png", version)
@@ -122,7 +139,6 @@ print("background files: " + str(len(background_files)))
 print("overlay files: " + str(len(overlay_files)))
 
 for (o, overlay_file) in enumerate(overlay_files):
-    overlay = cv2.imread(orginalMeta + overlay_file, cv2.IMREAD_UNCHANGED)
     overlay_name, _ = overlay_file.split(".")[-2:]
     print("overlay file: " + overlay_name)
 
@@ -131,14 +147,16 @@ for (o, overlay_file) in enumerate(overlay_files):
         targetName = overlay_name+"-b"+background_name
         v = 1
         while v < 30:
-            new_overlay = cv2.GaussianBlur(overlay, (5, 5), 0)
-            new_overlay = adjust_image(new_overlay)
+            overlay = cv2.imread(orginalMeta + overlay_file, cv2.IMREAD_UNCHANGED)
+            #new_overlay = cv2.GaussianBlur(overlay, (5, 5), 0)
+            adjust_overlay = adjust_image(overlay)
             min = 0
             if v > 5:
-                min = v / 5
-            new_overlay = rotate_image(new_overlay, v, min)
-            new_overlay = resize_image(new_overlay, v*2, min*4)
-            write_combine(targetName, new_overlay, background_file, str(v).zfill(3), classID)
+                min = v / 3
+            rotate_overlay = rotate_image(adjust_overlay, v, min)
+            resize_overlay = resize_image(rotate_overlay, v*2, min*4)
+            if_big_overlay = resize_if_big(resize_overlay)
+            write_combine(targetName, if_big_overlay, background_file, str(v).zfill(3), classID)
             v += 1
     if className != overlay_name[:7]:
         className != overlay_name[:7]
