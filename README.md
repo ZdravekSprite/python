@@ -97,7 +97,14 @@ git push
 [](https://blog.paperspace.com/train-yolov5-custom-data)
 
 ```bash
+git clone https://github.com/ultralytics/yolov5  # clone
+cd yolov5
+pip install -r requirements.txt  # install
+
 git add .
-git commit -am "Custom Dataset 0.0.8"
+git commit -am "Custom Dataset 0.0.9"
 git push
+```
+
+```bash
 ```
