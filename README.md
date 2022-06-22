@@ -45,7 +45,7 @@ pip install --upgrade opencv-python
 pip install --upgrade opencv-contrib-python
 
 git add .
-git commit -am "OpenCV 0.0.24"
+git commit -am "OpenCV 0.0.25"
 git push
 ```
 
@@ -104,7 +104,4 @@ pip install -r requirements.txt  # install
 git add .
 git commit -am "Custom Dataset 0.0.9"
 git push
-```
-
-```bash
 ```
