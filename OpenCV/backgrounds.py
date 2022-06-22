@@ -40,11 +40,11 @@ def adjust_image(image_to_adjust, gmin=0.5, gmax=1.5, smin=0.5, smax=1.0):
     gamma = random.uniform(gmin, gmax)
     # convert to HSV
     hsv = cv2.cvtColor(image_to_adjust, cv2.COLOR_BGR2HSV)
-    h,s,v = cv2.split(hsv)
+    h, s, v = cv2.split(hsv)
     # adjust
     s_desat = cv2.multiply(s, saturation).astype(np.uint8)
     v_gamma = cv2.multiply(v, gamma).astype(np.uint8)
-    hsv_new = cv2.merge([h,s_desat,v_gamma])
+    hsv_new = cv2.merge([h, s_desat, v_gamma])
     # convert to bgr
     bgr_adjust = cv2.cvtColor(hsv_new, cv2.COLOR_HSV2BGR)
     #bgr = cv2.cvtColor(hsv, cv2.COLOR_HSV2BGR)
@@ -54,8 +54,9 @@ def adjust_image(image_to_adjust, gmin=0.5, gmax=1.5, smin=0.5, smax=1.0):
         for x in range(width):
             c = bgr_adjust[y, x, :3]
             a = image_to_adjust[y, x, 3]
-            adjusted[y, x] = [c[0],c[1],c[2],a]
+            adjusted[y, x] = [c[0], c[1], c[2], a]
     return adjusted
+
 
 def rotate_image(image_to_rotate, max, min=0):
     deg = random.random()*(max-min)
@@ -68,7 +69,7 @@ def resize_image(image_to_resize, max, min=0):
     procent = 1-random.random()*(max-min)/100
     height, width = image_to_resize.shape[:2]
     dim = (int(width*(procent+min/100)), height)
-    resized = cv2.resize(image_to_resize, dim, interpolation = cv2.INTER_AREA)
+    resized = cv2.resize(image_to_resize, dim, interpolation=cv2.INTER_AREA)
     return crop_alpha(resized)
 
 
@@ -84,23 +85,37 @@ def crop_alpha(image_to_crop):
     return cropImg
 
 
+def create_label(classID, filePath):
+    #print(f"filePath: {filePath}")
+    f = open(filePath, "w")
+    f.write(str(classID) + " 0.5 0.5 1.0 1.0\n")
+    f.close()
+
+
 rootPath = "../datasets/"
 #orginalPath = rootPath + "orginal/"
-orginalPath = rootPath + "test/"
-#orginalBackgrounds = orginalPath + "backgrounds/"
-orginalBackgrounds = orginalPath + "background/"
+workingPath = rootPath+"test/"
+orginalBackgrounds = workingPath+"background/"
 #orginalMeta = orginalPath + "meta/"
-orginalMeta = orginalPath + "overlay/"
+orginalMeta = workingPath+"overlay/"
+targetPath = workingPath+"combined/"
+labelsPath = workingPath+"labels/"
 
-def write_combine(overlay,background_file,v):
+def write_combine(targetName, overlay, background_file, v, classID):
     height, width = overlay.shape[:2]
     #print("background_file,v: "+background_file+","+v)
     #print("height, width: "+str(height)+","+str(width))
-    random_crop = get_random_crop(cv2.imread(orginalBackgrounds+background_file), height, width, 5)
+    random_crop = get_random_crop(cv2.imread(
+        orginalBackgrounds+background_file), height, width, 5)
     version = combine_images(overlay, random_crop)
-    cv2.imwrite(targetPath+targetName+"-v"+v+".png", version)
+    filename = targetName+"-v"+v
+    cv2.imwrite(targetPath+filename+".png", version)
+    labelPath = os.path.sep.join([labelsPath, filename+'.txt'])
+    create_label(classID, labelPath)
 
 
+classID = 0
+className = ''
 _, _, background_files = next(os.walk(orginalBackgrounds), (None, [], []))
 _, _, overlay_files = next(os.walk(orginalMeta), (None, [], []))
 print("background files: " + str(len(background_files)))
@@ -113,7 +128,6 @@ for (o, overlay_file) in enumerate(overlay_files):
 
     for (b, background_file) in enumerate(background_files):
         background_name, _ = background_file.split(".")[-2:]
-        targetPath = rootPath+"test/combined/"
         targetName = overlay_name+"-b"+background_name
         v = 1
         while v < 30:
@@ -123,8 +137,9 @@ for (o, overlay_file) in enumerate(overlay_files):
             if v > 5:
                 min = v / 5
             new_overlay = rotate_image(new_overlay, v, min)
-            new_overlay = resize_image(new_overlay, v*2, min*3)
-            write_combine(new_overlay,background_file,str(v).zfill(3))
+            new_overlay = resize_image(new_overlay, v*2, min*4)
+            write_combine(targetName, new_overlay, background_file, str(v).zfill(3), classID)
             v += 1
-
-
+    if className != overlay_name[:7]:
+        className != overlay_name[:7]
+        classID += 1
