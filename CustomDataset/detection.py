@@ -11,13 +11,13 @@ sys.path.append(os.path.dirname(SCRIPT_DIR))
 from yolov5 import detect
 
 # python detect.py --weights best.pt --source test.mp4 --view-img --name test02 --device cpu --save-conf
-detect.run(weights='yolov5/runs/train/yolo_road_det3/weights/best.pt',
+detect.run(weights='yolov5/runs/train/yolo_road_det/weights/best.pt',
            source='yolov5/test.mp4',
            data='yolov5/data/road_sign_data.yaml',
            view_img=True,
            exist_ok=True,
            line_thickness=1,
-           name='yolo_road_det2')
+           name='yolo_road_det')
 
 """
 import os

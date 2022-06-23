@@ -3,8 +3,8 @@ import numpy as np
 import os
 
 cap = cv2.VideoCapture('OpenCV/test.mp4')
-modelPath = 'yolov5/runs/train/yolo_road_det3/weights/best.onnx'
-classesPath = os.path.join("OpenCV/test", "best.txt")
+modelPath = 'yolov5/runs/train/yolo_road_det/weights/best.onnx'
+classesPath = os.path.join("OpenCV/test", "road_sign_data.txt")
 
 # Constants.
 INPUT_WIDTH = 640
@@ -110,8 +110,14 @@ while cap.isOpened():
         t, _ = net.getPerfProfile()
         label = 'Inference time: %.2f ms' % (t * 1000.0 /  cv2.getTickFrequency())
         #print(label)
-        cv2.putText(img, label, (20, 40), FONT_FACE, FONT_SCALE,  (0, 0, 255), THICKNESS, cv2.LINE_AA)
-        cv2.imshow('Output', img)
+        height, width = frame.shape[:2]
+        if width > 2000:
+            height = int(height*2000/width)
+            width = 2000
+        dim =(width, height)
+        resized = cv2.resize(img, dim, interpolation=cv2.INTER_AREA)
+        cv2.putText(resized, label, (20, 40), FONT_FACE, FONT_SCALE,  (0, 0, 255), THICKNESS, cv2.LINE_AA)
+        cv2.imshow('Output', resized)
         key = cv2.waitKey(1) & 0xFF
         if key == ord("q"):
             break

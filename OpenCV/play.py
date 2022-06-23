@@ -14,7 +14,7 @@ while cap.isOpened():
         #cv2.imshow('object detection', cv2.resize(image_np, (960, 540)))
         cv2.imshow('play', image_np)
 
-        if cv2.waitKey(240) & 0xFF == ord('q'):
+        if cv2.waitKey(30) & 0xFF == ord('q'):
             break
 
 cap.release()

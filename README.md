@@ -102,6 +102,6 @@ cd yolov5
 pip install -r requirements.txt  # install
 
 git add .
-git commit -am "Custom Dataset 0.0.9"
+git commit -am "Custom Dataset 0.0.10"
 git push
 ```
