@@ -1,3 +1,4 @@
+import errno
 import os
 import cv2
 import numpy as np
@@ -115,8 +116,18 @@ workingPath = rootPath+"test/"
 orginalBackgrounds = workingPath+"background/"
 #orginalMeta = orginalPath + "meta/"
 orginalMeta = workingPath+"overlay/"
-targetPath = workingPath+"combined/"
+targetPath = workingPath+"images/"
 labelsPath = workingPath+"labels/"
+
+def mkdir_p(path):
+    try:
+        os.makedirs(path)
+    except OSError as exc:  # Python ≥ 2.5
+        if exc.errno == errno.EEXIST and os.path.isdir(path):
+            pass
+        # possibly handle other errno cases here, otherwise finally:
+        else:
+            raise
 
 def write_combine(targetName, overlay, background_file, v, classID):
     height, width = overlay.shape[:2]
@@ -141,6 +152,14 @@ print("overlay files: " + str(len(overlay_files)))
 for (o, overlay_file) in enumerate(overlay_files):
     overlay_name, _ = overlay_file.split(".")[-2:]
     print("overlay file: " + overlay_name)
+    mkdir_p(targetPath)
+    mkdir_p(targetPath+"train")
+    mkdir_p(targetPath+"val")
+    mkdir_p(targetPath+"test")
+    mkdir_p(labelsPath)
+    mkdir_p(labelsPath+"train")
+    mkdir_p(labelsPath+"val")
+    mkdir_p(labelsPath+"test")
 
     for (b, background_file) in enumerate(background_files):
         background_name, _ = background_file.split(".")[-2:]
@@ -153,11 +172,24 @@ for (o, overlay_file) in enumerate(overlay_files):
             min = 0
             if v > 5:
                 min = v / 3
+            targetName = "train/"+overlay_name+"-b"+background_name
+            if v == 6:
+                targetName = "test/"+overlay_name+"-b"+background_name
+            if v == 9:
+                targetName = "val/"+overlay_name+"-b"+background_name
+            if v == 13:
+                targetName = "test/"+overlay_name+"-b"+background_name
+            if v == 20:
+                targetName = "val/"+overlay_name+"-b"+background_name
             rotate_overlay = rotate_image(adjust_overlay, v, min)
             resize_overlay = resize_image(rotate_overlay, v*2, min*4)
             if_big_overlay = resize_if_big(resize_overlay)
             write_combine(targetName, if_big_overlay, background_file, str(v).zfill(3), classID)
             v += 1
     if className != overlay_name[:7]:
-        className != overlay_name[:7]
+        className = overlay_name[:7]
+        f = open(workingPath+"test.list", "a")
+        f.write(overlay_name[:7]+"\n")
+        f.close()
+
         classID += 1
