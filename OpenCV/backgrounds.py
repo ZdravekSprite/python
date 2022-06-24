@@ -103,10 +103,10 @@ def crop_alpha(image_to_crop):
     return cropImg
 
 
-def create_label(classID, filePath):
+def create_label(classID, filePath, w=1.0, h=1.0, x=0.5, y=0.5):
     #print(f"filePath: {filePath}")
     f = open(filePath, "w")
-    f.write(str(classID) + " 0.5 0.5 1.0 1.0\n")
+    f.write(str(classID)+" "+str(x)+" "+str(y)+" "+str(w)+" "+str(h)+"\n")
     f.close()
 
 
@@ -129,16 +129,24 @@ def mkdir_p(path):
         else:
             raise
 
-def write_combine(targetName, overlay, background_file, v, classID):
+def write_combine(folder, targetName, overlay, background_file, v, classID):
+    overlay = crop_alpha(overlay)
     height, width = overlay.shape[:2]
     #print("background_file,v: "+background_file+","+v)
     #print("height, width: "+str(height)+","+str(width))
+    padding = 1
+    if folder == "val":
+        padding = 5
+    if folder == "test":
+        padding = 25
     random_crop = get_random_crop(cv2.imread(
-        orginalBackgrounds+background_file), height, width, 1)
+        orginalBackgrounds+background_file), height, width, padding)
     version = combine_images(overlay, random_crop)
-    filename = targetName+"-v"+v
+    filename = folder+'/'+targetName+"-v"+v
     cv2.imwrite(targetPath+filename+".png", version)
     labelPath = os.path.sep.join([labelsPath, filename+'.txt'])
+    w = width/(width+2*padding)
+    h = height/(height+2*padding)
     create_label(classID, labelPath)
 
 
@@ -172,19 +180,20 @@ for (o, overlay_file) in enumerate(overlay_files):
             min = 0
             if v > 5:
                 min = v / 3
-            targetName = "train/"+overlay_name+"-b"+background_name
+            targetName = overlay_name+"-b"+background_name
+            folder = "train"
             if v == 6:
-                targetName = "test/"+overlay_name+"-b"+background_name
+                folder = "test"
             if v == 9:
-                targetName = "val/"+overlay_name+"-b"+background_name
+                folder = "val"
             if v == 13:
-                targetName = "test/"+overlay_name+"-b"+background_name
+                folder = "test"
             if v == 20:
-                targetName = "val/"+overlay_name+"-b"+background_name
+                folder = "val"
             rotate_overlay = rotate_image(adjust_overlay, v, min)
             resize_overlay = resize_image(rotate_overlay, v*2, min*4)
             if_big_overlay = resize_if_big(resize_overlay)
-            write_combine(targetName, if_big_overlay, background_file, str(v).zfill(3), classID)
+            write_combine(folder, targetName, if_big_overlay, background_file, str(v).zfill(3), classID)
             v += 1
     if className != overlay_name[:7]:
         className = overlay_name[:7]

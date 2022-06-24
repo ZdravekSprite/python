@@ -8,9 +8,9 @@ sys.path.append(os.path.dirname(SCRIPT_DIR))
 from yolov5 import train
 
 if __name__ == '__main__': 
-    train.run(data='road_sign_data.yaml',
-          cfg='road_sign_cfg.yaml',
+    train.run(data='test_data.yaml',
+          cfg='test_cfg.yaml',
           device='cpu',
           epochs=1000,
           save_period=5,
-          name='yolo_road_det')
+          name='test_yolo_det')
