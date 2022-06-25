@@ -45,7 +45,7 @@ pip install --upgrade opencv-python
 pip install --upgrade opencv-contrib-python
 
 git add .
-git commit -am "OpenCV 0.0.29"
+git commit -am "OpenCV 0.0.30"
 git push
 ```
 

@@ -1,3 +1,4 @@
+import copy
 import errno
 import os
 import cv2
@@ -50,7 +51,7 @@ def adjust_image(image_to_adjust, gmin=0.5, gmax=1.5, smin=0.5, smax=1.0):
     # convert to bgr
     bgr_adjust = cv2.cvtColor(hsv_new, cv2.COLOR_HSV2BGR)
     #bgr = cv2.cvtColor(hsv, cv2.COLOR_HSV2BGR)
-    adjusted = image_to_adjust
+    adjusted = copy.deepcopy(image_to_adjust)
     height, width = image_to_adjust.shape[:2]
     for y in range(height):
         for x in range(width):
@@ -62,7 +63,7 @@ def adjust_image(image_to_adjust, gmin=0.5, gmax=1.5, smin=0.5, smax=1.0):
 
 def rotate_image(image_to_rotate, max, min=0):
     deg = random.random()*(max-min)
-    pos = random.random()-0.5
+    pos = 2*(random.random()-0.5)
     rotated = ndimage.rotate(image_to_rotate, (deg+min)*pos)
     return crop_alpha(rotated)
 
@@ -147,7 +148,30 @@ def write_combine(folder, targetName, overlay, background_file, v, classID):
     labelPath = os.path.sep.join([labelsPath, filename+'.txt'])
     w = width/(width+2*padding)
     h = height/(height+2*padding)
-    create_label(classID, labelPath)
+    create_label(classID, labelPath, w, h)
+
+
+# Print iterations progress
+def printProgressBar (iteration, total, prefix = '', suffix = '', decimals = 1, length = 100, fill = '█', printEnd = "\r"):
+    """
+    Call in a loop to create terminal progress bar
+    @params:
+        iteration   - Required  : current iteration (Int)
+        total       - Required  : total iterations (Int)
+        prefix      - Optional  : prefix string (Str)
+        suffix      - Optional  : suffix string (Str)
+        decimals    - Optional  : positive number of decimals in percent complete (Int)
+        length      - Optional  : character length of bar (Int)
+        fill        - Optional  : bar fill character (Str)
+        printEnd    - Optional  : end character (e.g. "\r", "\r\n") (Str)
+    """
+    percent = ("{0:." + str(decimals) + "f}").format(100 * (iteration / float(total)))
+    filledLength = int(length * iteration // total)
+    bar = fill * filledLength + '-' * (length - filledLength)
+    print(f'\r{prefix} |{bar}| {percent}% {suffix}', end = printEnd)
+    # Print New Line on Complete
+    #if iteration == total: 
+    #    print()
 
 
 classID = 0
@@ -169,12 +193,25 @@ for (o, overlay_file) in enumerate(overlay_files):
     mkdir_p(labelsPath+"val")
     mkdir_p(labelsPath+"test")
 
+    if className != overlay_name[:7]:
+        className = overlay_name[:7]
+        f = open(workingPath+"test.list", "a")
+        f.write(overlay_name[:7]+"\n")
+        f.close()
+
+        classID += 1
+
+    items = list(range(1, 30))
+    l = len(items)
+    #Initial call to print 0% progress
+    printProgressBar(0, l, prefix = '0/'+str(len(background_files))+'- Progress:', suffix = 'Complete', length = 50)
+
     for (b, background_file) in enumerate(background_files):
         background_name, _ = background_file.split(".")[-2:]
         targetName = overlay_name+"-b"+background_name
-        v = 1
-        while v < 30:
-            overlay = cv2.imread(orginalMeta + overlay_file, cv2.IMREAD_UNCHANGED)
+        overlay = cv2.imread(orginalMeta + overlay_file, cv2.IMREAD_UNCHANGED)
+
+        for v, item in enumerate(items):
             #new_overlay = cv2.GaussianBlur(overlay, (5, 5), 0)
             adjust_overlay = adjust_image(overlay)
             min = 0
@@ -193,12 +230,7 @@ for (o, overlay_file) in enumerate(overlay_files):
             rotate_overlay = rotate_image(adjust_overlay, v, min)
             resize_overlay = resize_image(rotate_overlay, v*2, min*4)
             if_big_overlay = resize_if_big(resize_overlay)
-            write_combine(folder, targetName, if_big_overlay, background_file, str(v).zfill(3), classID)
-            v += 1
-    if className != overlay_name[:7]:
-        className = overlay_name[:7]
-        f = open(workingPath+"test.list", "a")
-        f.write(overlay_name[:7]+"\n")
-        f.close()
-
-        classID += 1
+            write_combine(folder, targetName, if_big_overlay, background_file, str(item).zfill(3), classID)
+            # Update Progress Bar
+            printProgressBar(v+1, l, prefix = str(b+1)+'/'+str(len(background_files))+'- Progress:', suffix = 'Complete', length = 50)
+    print()
