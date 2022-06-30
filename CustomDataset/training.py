@@ -10,7 +10,8 @@ from yolov5 import train
 if __name__ == '__main__': 
     train.run(data='test_data.yaml',
           cfg='test_cfg.yaml',
+          resume=True,
           device='cpu',
           epochs=1000,
           save_period=5,
-          name='test_yolo_det')
+          name='test_yolo152_det')

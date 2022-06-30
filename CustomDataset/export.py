@@ -37,6 +37,6 @@ from yolov5 import export
 
 # python detect.py --weights best.pt --source test.mp4 --view-img --name test02 --device cpu --save-conf
 export.run(data='yolov5/data/road_sign_data.yaml',
-           weights='yolov5/runs/train/yolo_road_det/weights/best.pt',
+           weights='yolov5/runs/train/test_yolo152_det/weights/best.pt',
            device='cpu',
            include=('torchscript', 'onnx', 'openvino', 'engine', 'coreml', 'saved_model', 'pb', 'tflite', 'edgetpu', 'tfjs'))
