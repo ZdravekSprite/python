@@ -2,16 +2,16 @@ import cv2
 import numpy as np
 import os
 
-cap = cv2.VideoCapture('OpenCV/test.mp4')
-modelPath = 'yolov5/runs/train/yolo_road_det/weights/best.onnx'
-classesPath = os.path.join("OpenCV/test", "road_sign_data.txt")
+cap = cv2.VideoCapture('OpenCV/test6.mp4')
+modelPath = 'yolov5/runs/train/test_yolo152_det/weights/best.onnx'
+classesPath = os.path.join("OpenCV/test", "test.list")
 
 # Constants.
 INPUT_WIDTH = 640
 INPUT_HEIGHT = 640
 SCORE_THRESHOLD = 0.5
 NMS_THRESHOLD = 0.45
-CONFIDENCE_THRESHOLD = 0.45 #0.45
+CONFIDENCE_THRESHOLD = 0.145 #0.45
 
 # Text parameters.
 FONT_FACE = cv2.FONT_HERSHEY_SIMPLEX

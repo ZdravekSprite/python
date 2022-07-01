@@ -39,4 +39,5 @@ from yolov5 import export
 export.run(data='yolov5/data/road_sign_data.yaml',
            weights='yolov5/runs/train/test_yolo152_det/weights/best.pt',
            device='cpu',
-           include=('torchscript', 'onnx', 'openvino', 'engine', 'coreml', 'saved_model', 'pb', 'tflite', 'edgetpu', 'tfjs'))
+           include=('torchscript', 'onnx', 'pb', 'tflite'))
+           #include=('torchscript', 'onnx', 'openvino', 'engine', 'coreml', 'saved_model', 'pb', 'tflite', 'edgetpu', 'tfjs'))
