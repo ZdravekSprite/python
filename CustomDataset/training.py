@@ -10,6 +10,7 @@ from yolov5 import train
 if __name__ == '__main__': 
     train.run(data='speed_test.yaml',
           cfg='speed_cfg.yaml',
+          resume=True,
           device='cpu',
           epochs=1000,
           save_period=5,
