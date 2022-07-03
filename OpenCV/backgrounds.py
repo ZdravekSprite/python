@@ -113,7 +113,7 @@ def create_label(classID, filePath, w=1.0, h=1.0, x=0.5, y=0.5):
 
 rootPath = "../datasets/"
 #orginalPath = rootPath + "orginal/"
-workingPath = rootPath+"test/"
+workingPath = rootPath+"speed/"
 orginalBackgrounds = workingPath+"background/"
 #orginalMeta = orginalPath + "meta/"
 orginalMeta = workingPath+"overlay/"
@@ -174,7 +174,7 @@ def printProgressBar (iteration, total, prefix = '', suffix = '', decimals = 1, 
     #    print()
 
 
-classID = 0
+classID = -1
 className = ''
 _, _, background_files = next(os.walk(orginalBackgrounds), (None, [], []))
 _, _, overlay_files = next(os.walk(orginalMeta), (None, [], []))
@@ -201,7 +201,7 @@ for (o, overlay_file) in enumerate(overlay_files):
 
         classID += 1
 
-    items = list(range(1, 30))
+    items = list(range(1, 11))
     l = len(items)
     #Initial call to print 0% progress
     printProgressBar(0, l, prefix = '0/'+str(len(background_files))+'- Progress:', suffix = 'Complete', length = 50)
@@ -216,16 +216,12 @@ for (o, overlay_file) in enumerate(overlay_files):
             adjust_overlay = adjust_image(overlay)
             min = 0
             if v > 5:
-                min = v / 3
+                min = v / 2
             targetName = overlay_name+"-b"+background_name
             folder = "train"
             if v == 6:
                 folder = "test"
             if v == 9:
-                folder = "val"
-            if v == 13:
-                folder = "test"
-            if v == 20:
                 folder = "val"
             rotate_overlay = rotate_image(adjust_overlay, v, min)
             resize_overlay = resize_image(rotate_overlay, v*2, min*4)

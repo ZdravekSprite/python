@@ -8,10 +8,9 @@ sys.path.append(os.path.dirname(SCRIPT_DIR))
 from yolov5 import train
 
 if __name__ == '__main__': 
-    train.run(data='test_data.yaml',
-          cfg='test_cfg.yaml',
-          resume=True,
+    train.run(data='speed_test.yaml',
+          cfg='speed_cfg.yaml',
           device='cpu',
           epochs=1000,
           save_period=5,
-          name='test_yolo152_det')
+          name='test_yolo26_det')
