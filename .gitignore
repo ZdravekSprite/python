@@ -2,3 +2,10 @@ Road_Sign_Dataset
 yolov5
 *.mp4
 CustomDataset/kinetics_classnames.json
+
+*/pyvenv.cfg
+*/Scripts/
+*/Lib/
+*/include/
+*/share/
+*/.ipynb_checkpoints/

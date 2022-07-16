@@ -102,8 +102,30 @@ cd yolov5
 pip install -r requirements.txt  # install
 
 git add .
-git commit -am "Custom Dataset 0.0.13"
+git commit -am "Custom Dataset 0.0.14"
 git push
+```
+
+### Create a new virtual environment
+
+```cmd
+python -m venv CustomDataset
+```
+
+### Activate your virtual environment
+
+```cmd
+.\CustomDataset\Scripts\activate
+```
+
+## Install dependencies and add virtual environment to the Python Kernel
+
+```bash
+cd CustomDataset
+python -m pip install --upgrade pip
+pip list
+pip install notebook
+jupyter notebook
 ```
 
 ## Tensorflow Object Detection
