@@ -135,3 +135,32 @@ git add .
 git commit -am "TOD 0.0.3"
 git push
 ```
+
+## YOLOv7
+
+```bash
+# Download YOLOv7 repository and install requirements
+git clone https://github.com/WongKinYiu/yolov7
+```
+
+### Create and activate a YOLOv7 virtual environment
+
+```cmd
+python -m venv YOLOv7
+.\YOLOv7\Scripts\activate
+python -m pip install --upgrade pip
+```
+
+### Install Dependencies
+
+```bash
+cd yolov7
+pip install -r requirements.txt
+pip list
+```
+
+```bash
+git add .
+git commit -am "YOLOv7 0.0.1"
+git push
+```
