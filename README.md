@@ -164,3 +164,21 @@ git add .
 git commit -am "YOLOv7 0.0.1"
 git push
 ```
+
+## PyTorch
+
+[Learn PyTorch for deep learning in a day. Literally.](https://www.youtube.com/watch?v=Z_ikDlimN6A)
+
+### Create and activate a PyTorch virtual environment
+
+```cmd
+python -m venv PyTorch
+.\PyTorch\Scripts\activate
+python -m pip install --upgrade pip
+```
+
+```bash
+git add .
+git commit -am "PyTorch 0.0.1"
+git push
+```
