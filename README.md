@@ -175,10 +175,13 @@ git push
 python -m venv PyTorch
 .\PyTorch\Scripts\activate
 python -m pip install --upgrade pip
+pip install notebook
+cd PyTorch
+jupyter notebook
 ```
 
 ```bash
 git add .
-git commit -am "PyTorch 0.0.1"
+git commit -am "PyTorch 0.0.2"
 git push
 ```
