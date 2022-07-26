@@ -182,6 +182,6 @@ jupyter notebook
 
 ```bash
 git add .
-git commit -am "PyTorch 0.0.3"
+git commit -am "PyTorch 0.0.4"
 git push
 ```
