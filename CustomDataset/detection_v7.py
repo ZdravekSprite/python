@@ -27,4 +27,4 @@
 
 # python detect.py --source test.mp4 --view-img --device cpu --conf 0.25
 
-# python detect.py --weights runs/train/road_det/weights/best.pt --source test.mp4 --view-img --name road_det --device cpu --save-conf
+# python detect.py --weights best.pt --source test_images --view-img --name test --device cpu --save-conf
