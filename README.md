@@ -102,7 +102,7 @@ cd yolov5
 pip install -r requirements.txt  # install
 
 git add .
-git commit -am "Custom Dataset 0.0.25"
+git commit -am "Custom Dataset 0.0.26"
 git push
 ```
 
@@ -143,7 +143,7 @@ git push
 git clone https://github.com/WongKinYiu/yolov7
 ```
 
-https://github.com/jinfagang/yolov7
+[](https://github.com/jinfagang/yolov7)
 
 ### Create and activate a YOLOv7 virtual environment
 
