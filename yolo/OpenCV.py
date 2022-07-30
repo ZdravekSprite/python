@@ -41,6 +41,22 @@ class ObjectDetectionPipeline:
 
     
     @staticmethod
+    def _resize_img(img):
+        if len(img.shape) == 3:
+            y = img.shape[0]
+            x = img.shape[1]
+        elif len(img.shape) == 4:
+            y = img.shape[1]
+            x = img.shape[2]
+        else:
+            raise ValueError(f"Image shape: {img.shape} invalid")
+            
+        out_size = min((y, x))
+        dim = (out_size, out_size)
+        resized = cv2.resize(img, dim, interpolation=cv2.INTER_AREA)
+
+        return resized
+        
     def _crop_img(img):
         """Crop an image or batch of images to square"""
         if len(img.shape) == 3:
@@ -88,17 +104,15 @@ class ObjectDetectionPipeline:
             # single image case
             
             # First convert the image to a tensor, reverse the channels, unsqueeze and send to the right device.
-            img_tens = self.tfms(Image.fromarray(img[:,:,::-1])).unsqueeze(0).to(self.device)
+            resized = self._resize_img(img)
+            img_tens = self.tfms(Image.fromarray(resized[:,:,::-1])).unsqueeze(0).to(self.device)
         
             # Run the tensor through the network.
             # We'll use NVIDIAs utils to decode.
             results = utils.decode_results(self.model(img_tens))
             boxes, labels, conf = utils.pick_best(results[0], self.threshold)
         
-            # Crop the image to match what we've been predicting on.
-            output_img = self._crop_img(img)
-        
-            return self._plot_boxes(output_img, labels, boxes)
+            return self._plot_boxes(img, labels, boxes)
         
         elif type(img) == list:
             # batch case
@@ -126,7 +140,7 @@ cap = cv2.VideoCapture('OpenCV/test.mp4')
 while cap.isOpened():
     ret, frame = cap.read()
     if ret:
-        cv2.imshow('object detection', obj_detect(frame)[:,:,::-1])
+        cv2.imshow('object detection', cv2.cvtColor(obj_detect(frame)[:,:,::-1], cv2.COLOR_BGR2RGB))
 
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
