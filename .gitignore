@@ -6,6 +6,8 @@ yolov7
 yolovn
 *.mp4
 CustomDataset/kinetics_classnames.json
+__pycache__
+*/__pycache__
 
 */pyvenv.cfg
 */Scripts/

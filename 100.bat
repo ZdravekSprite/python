@@ -1,1 +1,1 @@
-.\ve\Scripts\activate && jupyter notebook
+.\ve\Scripts\activate

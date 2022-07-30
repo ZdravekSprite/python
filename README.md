@@ -26,8 +26,9 @@ jupyter notebook
 ### bat
 
 - 001.bat - first start, create venv
-- 002.bat - instal jupyter
+- 002.bat - install jupyter and requirements
 - 003.bat - start jupyter
+- 100.bat - start, activate venv
 - 100.bat - start, activate venv and start jupyter
 
 ```bash
@@ -150,6 +151,15 @@ git commit -am "TOD 0.0.3"
 git push
 ```
 
+## YOLOv6
+
+```bash
+# Download YOLOv6 repository and install requirements
+git clone https://github.com/meituan/YOLOv6
+cd yolov6
+pip install -r requirements.txt
+```
+
 ## YOLOv7
 
 ```bash
@@ -157,13 +167,6 @@ git push
 git clone https://github.com/WongKinYiu/yolov7
 cd yolov7
 pip install -r requirements.txt
-pip list
-```
-
-```bash
-git add .
-git commit -am "YOLOv7 0.0.1"
-git push
 ```
 
 ## YOLOvn
@@ -173,7 +176,12 @@ git push
 git clone https://github.com/jinfagang/yolov7 yolovn
 cd yolovn
 pip install -r requirements.txt
-pip list
+```
+
+```bash
+git add .
+git commit -am "YOLO 0.1.0"
+git push
 ```
 
 ## PyTorch
