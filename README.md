@@ -1,5 +1,32 @@
 # python
 
+## Environment
+
+### Create virtual environment
+
+```cmd
+python -m venv ve
+```
+
+### Activate virtual environment
+
+```cmd
+.\ve\Scripts\activate
+```
+
+### Install and start Jupyter
+
+```bash
+python -m pip install --upgrade pip
+pip install notebook
+pip list
+jupyter notebook
+
+git add .
+git commit -am "Environment 0.1"
+git push
+```
+
 ## MPlayer
 
 [python.org](https://www.python.org/)
@@ -106,28 +133,6 @@ git commit -am "Custom Dataset 0.0.26"
 git push
 ```
 
-### Create a new virtual environment
-
-```cmd
-python -m venv CustomDataset
-```
-
-### Activate your virtual environment
-
-```cmd
-.\CustomDataset\Scripts\activate
-```
-
-## Install dependencies and add virtual environment to the Python Kernel
-
-```bash
-cd CustomDataset
-python -m pip install --upgrade pip
-pip list
-pip install notebook
-jupyter notebook
-```
-
 ## Tensorflow Object Detection
 
 ```bash
@@ -141,21 +146,6 @@ git push
 ```bash
 # Download YOLOv7 repository and install requirements
 git clone https://github.com/WongKinYiu/yolov7
-```
-
-[](https://github.com/jinfagang/yolov7)
-
-### Create and activate a YOLOv7 virtual environment
-
-```cmd
-python -m venv YOLOv7
-.\YOLOv7\Scripts\activate
-python -m pip install --upgrade pip
-```
-
-### Install Dependencies
-
-```bash
 cd yolov7
 pip install -r requirements.txt
 pip list
@@ -165,6 +155,16 @@ pip list
 git add .
 git commit -am "YOLOv7 0.0.1"
 git push
+```
+
+## YOLOvn
+
+```bash
+# Download YOLOv7 repository and install requirements
+git clone https://github.com/jinfagang/yolov7 yolovn
+cd yolovn
+pip install -r requirements.txt
+pip list
 ```
 
 ## PyTorch
