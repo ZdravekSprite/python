@@ -4,10 +4,15 @@ yolov5
 yolov6
 yolov7
 *.mp4
+*.pt
+*.onnx
+*.jpg
+*.png
 CustomDataset/kinetics_classnames.json
 __pycache__
 */__pycache__
 
+*/run/*
 */pyvenv.cfg
 */Scripts/
 */Lib/
