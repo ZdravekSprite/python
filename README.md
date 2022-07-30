@@ -23,7 +23,7 @@ pip list
 jupyter notebook
 
 git add .
-git commit -am "Environment 0.1"
+git commit -am "Environment 0.1.1"
 git push
 ```
 

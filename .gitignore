@@ -1,7 +1,9 @@
 Road_Sign_Dataset
 ve
 yolov5
+yolov6
 yolov7
+yolovn
 *.mp4
 CustomDataset/kinetics_classnames.json
 
@@ -10,4 +12,4 @@ CustomDataset/kinetics_classnames.json
 */Lib/
 */include/
 */share/
-*/.ipynb_checkpoints/
+*/.ipynb_checkpoints
