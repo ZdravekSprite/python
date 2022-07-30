@@ -8,3 +8,4 @@ pip install torchvision
 pip install tqdm
 pip install pyyaml
 pip install seaborn
+pip install protobuf

@@ -151,6 +151,15 @@ git commit -am "TOD 0.0.3"
 git push
 ```
 
+## YOLOv5
+
+```bash
+# Download YOLOv5 repository and install requirements
+git clone https://github.com/ultralytics/yolov5
+cd yolov5
+pip install -r requirements.txt
+```
+
 ## YOLOv6
 
 ```bash
@@ -169,18 +178,9 @@ cd yolov7
 pip install -r requirements.txt
 ```
 
-## YOLOvn
-
-```bash
-# Download YOLOv7 repository and install requirements
-git clone https://github.com/jinfagang/yolov7 yolovn
-cd yolovn
-pip install -r requirements.txt
-```
-
 ```bash
 git add .
-git commit -am "YOLO 0.1.0"
+git commit -am "YOLO 0.1.1"
 git push
 ```
 
