@@ -180,7 +180,7 @@ pip install -r requirements.txt
 
 ```bash
 git add .
-git commit -am "YOLO 0.1.2"
+git commit -am "YOLO 0.1.3"
 git push
 ```
 
