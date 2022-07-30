@@ -21,9 +21,18 @@ python -m pip install --upgrade pip
 pip install notebook
 pip list
 jupyter notebook
+```
 
+### bat
+
+- 001.bat - first start, create venv
+- 002.bat - instal jupyter
+- 003.bat - start jupyter
+- 100.bat - start, activate venv and start jupyter
+
+```bash
 git add .
-git commit -am "Environment 0.1.1"
+git commit -am "Environment 0.1.2"
 git push
 ```
 
