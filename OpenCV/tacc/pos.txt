@@ -1,0 +1,4 @@
+positive/b01-000-000.png 1 8 45 580 508
+positive/b02-000-000.png 1 12 15 575 572
+positive/b03-000-000.png 1 14 18 572 566
+positive/b04-000-000.png 1 9 10 581 576

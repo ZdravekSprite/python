@@ -1,0 +1,4 @@
+negative/000.jpg
+negative/005.jpg
+negative/006.jpg
+negative/008.jpg

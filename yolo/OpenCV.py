@@ -7,7 +7,17 @@ import torch
 from torch import nn
 from torchvision import transforms
 
-utils = torch.hub.load('NVIDIA/DeepLearningExamples:torchhub', 'nvidia_ssd_processing_utils')
+import os
+from pathlib import Path
+
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+script_path = Path(SCRIPT_DIR)
+yolov5_path = "/".join(str(script_path.parent / "yolov5").split("\\"))
+model_path = yolov5_path + '/yolov5.pt'
+
+# Model
+utils = torch.hub.load(yolov5_path, 'custom', path=model_path, source='local')
+utils1 = torch.hub.load('NVIDIA/DeepLearningExamples:torchhub', 'nvidia_ssd_processing_utils')
 
 class ObjectDetectionPipeline:
     def __init__(self, threshold=0.5, device="cpu", cmap_name="tab10_r"):
@@ -26,7 +36,8 @@ class ObjectDetectionPipeline:
         # We get some speedup from the gpu but not as much as we could.
         # A more efficient way to do this would be to collect frames to a buffer,
         # run them through the network as a batch, then output them one by one
-        self.model = torch.hub.load('NVIDIA/DeepLearningExamples:torchhub', 'nvidia_ssd').eval().to(device)
+        #self.model = torch.hub.load('NVIDIA/DeepLearningExamples:torchhub', 'nvidia_ssd').eval().to(device)
+        self.model = torch.hub.load(yolov5_path, 'custom', path=model_path, source='local').eval().to(device)
         
         # Stop the network from keeping gradients.
         # It's not required but it gives some speedup / reduces memory use.
@@ -37,7 +48,7 @@ class ObjectDetectionPipeline:
         self.device = device
         self.threshold = threshold # Confidence threshold for displaying boxes.
         self.cmap = cm.get_cmap(cmap_name) # colour map
-        self.classes_to_labels = utils.get_coco_object_dictionary()
+        self.classes_to_labels = utils1.get_coco_object_dictionary()
 
     
     @staticmethod
