@@ -1,6 +1,9 @@
 import os
 from pathlib import Path
 
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+script_path = Path(SCRIPT_DIR)
+
 # generate positive description file using:
 # $ C:/python/opencv/build/x64/vc15/bin/opencv_annotation.exe --annotations=test.txt --images=test/
 '''
@@ -33,14 +36,14 @@ def inplace_change(filename, old_string, new_string):
         s = s.replace(old_string, new_string)
         f.write(s)
 
-inplace_change('test.txt', '\\', '/')
+#inplace_change('test.txt', '\\', '/')
 
 # generate positive samples from the annotations to get a vector file using:
 # $ C:/python/opencv/build/x64/vc15/bin/opencv_createsamples.exe -info pos.txt -w 24 -h 24 -num 1000 -vec pos.vec
 
 def generate_negative_description_file():
-    with open('neg.txt', 'w') as f:
-        for filename in os.listdir('negative'):
+    with open(script_path / 'neg.txt', 'w') as f:
+        for filename in os.listdir(script_path / 'negative'):
             f.write(f'negative/{filename}\n')
 
 generate_negative_description_file()
@@ -49,4 +52,4 @@ generate_negative_description_file()
 # $ C:/python/opencv/build/x64/vc15/bin/opencv_traincascade.exe -data cascade/ -vec pos.vec -bg neg.txt -numPos 75 -numNeg 150 -numStages 30 -w 24 -h 24
 
 # my final classifier training arguments:
-# $ C:/python/opencv/build/x64/vc15/bin/opencv_traincascade.exe -data cascade/ -vec pos.vec -bg neg.txt -precalcValBufSize 6000 -precalcIdxBufSize 6000 -numPos 200 -numNeg 1000 -numStages 12 -w 24 -h 24 -maxFalseAlarmRate 0.4 -minHitRate 0.999
+# $ C:/python/opencv/build/x64/vc15/bin/opencv_traincascade.exe -data cascade/ -vec pos.vec -bg neg.txt -precalcValBufSize 6000 -precalcIdxBufSize 6000 -numPos 200 -numNeg 1000 -numStages 15 -w 24 -h 24 -maxFalseAlarmRate 0.4 -minHitRate 0.999

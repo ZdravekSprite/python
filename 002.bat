@@ -16,3 +16,4 @@ pipwin install gdal
 pipwin install fiona
 pip install gpmf
 pip install ffmpeg-python
+pip install imagesize

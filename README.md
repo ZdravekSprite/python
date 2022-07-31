@@ -81,6 +81,10 @@ pip install opencv-contrib-python
 pip install --upgrade opencv-python
 pip install --upgrade opencv-contrib-python
 
+pip install labelImg
+labelImg
+labelImg [IMAGE_PATH] [PRE-DEFINED CLASS FILE]
+
 git add .
 git commit -am "OpenCV 0.1.3"
 git push
