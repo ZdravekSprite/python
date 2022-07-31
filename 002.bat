@@ -17,3 +17,4 @@ pipwin install fiona
 pip install gpmf
 pip install ffmpeg-python
 pip install imagesize
+pip install labelImg
