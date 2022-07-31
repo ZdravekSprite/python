@@ -8,6 +8,9 @@ yolov7
 *.onnx
 *.jpg
 *.png
+*.xml
+*.txt
+*.vec
 CustomDataset/kinetics_classnames.json
 __pycache__
 */__pycache__

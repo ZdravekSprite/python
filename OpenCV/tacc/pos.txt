@@ -1,4 +1,50 @@
-positive/b01-000-000.png 1 8 45 580 508
-positive/b02-000-000.png 1 12 15 575 572
-positive/b03-000-000.png 1 14 18 572 566
-positive/b04-000-000.png 1 9 10 581 576
+positive/frame00201.jpg 1 485 87 11 14
+positive/frame00211.jpg 1 483 84 9 13
+positive/frame00221.jpg 1 483 84 15 14
+positive/frame00231.jpg 2 484 82 12 13 514 76 9 11
+positive/frame00241.jpg 2 487 81 14 14 519 76 10 12
+positive/frame00251.jpg 2 487 78 13 16 520 73 7 13
+positive/frame00261.jpg 2 481 73 15 18 516 71 8 10
+positive/frame00271.jpg 2 473 76 15 18 508 70 9 15
+positive/frame00281.jpg 2 462 67 17 19 497 62 10 16
+positive/frame00291.jpg 2 458 67 17 17 494 60 12 14
+positive/frame00301.jpg 2 453 64 17 20 490 58 12 14
+positive/frame00311.jpg 2 445 61 20 19 485 53 11 15
+positive/frame00321.jpg 2 441 62 20 20 483 56 13 18
+positive/frame00331.jpg 2 433 56 19 20 476 49 15 18
+positive/frame00341.jpg 2 426 48 21 21 474 41 11 18
+positive/frame00351.jpg 2 417 41 23 21 463 31 13 16
+positive/frame00361.jpg 2 415 32 23 22 465 22 16 18
+positive/frame00371.jpg 2 428 35 23 22 484 23 13 21
+positive/frame00381.jpg 2 437 38 26 25 495 28 15 19
+positive/frame00391.jpg 2 445 45 24 26 505 36 19 21
+positive/frame00401.jpg 2 448 50 26 30 516 41 11 24
+positive/frame00411.jpg 2 448 53 30 33 517 40 18 28
+positive/frame00421.jpg 2 448 64 32 32 525 53 18 27
+positive/frame00431.jpg 2 446 76 33 34 530 65 16 27
+positive/frame00441.jpg 2 443 84 34 34 535 72 15 29
+positive/frame00451.jpg 2 443 91 37 35 543 77 14 35
+positive/frame00461.jpg 2 442 91 42 41 549 77 16 33
+positive/frame00471.jpg 2 446 99 41 38 563 82 16 38
+positive/frame00481.jpg 2 445 95 43 43 575 77 15 40
+positive/frame00491.jpg 2 439 94 50 48 586 71 13 48
+positive/frame00501.jpg 2 435 93 53 49 593 63 14 50
+positive/frame00511.jpg 1 424 94 51 51
+positive/frame00521.jpg 1 434 83 63 56
+positive/frame00531.jpg 1 452 61 69 63
+positive/frame00541.jpg 1 467 19 80 71
+positive/frame00551.jpg 1 502 4 79 54
+positive/frame00561.jpg 1 551 0 60 17
+positive/frame01011.jpg 1 389 64 8 22
+positive/frame01021.jpg 1 396 64 9 19
+positive/frame01031.jpg 1 392 61 7 23
+positive/frame01041.jpg 1 389 58 6 26
+positive/frame01051.jpg 1 389 61 7 21
+positive/frame01061.jpg 1 388 52 9 27
+positive/frame01071.jpg 1 390 54 9 26
+positive/frame01081.jpg 1 390 54 9 31
+positive/frame01091.jpg 1 379 50 12 33
+positive/frame01101.jpg 1 354 60 11 36
+positive/frame01111.jpg 1 295 72 11 29
+positive/frame01121.jpg 1 280 96 11 37
+positive/frame01131.jpg 1 282 102 13 36
