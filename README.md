@@ -82,7 +82,7 @@ pip install --upgrade opencv-python
 pip install --upgrade opencv-contrib-python
 
 git add .
-git commit -am "OpenCV 0.1.1"
+git commit -am "OpenCV 0.1.2"
 git push
 ```
 
