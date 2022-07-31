@@ -2,7 +2,7 @@ import os
 from pathlib import Path
 
 # generate positive description file using:
-# $ C:/python/opencv/build/x64/vc15/bin/opencv_annotation.exe --annotations=pos.txt --images=positive/
+# $ C:/python/opencv/build/x64/vc15/bin/opencv_annotation.exe --annotations=test.txt --images=test/
 '''
 * mark rectangles with the left mouse button,
 * press 'c' to accept a selection,
@@ -33,7 +33,7 @@ def inplace_change(filename, old_string, new_string):
         s = s.replace(old_string, new_string)
         f.write(s)
 
-inplace_change('pos.txt', '\\', '/')
+inplace_change('test.txt', '\\', '/')
 
 # generate positive samples from the annotations to get a vector file using:
 # $ C:/python/opencv/build/x64/vc15/bin/opencv_createsamples.exe -info pos.txt -w 24 -h 24 -num 1000 -vec pos.vec

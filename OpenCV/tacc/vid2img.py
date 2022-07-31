@@ -1,7 +1,8 @@
 import cv2
 from time import time
 
-vidcap = cv2.VideoCapture('test.mp4')
+videofilename = "test"
+vidcap = cv2.VideoCapture(videofilename+'.LRV')
 count = 0
 
 loop_time = time()
@@ -14,7 +15,7 @@ while vidcap.isOpened():
 
     if ret:
         if (count % 20) == 3:
-            cv2.imwrite(f"temp/frame{count:05d}.jpg", frame)     # save frame as JPEG file      
+            cv2.imwrite(f"temp/{videofilename}{count:05d}.jpg", frame)     # save frame as JPEG file      
         cv2.imshow('Video to frames', frame)
         count += 1
 
