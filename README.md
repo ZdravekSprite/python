@@ -86,7 +86,7 @@ labelImg
 labelImg [IMAGE_PATH] [PRE-DEFINED CLASS FILE]
 
 git add .
-git commit -am "OpenCV 0.1.6"
+git commit -am "OpenCV 0.1.7"
 git push
 ```
 
