@@ -25,6 +25,7 @@ class RotatableContainer(QGraphicsView):
         self.setScene(scene)
 
         self.proxy = QGraphicsProxyWidget()
+        widget.setGeometry(0, 0, 848, 480)
         self.proxy.setWidget(widget)
         self.proxy.setTransformOriginPoint(self.proxy.boundingRect().center())
         self.proxy.setRotation(rotation)
@@ -39,7 +40,7 @@ class Window(QWidget):
 
         self.setWindowIcon(self.style().standardIcon(QStyle.SP_MediaPlay))
         self.setWindowTitle('PyQt5MultiPlayer')
-        self.setGeometry(100, 100, 1500, 490)
+        self.setGeometry(100, 100, 1800, 600)
 
         self.create_player()
 
@@ -231,11 +232,13 @@ class Window(QWidget):
             print(f"v1.end {self.v1.end}")
             self.slider.setRange(0, self.mediaPlayer1.duration())
         if self.v1.start == 0 and self.v2.start != 0:
-            print(f"v1.end {self.v2.end}")
+            print(f"v2.end {self.v2.end}")
             self.slider.setRange(0, self.mediaPlayer2.duration())
         if self.v1.start != 0 and self.v2.start != 0:
+            print(f"theStart {theStart}")
+            print(f"theEnd {theEnd}")
             print(f"theEnd-theStart {theEnd-theStart}")
-            self.slider.setRange(0, theEnd-theStart)
+            #self.slider.setRange(0, theEnd-theStart)
 
         self.mediaPlayer1.setPosition(self.slider.sliderPosition() - self.v1.corection)
         self.mediaPlayer2.setPosition(self.slider.sliderPosition() - self.v2.corection)
@@ -255,13 +258,30 @@ class Window(QWidget):
         # print(gps_blocks)
         # Parse low level data into more usable format
         gps_data = list(map(gpmf.gps.parse_gps_block, gps_blocks))
+        first = 0
+        dtFirst = datetime.strptime(gps_data[first].timestamp, '%Y-%m-%d %H:%M:%S.%f')
+        last = len(gps_data)-1
+        dtLast = datetime.strptime(gps_data[last].timestamp, '%Y-%m-%d %H:%M:%S.%f')
+        if (dtLast - dtFirst).days > 1:
+            for x, gps_rec in enumerate(gps_data):
+                dtFirst = datetime.strptime(gps_data[x].timestamp, '%Y-%m-%d %H:%M:%S.%f')
+                if (dtLast - dtFirst).days < 1:
+                    print((dtLast - dtFirst).days)
+                    first = x
+                    break
+        
         print(f"first timestamp {gps_data[0].timestamp}")
-        # print(gps_data[0])
+        print(f"before 'first' timestamp {gps_data[first-1].timestamp}")
+        print(f"'first' timestamp {gps_data[first].timestamp - gps_data[first-1].timestamp + gps_data[0].timestamp}")
 
         labelStart.setText(gps_data[0].timestamp)
         start = gps_data[0].timestamp
         dt_start = datetime.strptime(start, '%Y-%m-%d %H:%M:%S.%f')
-        video.start = int(dt_start.timestamp() * 1000)
+        before_first = gps_data[first-1].timestamp
+        dt_before_first = datetime.strptime(before_first, '%Y-%m-%d %H:%M:%S.%f')
+        first = gps_data[first].timestamp
+        dt_first = datetime.strptime(first, '%Y-%m-%d %H:%M:%S.%f')
+        video.start = int((dt_first-dt_before_first+dt_start).timestamp() * 1000)
 
         print(f"last timestamp {gps_data[len(gps_data)-1].timestamp}")
         # print(gps_data[len(gps_data)-1])
@@ -271,6 +291,8 @@ class Window(QWidget):
         dt_end = datetime.strptime(end, '%Y-%m-%d %H:%M:%S.%f')
         video.end = int(dt_end.timestamp() * 1000)
 
+        print('v1',self.v1.start,self.v1.end)
+        print('v2',self.v2.start,self.v2.end)
         if self.v1.start != 0 and self.v2.start != 0:
             if self.v1.start > self.v2.start:
                 self.v1.corection = self.v1.start - self.v2.start

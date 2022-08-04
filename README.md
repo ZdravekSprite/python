@@ -65,7 +65,7 @@ pip install ffmpeg-python # install ffmpeg https://www.wikihow.com/Install-FFmpe
 
 git init
 git add .
-git commit -am "PyQt5MultiPlayer 0.0.18x"
+git commit -am "PyQt5MultiPlayer 0.0.19x"
 ```
 
 ## OpenCV
