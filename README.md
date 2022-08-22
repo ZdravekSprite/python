@@ -29,7 +29,7 @@ jupyter notebook
 - 002.bat - install jupyter and requirements
 - 003.bat - start jupyter
 - 100.bat - start, activate venv
-- 100.bat - start, activate venv and start jupyter
+- 101.bat - start, activate venv and start jupyter
 
 ```bash
 git add .
@@ -86,7 +86,7 @@ labelImg
 labelImg [IMAGE_PATH] [PRE-DEFINED CLASS FILE]
 
 git add .
-git commit -am "OpenCV 0.1.10"
+git commit -am "OpenCV 0.1.11"
 git push
 ```
 
