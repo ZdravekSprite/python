@@ -18,3 +18,5 @@ pip install gpmf
 pip install ffmpeg-python
 pip install imagesize
 pip install labelImg
+pip install python-vlc
+pip install ffpyplayer

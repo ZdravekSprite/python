@@ -1,9 +1,5 @@
 import numpy as np
 from math import sqrt
-import sys
-import argparse
-import os
-
 
 def get_fish_xn_yn(source_x, source_y, radius, distortion):
     if 1 - distortion*(radius**2) == 0:
