@@ -29,6 +29,6 @@ pip install ultralytics
 
 ```bash
 git add .
-git commit -am "Environment 0.2.1"
+git commit -am "Environment 0.2.2"
 git push
 ```
