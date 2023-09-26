@@ -1,5 +1,7 @@
+from help.paths import paths
+
 def main():
-    print('run')
+    print(paths('custom'))
 
 
 if __name__ == "__main__":
