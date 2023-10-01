@@ -36,6 +36,17 @@ def paths(workspace):
 
     return paths
 
+def files(path):
+    print("path: " + path)
+
+    if os.path.exists(path):
+        _, folders, files = next(os.walk(path), (None, [], []))
+        if len(folders) > 0: print("folders: " + str(len(folders)))
+        if len(files) > 0: print("files: " + str(len(files)))
+    else:
+        print(path + " not exist")
+
+
 def main():
     print(paths('test'))
 
