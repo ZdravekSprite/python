@@ -21,7 +21,17 @@ def main():
     
     #print(labels_list)
     unique_labels = list(dict.fromkeys(labels_list))
-    print(unique_labels)
+    #print(unique_labels)
+
+    list_filename = os.path.join(paths_list['WORKSPACE_PATH'], 'className.list')
+    #print(list_filename)
+
+    with open(list_filename, 'w') as file :
+        file.write('')
+
+    for (l, label) in enumerate(unique_labels):
+        with open(list_filename, 'a') as file :
+            file.write(label+"\n")
 
 
 if __name__ == "__main__":
