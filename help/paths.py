@@ -47,6 +47,16 @@ def files(path):
     else:
         print(path + " not exist")
 
+def append_folders(folders,labels_list,overlays_list,paths_list):
+    for folder in folders:
+        #print("label: " + folder)
+        labels_list.append(folder)
+        _, _, overlays_files_versions = next(os.walk(os.path.join(paths_list['OVERLAYS_PATH'], folder)), (None, [], []))
+        for file in overlays_files_versions:
+            #print("file: " + file)
+            overlays_list.append(os.path.join(paths_list['OVERLAYS_PATH'], folder, file))
+    return [labels_list,overlays_list]
+
 def main():
     print(paths('test'))
 

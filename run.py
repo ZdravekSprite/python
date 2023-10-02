@@ -8,13 +8,8 @@ def main():
     overlays = files(paths_list['OVERLAYS_PATH'])
     if overlays:
         #print(overlays)
-        for folder in overlays[0]:
-            #print("label: " + folder)
-            labels_list.append(folder)
-            _, _, overlays_files_versions = next(os.walk(os.path.join(paths_list['OVERLAYS_PATH'], folder)), (None, [], []))
-            for file in overlays_files_versions:
-                #print("file: " + file)
-                overlays_list.append(os.path.join(paths_list['OVERLAYS_PATH'], folder, file))
+        [overlays_folders,overlays_files] = overlays
+        [labels_list,overlays_list] = append_folders(overlays_folders,labels_list,overlays_list,paths_list)
 
         for file in overlays[1]:
             overlays_list.append(os.path.join(paths_list['OVERLAYS_PATH'], file))
