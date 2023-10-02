@@ -57,6 +57,14 @@ def append_folders(folders,labels_list,overlays_list,paths_list):
             overlays_list.append(os.path.join(paths_list['OVERLAYS_PATH'], folder, file))
     return [labels_list,overlays_list]
 
+def append_files(files,labels_list,overlays_list,paths_list):
+    for file in files:
+        overlays_list.append(os.path.join(paths_list['OVERLAYS_PATH'], file))
+        file_label = "-".join(file.split("-")[:-1])
+        #print("label: " + file_label)
+        labels_list.append(file_label)
+    return [labels_list,overlays_list]
+
 def main():
     print(paths('test'))
 

@@ -10,12 +10,7 @@ def main():
         #print(overlays)
         [overlays_folders,overlays_files] = overlays
         [labels_list,overlays_list] = append_folders(overlays_folders,labels_list,overlays_list,paths_list)
-
-        for file in overlays[1]:
-            overlays_list.append(os.path.join(paths_list['OVERLAYS_PATH'], file))
-            file_label = "-".join(file.split("-")[:-1])
-            #print("label: " + file_label)
-            labels_list.append(file_label)
+        [labels_list,overlays_list] = append_files(overlays_files,labels_list,overlays_list,paths_list)
     else:
         print('Add some images to ovarlay folder ' + paths_list['OVERLAYS_PATH'])
     background_files = files(paths_list['BACKGROUNDS_PATH'])
