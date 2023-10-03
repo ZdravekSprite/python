@@ -1,6 +1,7 @@
 from help.paths import *
 from help.images import *
 import cv2
+import matplotlib.image as mpimg
 
 def main():
     paths_list = paths('custom')
@@ -40,9 +41,12 @@ def main():
 
     #for o in overlays_list:
     #    print(o)
-    img = cv2.imread(overlays_list[0])
+    #img = cv2.imread(overlays_list[0])
+    img = mpimg.imread(overlays_list[0])
     img = resize_if_small(img, finish_size)
+    rotated = rotate_image(img)
 
+    img = cv2.cvtColor(rotated, cv2.COLOR_BGR2RGB)
     cv2.imshow('image', img)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
