@@ -56,6 +56,26 @@ def rotate_image(image_to_rotate, rmax=15, rmin=0):
     rotated = imutils.rotate(transparent_img, angle=deg*pos)
     return crop_alpha(rotated)
 
+def adjust_image(image_to_adjust, gmin=0.5, gmax=1.5, smin=0.5, smax=1.0):
+    saturation = random.uniform(smin, smax)
+    gamma = random.uniform(gmin, gmax)
+
+    a = image_to_adjust[:, :, 3]
+
+    hsv = cv2.cvtColor(image_to_adjust, cv2.COLOR_BGR2HSV)
+    h, s, v = cv2.split(hsv)
+
+    s_desat = cv2.multiply(s, saturation)
+    v_gamma = cv2.multiply(v, gamma)
+    hsv_new = cv2.merge([h, s_desat, v_gamma])
+
+    bgr_adjust = cv2.cvtColor(hsv_new, cv2.COLOR_HSV2BGR)
+    adjusted = cv2.cvtColor(bgr_adjust, cv2.COLOR_RGB2RGBA)
+    adjusted[:, :, 3] = a
+    adjusted[adjusted < 0] = 0.
+    adjusted[adjusted > 1] = 1.
+    return adjusted
+
 def main():
     print('test')
 
