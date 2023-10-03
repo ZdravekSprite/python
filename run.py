@@ -1,4 +1,6 @@
 from help.paths import *
+from help.images import *
+import cv2
 
 def main():
     paths_list = paths('custom')
@@ -20,6 +22,7 @@ def main():
         print('Add some images to background folder ' + paths_list['BACKGROUNDS_PATH'])
     
     #print(labels_list)
+    #print(overlays_list)
     unique_labels = list(dict.fromkeys(labels_list))
     #print(unique_labels)
 
@@ -32,6 +35,17 @@ def main():
     for (l, label) in enumerate(unique_labels):
         with open(list_filename, 'a') as file :
             file.write(label+"\n")
+    
+    finish_size = 256
+
+    #for o in overlays_list:
+    #    print(o)
+    img = cv2.imread(overlays_list[0])
+    img = resize_if_small(img, finish_size)
+
+    cv2.imshow('image', img)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
 
 
 if __name__ == "__main__":

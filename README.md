@@ -29,6 +29,6 @@ pip install ultralytics
 
 ```bash
 git add .
-git commit -am "Paths 0.2.8"
+git commit -am "Images 0.3.0"
 git push
 ```
