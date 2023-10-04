@@ -65,6 +65,11 @@ def append_files(files,labels_list,overlays_list,paths_list):
         labels_list.append(file_label)
     return [labels_list,overlays_list]
 
+def append_bg_files(files,bgs_list,paths_list):
+    for file in files:
+        bgs_list.append(os.path.join(paths_list['BACKGROUNDS_PATH'], file))
+    return bgs_list
+
 def main():
     print(paths('test'))
 

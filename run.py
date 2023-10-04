@@ -3,10 +3,19 @@ from help.images import *
 import cv2
 import matplotlib.image as mpimg
 
+def augment(img, finish_size = 256):
+    img = resize_if_small(img, finish_size)
+    rotated = rotate_image(img)
+    adjusted = adjust_image(rotated)
+    return adjusted
+
+
 def main():
     paths_list = paths('custom')
     labels_list = []
     overlays_list = []
+    backgrounds_list = []
+    finish_size = 256
     #print(paths_list)
     overlays = files(paths_list['OVERLAYS_PATH'])
     if overlays:
@@ -16,9 +25,11 @@ def main():
         [labels_list,overlays_list] = append_files(overlays_files,labels_list,overlays_list,paths_list)
     else:
         print('Add some images to ovarlay folder ' + paths_list['OVERLAYS_PATH'])
-    background_files = files(paths_list['BACKGROUNDS_PATH'])
-    if background_files:
-        print(background_files)
+    backgrounds = files(paths_list['BACKGROUNDS_PATH'])
+    if backgrounds:
+        #print(backgrounds)
+        [_,backgrounds_files] = backgrounds
+        backgrounds_list = append_bg_files(backgrounds_files,backgrounds_list,paths_list)
     else:
         print('Add some images to background folder ' + paths_list['BACKGROUNDS_PATH'])
     
@@ -37,17 +48,24 @@ def main():
         with open(list_filename, 'a') as file :
             file.write(label+"\n")
     
-    finish_size = 256
+    #for b in background_files:
+    #background = os.path.join(paths['BACKGROUNDS_PATH'], b)
+
+    #bgi = mpimg.imread(background)
+    bgi = mpimg.imread(backgrounds_list[1])
+    bgi = resize_if_small(bgi, size=finish_size)
+    bgi = cv2.cvtColor(bgi, cv2.COLOR_BGR2RGB)
+    cv2.imshow('image', bgi)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
+
+
 
     #for o in overlays_list:
     #    print(o)
     #img = cv2.imread(overlays_list[0])
-    img = mpimg.imread(overlays_list[0])
-    img = resize_if_small(img, finish_size)
-    rotated = rotate_image(img)
-    adjusted = adjust_image(rotated)
-
-    img = cv2.cvtColor(adjusted, cv2.COLOR_BGR2RGB)
+    img = mpimg.imread(overlays_list[10])
+    img = cv2.cvtColor(augment(img), cv2.COLOR_BGR2RGB)
     cv2.imshow('image', img)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
