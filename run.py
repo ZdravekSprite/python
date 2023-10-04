@@ -7,7 +7,10 @@ def augment(img, finish_size = 256):
     img = resize_if_small(img, finish_size)
     rotated = rotate_image(img)
     adjusted = adjust_image(rotated)
-    return adjusted
+    resized = resize_image(adjusted)
+    overlay = crop_alpha(resized)
+    overlay = resize_if_big(overlay, finish_size)
+    return overlay
 
 
 def main():
@@ -52,25 +55,25 @@ def main():
     #background = os.path.join(paths['BACKGROUNDS_PATH'], b)
 
     #bgi = mpimg.imread(background)
-    bgi = mpimg.imread(backgrounds_list[1])
+    bgi = mpimg.imread(backgrounds_list[3])
     bgi = resize_if_small(bgi, size=finish_size)
     bg_crop = random_crop(bgi, finish_size, finish_size, 0)
-    bgi = cv2.cvtColor(bg_crop, cv2.COLOR_BGR2RGB)
-    cv2.imshow('image', bgi)
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
-
-
 
     #for o in overlays_list:
     #    print(o)
     #img = cv2.imread(overlays_list[0])
-    img = mpimg.imread(overlays_list[10])
-    img = cv2.cvtColor(augment(img), cv2.COLOR_BGR2RGB)
-    cv2.imshow('image', img)
+    img = mpimg.imread(overlays_list[199])
+    overlay = augment(img)
+
+    combine = combine_images(overlay, bg_crop/255)
+    combine = (combine*255).astype('uint8')
+    combine[combine < 0] = 0
+    combine[combine > 255] = 255
+    overlay = cv2.cvtColor(combine, cv2.COLOR_BGR2RGB)
+
+    cv2.imshow('image', overlay)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
-
 
 if __name__ == "__main__":
     main()

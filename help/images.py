@@ -19,6 +19,23 @@ def resize_if_small(image_to_resize, size=100):
     resized = cv2.resize(image_to_resize, dim, interpolation=cv2.INTER_AREA)
     return resized
 
+def resize_if_big(image_to_resize, size=100):
+    height, width = image_to_resize.shape[:2]
+
+    dim = (width, height)
+    if height >= size:
+        dim = (int(size*width/height), size)
+
+    if width > height:
+        if width >= size:
+            dim = (size, int(size*height/width))
+
+    if dim == (width, height):
+        return image_to_resize
+    
+    resized = cv2.resize(image_to_resize, dim, interpolation=cv2.INTER_AREA)
+    return resized
+
 def crop_alpha(image_to_crop):
     image_to_crop[image_to_crop < 0.008] = 0.
     # axis 0 is the row(y) and axis(x) 1 is the column
@@ -83,6 +100,39 @@ def random_crop(image, crop_height=320, crop_width=320, padding=0):
     y = np.random.randint(0, max_y)
     crop = image[y: y+crop_height+padding*2, x: x+crop_width+padding*2]
     return crop
+
+def resize_image(image_to_resize, max=50, min=0):
+    resize = random.uniform(min, max)
+    procent = 1-resize/100
+
+    height, width = image_to_resize.shape[:2]
+    dim = (int(width*procent), height)
+    resized = cv2.resize(image_to_resize, dim, interpolation=cv2.INTER_AREA)
+    return resized
+
+def combine_images(overlay, background, x_off = 0, y_off = 0):
+    combine_image = background
+    overlay_height, overlay_width = overlay.shape[:2]
+    background_height, background_width = background.shape[:2]
+    # background_padding_y
+    bpy = int((background_height - overlay_height)/2)+y_off
+    # background_padding_x
+    bpx = int((background_width - overlay_width)/2)+x_off
+    for y in range(overlay_height):
+        for x in range(overlay_width):
+            overlay_color = overlay[y, x, :3]
+            # 4th element is the alpha channel, convert from 0-255 to 0.0-1.0
+            overlay_alpha = overlay[y, x, 3]
+            background_color = background[bpy+y, bpx+x]
+            combine_color = background_color * \
+                (1 - overlay_alpha)+overlay_color*overlay_alpha
+            # update the background image in place
+            combine_image[bpy+y, bpx+x] = combine_color
+
+    combine_image[combine_image < 0] = 0.
+    combine_image[combine_image > 1] = 1.
+    
+    return combine_image
 
 def main():
     print('test')
