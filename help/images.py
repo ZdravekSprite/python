@@ -76,6 +76,14 @@ def adjust_image(image_to_adjust, gmin=0.5, gmax=1.5, smin=0.5, smax=1.0):
     adjusted[adjusted > 1] = 1.
     return adjusted
 
+def random_crop(image, crop_height=320, crop_width=320, padding=0):
+    max_x = image.shape[1]-crop_width-padding*2
+    max_y = image.shape[0]-crop_height-padding*2
+    x = np.random.randint(0, max_x)
+    y = np.random.randint(0, max_y)
+    crop = image[y: y+crop_height+padding*2, x: x+crop_width+padding*2]
+    return crop
+
 def main():
     print('test')
 
