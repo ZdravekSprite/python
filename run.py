@@ -1,5 +1,6 @@
 from help.paths import *
 from help.images import *
+import random
 import cv2
 import matplotlib.image as mpimg
 
@@ -106,11 +107,14 @@ def main():
 
         bg_crop = random_crop(bgi, finish_size, finish_size, 0)
 
-        img_folder = paths_list["TRAIN_IMAGES_PATH"]
-        lbl_folder = paths_list["TRAIN_LABELS_PATH"]
-        #print(img_folder,lbl_folder,overlays_todo,labels_todo)
         for o in overlays_todo:
-            print(o)
+
+            pos = random.random()
+
+            img_folder = paths_list["TRAIN_IMAGES_PATH"]
+            lbl_folder = paths_list["TRAIN_LABELS_PATH"]
+            #print(img_folder,lbl_folder,overlays_todo,labels_todo)
+            print(o,pos)
             # img = cv2.imread(overlays_list[0])
 
             img = mpimg.imread(o[0])
