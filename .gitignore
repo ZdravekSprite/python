@@ -24,3 +24,4 @@ __pycache__
 */share/
 */.ipynb_checkpoints
 datasets
+training

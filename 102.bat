@@ -1,0 +1,1 @@
+yolo task=detect mode=train epochs=10 data=datasets\custom\data.yaml model=yolov8n.pt imgsz=640 project=training name=traffic_signs
