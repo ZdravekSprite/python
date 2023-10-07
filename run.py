@@ -58,7 +58,21 @@ def main():
     labels_todo = []
     overlays_todo = []
     [labels_todo,overlays_todo] = append_folders(class_todo,labels_todo,overlays_todo,paths_list)
-    #print(overlays_todo,overlays_list[195])
+    print(overlays_todo[0],overlays_list[195])
+
+    yaml_filename = os.path.join(paths_list['WORKSPACE_PATH'], 'data.yaml')
+    #print(list_filename)
+
+    with open(yaml_filename, 'w') as yaml :
+        yaml.write('')
+
+    with open(yaml_filename, 'a') as yaml :
+        yaml.write("train: " + paths_list['TRAIN_IMAGES_PATH'] + "\n")
+        yaml.write("val: " + paths_list['VAL_IMAGES_PATH'] + "\n")
+        yaml.write("test: " + paths_list['TEST_IMAGES_PATH'] + "\n")
+        yaml.write("\n")
+        yaml.write("nc: " + str(len(class_todo)) + "\n")
+        yaml.write("names: ['" + "', '".join(class_todo) + "']\n")
 
     #for b in background_files:
     #background = os.path.join(paths['BACKGROUNDS_PATH'], b)
