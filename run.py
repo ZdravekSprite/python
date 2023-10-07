@@ -51,6 +51,15 @@ def main():
         with open(list_filename, 'a') as file :
             file.write(label+"\n")
     
+    list_todo = os.path.join(paths_list['WORKSPACE_PATH'], 'classNameTodo.list')
+    with open(list_todo) as f:
+        class_todo = f.read().splitlines()
+
+    labels_todo = []
+    overlays_todo = []
+    [labels_todo,overlays_todo] = append_folders(class_todo,labels_todo,overlays_todo,paths_list)
+    #print(overlays_todo,overlays_list[195])
+
     #for b in background_files:
     #background = os.path.join(paths['BACKGROUNDS_PATH'], b)
 
@@ -62,7 +71,7 @@ def main():
     #for o in overlays_list:
     #    print(o)
     #img = cv2.imread(overlays_list[0])
-    img = mpimg.imread(overlays_list[195])
+    img = mpimg.imread(overlays_todo[1])
     overlay = augment(img)
 
     combine = combine_images(overlay, bg_crop/255)
