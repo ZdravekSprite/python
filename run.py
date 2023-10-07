@@ -93,55 +93,54 @@ def main():
         yaml.write("nc: " + str(len(class_todo)) + "\n")
         yaml.write("names: ['" + "', '".join(class_todo) + "']\n")
 
-    # for b in background_files:
-    # background = os.path.join(paths['BACKGROUNDS_PATH'], b)
+    for b in backgrounds_list:
+        #background = os.path.join(paths['BACKGROUNDS_PATH'], b)
 
-    # bgi = mpimg.imread(background)
+        # bgi = mpimg.imread(background)
 
-    b_part = backgrounds_list[3].split(".")[0]
-    b_part = b_part.split("\\")[-1]
+        b_part = b.split(".")[0]
+        b_part = b_part.split("\\")[-1]
 
-    bgi = mpimg.imread(backgrounds_list[3])
-    bgi = resize_if_small(bgi, size=finish_size*2)
+        bgi = mpimg.imread(b)
+        bgi = resize_if_small(bgi, size=finish_size*2)
 
-    bg_crop = random_crop(bgi, finish_size, finish_size, 0)
+        bg_crop = random_crop(bgi, finish_size, finish_size, 0)
 
-    x=5
-    img_folder = paths_list["TRAIN_IMAGES_PATH"]
-    lbl_folder = paths_list["TRAIN_LABELS_PATH"]
-    #print(img_folder,lbl_folder,overlays_todo,labels_todo)
-    #for o in overlays_list:
-    #    print(o)
-    # img = cv2.imread(overlays_list[0])
+        img_folder = paths_list["TRAIN_IMAGES_PATH"]
+        lbl_folder = paths_list["TRAIN_LABELS_PATH"]
+        #print(img_folder,lbl_folder,overlays_todo,labels_todo)
+        for o in overlays_todo:
+            print(o)
+            # img = cv2.imread(overlays_list[0])
 
-    img = mpimg.imread(overlays_todo[x][0])
-    overlay = augment(img)
+            img = mpimg.imread(o[0])
+            overlay = augment(img)
 
-    combine = combine_images(overlay, bg_crop / 255)
-    combine = (combine * 255).astype("uint8")
-    combine[combine < 0] = 0
-    combine[combine > 255] = 255
+            combine = combine_images(overlay, bg_crop / 255)
+            combine = (combine * 255).astype("uint8")
+            combine[combine < 0] = 0
+            combine[combine > 255] = 255
 
-    o_part = overlays_todo[x][0].split(".")[0]
-    l_part =  o_part.split("\\")[-2]
-    o_part = o_part.split("\\")[-1]
-    #print(l_part,b_part,o_part)
-    new_file_name = l_part+'-'+o_part+'-b'+b_part
+            o_part = o[0].split(".")[0]
+            l_part =  o_part.split("\\")[-2]
+            o_part = o_part.split("\\")[-1]
+            #print(l_part,b_part,o_part)
+            new_file_name = l_part+'-'+o_part+'-b'+b_part
 
-    img_filePath = os.path.join(img_folder, new_file_name+'.png')
-    save_image(combine, img_filePath)
+            img_filePath = os.path.join(img_folder, new_file_name+'.png')
+            save_image(combine, img_filePath)
 
-    a, b = overlay.shape[:2]
-    c, d = bg_crop.shape[:2]
-    classID = overlays_todo[x][1]
+            a, b = overlay.shape[:2]
+            c, d = bg_crop.shape[:2]
+            classID = o[1]
 
-    lbl_filePath = os.path.join(lbl_folder, new_file_name+'.txt')
-    save_label(classID, lbl_filePath, 0.5, 0.5, b / d, a / c)
-    
-    overlay = cv2.cvtColor(combine, cv2.COLOR_BGR2RGB)
-    cv2.imshow("image", overlay)
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
+            lbl_filePath = os.path.join(lbl_folder, new_file_name+'.txt')
+            save_label(classID, lbl_filePath, 0.5, 0.5, b / d, a / c)
+            
+            #overlay = cv2.cvtColor(combine, cv2.COLOR_BGR2RGB)
+            #cv2.imshow("image", overlay)
+            #cv2.waitKey(0)
+            #cv2.destroyAllWindows()
 
 
 if __name__ == "__main__":
