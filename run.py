@@ -62,7 +62,7 @@ def main():
     #for o in overlays_list:
     #    print(o)
     #img = cv2.imread(overlays_list[0])
-    img = mpimg.imread(overlays_list[199])
+    img = mpimg.imread(overlays_list[195])
     overlay = augment(img)
 
     combine = combine_images(overlay, bg_crop/255)

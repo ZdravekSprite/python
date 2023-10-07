@@ -28,7 +28,6 @@ pip install ultralytics
 - 101.bat - start, activate venv and start jupyter
 
 ```bash
-git add .
-git commit -am "Images 0.3.4"
+git add . & git commit -am "Images 0.3.5"
 git push
 ```
