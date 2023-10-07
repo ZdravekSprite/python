@@ -28,6 +28,6 @@ pip install ultralytics
 - 101.bat - start, activate venv and start jupyter
 
 ```bash
-git add . & git commit -am "save 0.5.0"
+git add . & git commit -am "save 0.5.1"
 git push
 ```

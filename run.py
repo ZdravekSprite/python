@@ -111,8 +111,16 @@ def main():
 
             pos = random.random()
 
-            img_folder = paths_list["TRAIN_IMAGES_PATH"]
-            lbl_folder = paths_list["TRAIN_LABELS_PATH"]
+            if pos > 0.9:
+                img_folder = paths_list["TEST_IMAGES_PATH"]
+                lbl_folder = paths_list["TEST_LABELS_PATH"]
+            elif pos < 0.1:
+                img_folder = paths_list["VAL_IMAGES_PATH"]
+                lbl_folder = paths_list["VAL_LABELS_PATH"]
+            else: 
+                img_folder = paths_list["TRAIN_IMAGES_PATH"]
+                lbl_folder = paths_list["TRAIN_LABELS_PATH"]
+
             #print(img_folder,lbl_folder,overlays_todo,labels_todo)
             print(o,pos)
             # img = cv2.imread(overlays_list[0])
