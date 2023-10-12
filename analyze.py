@@ -20,7 +20,11 @@ def main():
     else:
         print("Add some labels to train labels folder " + paths_list["TRAIN_LABELS_PATH"])
     
-    print(len(images_files),len(labels_files))
+    classes_file = os.path.join(paths_list["TRAIN_LABELS_PATH"], "classes.txt")
+    with open(classes_file) as f:
+        classes = f.read().splitlines()
+
+    print(len(images_files),len(labels_files),classes)
 
 
 if __name__ == "__main__":
