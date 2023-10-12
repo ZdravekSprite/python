@@ -40,6 +40,6 @@ yolo task=detect mode=train epochs=100 data=datasets\org\data.yaml model=yolov8n
 ```
 
 ```bash
-git add . & git commit -am "test 0.6.0"
+git add . & git commit -am "analyze 0.7.0"
 git push
 ```

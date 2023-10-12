@@ -83,7 +83,7 @@ def main():
                 )
                 """
                 for i in range(len(detections)):
-                    skip_label = detections.confidence[i] < 0.5
+                    skip_label = detections.confidence[i] < 0.05
                     if skip_label:
                         continue
 
