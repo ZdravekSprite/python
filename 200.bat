@@ -1,1 +1,1 @@
-.\ve\Scripts\activate && jupyter notebook
+.\gpu\Scripts\activate && jupyter notebook

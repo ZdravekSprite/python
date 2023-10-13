@@ -1,1 +1,1 @@
-py analyze.py
+py run.py

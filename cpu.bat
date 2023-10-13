@@ -1,0 +1,1 @@
+.\cpu\Scripts\activate && pip install -U ultralytics

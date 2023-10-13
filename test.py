@@ -83,9 +83,9 @@ def main():
                 )
                 """
                 for i in range(len(detections)):
-                    skip_label = detections.confidence[i] < 0.05
-                    if skip_label:
-                        continue
+                    #skip_label = detections.confidence[i] < 0.05
+                    #if skip_label:
+                    #    continue
 
                     x1, y1, x2, y2 = detections.xyxy[i].astype(int)
                     class_id = (

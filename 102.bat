@@ -1,1 +1,1 @@
-yolo task=detect mode=train epochs=10 data=datasets\custom\data.yaml model=yolov8n.pt imgsz=640 project=training name=traffic_signs
+.\gpu\Scripts\activate && yolo task=detect mode=train resume model=training\traffic_signs_7\weights\last.pt data=datasets\custom\data.yaml epochs=100 imgsz=640 project=training name=traffic_signs_7

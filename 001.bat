@@ -1,2 +1,2 @@
-python -m venv ve
-.\ve\Scripts\activate
+python -m venv gpu
+python -m venv cpu

@@ -1,1 +1,2 @@
-.\ve\Scripts\activate
+py analyze.py
+py distribute.py

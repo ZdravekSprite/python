@@ -1,1 +1,1 @@
-py run.py
+.\cpu\Scripts\activate && yolo task=detect mode=train epochs=100 data=datasets\custom\data.yaml model=yolov8n.pt imgsz=640 project=training name=traffic_signs_7
