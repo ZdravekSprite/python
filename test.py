@@ -34,7 +34,7 @@ def saveBox(box, name, frame):
 def main():
     cap = cv2.VideoCapture("datasets/test.mp4")
 
-    modelPath = "training/traffic_signs/weights/best.pt"
+    modelPath = "training/traffic_signs_7/weights/best.pt"
 
     framecount = cap.get(cv2.CAP_PROP_FRAME_COUNT)
     width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
