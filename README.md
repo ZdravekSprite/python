@@ -39,7 +39,9 @@ yolo task=detect mode=train epochs=100 data=datasets\org\data.yaml model=yolov8n
 !yolo task=detect mode=train resume model=./runs/detect/train2/weights/last.pt data=dataset.yaml epochs=10 imgsz=640 batch=8 project=training_results name=traffic_signs
 ```
 
+- Usage : labelImg datasets\custom\train\images datasets\class\predefined_classes.txt datasets\custom\train\labels
+
 ```bash
-git add . & git commit -am "analyze 0.7.2"
+git add . & git commit -am "analyze 0.7.3"
 git push
 ```

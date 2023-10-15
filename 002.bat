@@ -5,3 +5,4 @@ pip install ultralytics
 pip install imutils
 pip uninstall opencv-python
 pip install opencv-python
+pip install PyQt5
