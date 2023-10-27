@@ -47,6 +47,6 @@ labelImg datasets\custom\train\images datasets\class\predefined_classes.txt data
 ```
 
 ```bash
-git add . & git commit -am "analyze 0.7.4"
+git add . & git commit -am "sql 0.8.0"
 git push
 ```

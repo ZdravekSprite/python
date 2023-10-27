@@ -1,1 +1,1 @@
-.\gpu\Scripts\activate && pip install -U ultralytics
+.\gpu\Scripts\activate
