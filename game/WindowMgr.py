@@ -19,7 +19,7 @@ class WindowMgr:
       self._handles.append(hwnd)
       self._handle = hwnd
 
-  def find_window_wildcard(self, wildcard):
+  def find_window_wildcard(self, wildcard=""):
     """find a window whose title matches the wildcard regex"""
     self._handle = None
     self._handles = []
@@ -51,10 +51,21 @@ class WindowMgr:
 
   def print_matches(self):
     """print the title of each matched handle"""
+    blank = 0
+    titles = []
     for hwnd in self._handles:
-      print("- " + str(win32gui.GetWindowText(hwnd)))
+      if str(win32gui.GetWindowText(hwnd)):
+        titles.append(str(win32gui.GetWindowText(hwnd)))
+        #print("- " + str(win32gui.GetWindowText(hwnd)))
+      else:
+        blank += 1
+    titles_set = set(titles)
+    for title in titles_set:
+      print(f"-[{titles.count(title)}] {title}")
+    print(f"+ {blank} with no title")
 
 if __name__ == "__main__":
     w = WindowMgr()
-    w.find_window_wildcard(".*OpenXcom.*")
-    w.set_foreground()
+    #w.find_window_wildcard(".*OpenXcom.*")
+    w.find_window_wildcard()
+    #w.set_foreground()
