@@ -1,9 +1,11 @@
 import os
-from selenium import webdriver 
+#pip install bs4
 from bs4 import BeautifulSoup 
-import time
+#pip install selenium
+from selenium import webdriver
 from selenium.webdriver.common.by import By
 # importing csv module
+import time
 import csv
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))

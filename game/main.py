@@ -3,7 +3,7 @@ from pyautogui import *
 import pyautogui
 import time
 #pip install keyboard
-import keyboard
+#import keyboard
 #import numpy as np
 #import random
 import win32api, win32con
@@ -21,15 +21,17 @@ def displayMousePosition():
     pyautogui.displayMousePosition()
 
 def selectGUI(png):
+    pyautogui.moveTo(0,0)
     try:
-        box = pyautogui.locateOnScreen(os.path.sep.join([SCRIPT_DIR, png]), grayscale=True, confidence=0.8)
+        box = pyautogui.locateOnScreen(os.path.sep.join([SCRIPT_DIR, 'img', png]), grayscale=True, confidence=0.8)
         print(png,box)
         click(int(box.left+box.width/2),int(box.top+box.height/2))
-        time.sleep(0.5)
+        time.sleep(0.3)
         return True
     except:
         print("No",png)
         return False
+
 def newGame():
     for png in ['new','super','ok1']:
         selectGUI(png+'.png')
@@ -38,52 +40,65 @@ def newGame():
 
 def buildBase():
     if selectGUI('loc.png'):
-        pyautogui.typewrite('Base')
+        pyautogui.typewrite('Grcka')
         for png in ['ok2']:
             selectGUI(png+'.png')
     if selectGUI('lift.png'):
         print(position())
     if selectGUI('hangar0.png'):
         selectGUI('hangar1.png')
-        print(position())
+        #print(position())
     if selectGUI('hangar0.png'):
         selectGUI('hangar2.png')
-        print(position())
+        #print(position())
     if selectGUI('hangar0.png'):
         selectGUI('hangar3.png')
-        print(position())
+        #print(position())
     if selectGUI('life0.png'):
         selectGUI('life1.png')
-        print(position())
+        #print(position())
     if selectGUI('radar0.png'):
         selectGUI('radar1.png')
-        print(position())
+        #print(position())
     if selectGUI('warehouse0.png'):
         selectGUI('warehouse1.png')
-        print(position())
+        #print(position())
     if selectGUI('lab0.png'):
         selectGUI('lab1.png')
-        print(position())
+        #print(position())
     if selectGUI('work0.png'):
         selectGUI('work1.png')
-        print(position())
+        #print(position())
 
 def getSol():
-    if selectGUI('base0.png'):
-        print(position())
-    if selectGUI('sol0.png'):
-        print(position())
+    for png in ['base0','sol0']:
+        selectGUI(png+'.png')
+        #print(position())
     if selectGUI('sol1.png'):
-        print(position())
-    solRot()
+        #print(position())
+        solRot()
 
 def solRot():
     start = getStart()
     rows = getRows()
+    exit = False
     if start:
         for n in range(8):
-            getStats(start,rows)
-            selectGUI('next.png')
+            stats = getStats(start,rows)
+            if stats['row1']<55:
+                exit = True
+            #if stats['row6']<55:
+            #    exit = True
+            print(stats)
+            if not exit:
+                if not selectGUI('next.png'):
+                    selectGUI('next1.png')
+            else:
+                break
+    if exit:
+        exitStats()
+        newGame()
+        getSol()
 
 def getRows():
         rows = []
@@ -114,25 +129,35 @@ def selectRow(start:int,line:int):
         if line < start + r * 21.875:
             return r
 
+def exitStats():
+    selectGUI('ok1.png')
+    selectGUI('ok1.png')
+    selectGUI('geoscape.png')
+    selectGUI('options.png')
+    selectGUI('exit.png')
+    selectGUI('yes.png')
+
 def getStats(start,rows):
-        stats = {}
-        for no in [10]+list(range(20,72))+[73,75,77,79]:
-            png = str(no)+'.png'
-            try:
-                box = pyautogui.locateAllOnScreen(os.path.sep.join([SCRIPT_DIR, png]), grayscale=True, confidence=0.99)
-                for b in box:
-                    #print(png,b.top,rows[selectRow(start,b.top)])
-                    stats[rows[selectRow(start,b.top)]] = no
-            except:
-                #print("No",png)
-                pass
-        for r in rows:
-            print (r,stats[r])
+    stats = {}
+    for no in [10]+list(range(20,72))+[73,74,75,76,77,79]:
+        png = str(no)+'.png'
+        try:
+            box = pyautogui.locateAllOnScreen(os.path.sep.join([SCRIPT_DIR, png]), grayscale=True, confidence=0.99)
+            for b in box:
+                #print(png,b.top,rows[selectRow(start,b.top)])
+                stats[rows[selectRow(start,b.top)]] = no
+        except:
+            #print("No",png)
+            pass
+    #for r in rows:
+    #    print (r,stats[r])
+    return stats
 
 if __name__ == "__main__":
     print(__file__)
 
     time.sleep(1)
-    #newGame()
-    #getSol()
-    solRot()
+    newGame()
+    getSol()
+    #solRot()
+    #exitStats()
