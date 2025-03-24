@@ -6,6 +6,7 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 # importing csv module
 import time
+import datetime
 import csv
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -62,11 +63,11 @@ for div in soup.find_all('div', class_='result-numbers'):
     drawDateTime_div = div.find('div', class_='drawDateTime')
     kolo_div = drawDateTime_div.find('div')
     print(kolo_div.text)
-    kolo.append(kolo_div.text)
+    kolo.append(kolo_div.text.split(" ")[1])
     dateTime_span = drawDateTime_div.find('span', class_='date-time')
-    dt_txt = dateTime_span.text
+    dt_txt = dateTime_span.text.replace(' \n ',' ').split(",")[1].strip()
     #print(dt_txt.replace(''))
-    kolo.append(dt_txt.replace(' \n ',' '))
+    kolo.append(datetime.datetime.strptime(dt_txt, '%d.%m.%Y %H:%M'))
     winningNumbers_div = div.find('div', class_='winning-numbers')
     eurojackpot_div = div.find('div', class_='EUROJACKPOT')
     lis = div.find_all('li')
@@ -74,7 +75,7 @@ for div in soup.find_all('div', class_='result-numbers'):
         #print(li.text)
         kolo.append(li.text)
     #print(div.text)
-    if kolo[1] != kola[0][1]:
+    if str(kolo[1]) != kola[0][1]:
         nova_kola.append(kolo)
     else:
         break
