@@ -3,7 +3,7 @@
 
 import subprocess
 from subprocess import PIPE, STDOUT
-from config import argument2
+from config import test_argument
 from os_help import file_del, path, isWin
 
 def create_wallet():
@@ -15,7 +15,7 @@ def create_wallet():
     argument3 = "--generate-new-wallet=monero/test"
     argument4 = "--restore-height=3378000"
     #commandList = [program, argument1] # commandLine
-    commandList = [program, argument1, argument2, argument3, argument4] # commandLine
+    commandList = [program, argument1, test_argument, argument3, argument4] # commandLine
     #result = subprocess.run(commandList, shell=True, capture_output=True, text=True)
     #print(result.stdout)
     #ps = subprocess.Popen(commandList , shell=False, stdin=PIPE, stdout=PIPE, stderr=STDOUT)
@@ -25,7 +25,6 @@ def create_wallet():
 def runcmd(cmd):
     result = subprocess.run([cmd], shell=True, capture_output=True, text=True)
     print(result.stdout)
-
 
 if __name__ == '__main__':
     print(__file__)
