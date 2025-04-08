@@ -16,6 +16,7 @@ yolov7
 *.lrv
 *.db
 *.csv
+*.zip
 CustomDataset/kinetics_classnames.json
 __pycache__
 */__pycache__

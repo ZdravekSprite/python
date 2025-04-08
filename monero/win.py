@@ -1,11 +1,12 @@
-#monerod.exe
 #C:\ProgramData\bitmonero
+#monerod.exe --data-dir=C:\ProgramData\bitmonero\
+#C:\monero\monerod.exe --data-dir=C:\dev\linux\bitmonero\
 
 import subprocess
 from subprocess import PIPE, STDOUT
 from config import test_argument
 from os_help import file_del, path, isWin
-from words import *
+from monero.address.words import *
 
 def getArgument(list):
     return "--electrum-seed="+" ".join(list)
@@ -25,15 +26,16 @@ def create_wallet(electrum):
     file_del(path("monero-wallet-cli.log"))
     program = path("monero-wallet-cli.exe")
     argument1 = "--restore-deterministic-wallet"
-    argument3 = "--generate-new-wallet=monero/test"
+    #argument3 = "--generate-new-wallet=monero/test"
     argument4 = "--restore-height=3378000"
-    commandList = [program, argument1, getArgument(electrum), argument3, argument4] # commandLine
+    #commandList = [program, argument1, getArgument(electrum), argument3, argument4] # commandLine
+    commandList = [program, argument1, getArgument(electrum), argument4] # commandLine
 
     test00(commandList)
 
 class Test:
     def __init__(self, commandList):
-        self.proc = subprocess.Popen(commandList, stdin=PIPE, stdout=PIPE, encoding="utf-8")
+        self.proc = subprocess.Popen(commandList, stdin=PIPE, stdout=PIPE, text=True)
 
     def talk(self, tx):
         self.proc.stdout.flush()
@@ -55,9 +57,9 @@ def test00(commandList):
     try:
         test = Test(commandList)
         print("prije")
-        for i in range(6):
+        for i in range(7):
             test.read()
-        test.talk("\n")
+        test.talk("test\n")
         print("poslije")
     except Exception as ex:
         print('ex',ex)
