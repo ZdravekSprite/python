@@ -16,7 +16,11 @@ def reverse_byte_order(hex):
     return "".join(reversed([hex[i:i+2] for i in range(0, len(hex), 2)]))
 
 def sc_reduce32(key):
-    return reverse_byte_order("%x" % int((int(reverse_byte_order(key), 16) % l)))
+    reverse = reverse_byte_order("%x" % int((int(reverse_byte_order(key), 16) % l)))
+    if len(reverse) == 62:
+        reverse += "00"
+    return reverse
+    #return reverse_byte_order("%x" % int((int(reverse_byte_order(key), 16) % l)))
 
 '''
 var privSk = sc_reduce32(hs);
