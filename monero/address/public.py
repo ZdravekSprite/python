@@ -97,8 +97,7 @@ def publickey(sk):
     A = scalarmult(B,a)
     return binascii.hexlify(encodepoint(A)).decode()
 
-if __name__ == '__main__':
-    print(__file__)
+def print_all():
     print('Mnemonic Seed:            ',test_mnemonic_seed)
     print('25 words seed:            ',words25(" ".join(test_mnemonic_seed.split(" ")[:24])))
     print('Hexadecimal Seed:         ',test_hexadecimal_seed)
@@ -111,3 +110,76 @@ if __name__ == '__main__':
     print('publickey(spend):         ',publickey(test_private_spend_key))
     print('Public View Key:          ',test_public_view_key)
     print('publickey(view):          ',publickey(test_private_view_key))
+
+def print_int2byte(i,bits):
+    sum_bits = []
+    for j in range(8):
+        #print(i,j,bits[i * 8 + j] << j,bits[i * 8 + j],i * 8 + j)
+        sum_bits.append(bits[i * 8 + j] << j)
+    #print(sum(sum_bits),sum_bits)
+    #sum_bits = sum([bits[i * 8 + j] << j for j in range(8)])
+    return int2byte(sum(sum_bits))
+
+def print_join(bits):
+    #join = [int2byte(sum([bits[i * 8 + j] << j for j in range(8)])) for i in range(32)]
+    join=[]
+    for i in range(32):
+        #join.append(int2byte(sum([bits[i * 8 + j] << j for j in range(8)])))
+        join.append(print_int2byte(i,bits))
+    print('[sum([bits[i * 8 + j] << j for j in range(8)]) for i in range(b//8)]          ',[sum([bits[i * 8 + j] << j for j in range(8)]) for i in range(b//8)])
+    print('[int2byte(sum([bits[i * 8 + j] << j for j in range(8)])) for i in range(b//8)]',join)
+    return join
+
+def get_bits(join_int):
+    bits_list=[]
+    for int in join_int:
+        mini_list = []
+        for x in [128,64,32,16,8,4,2,1]:
+            mini_list = [int//x]+mini_list
+            int = int%x
+        bits_list+=mini_list
+    return bits_list
+
+def print_de98(A):
+    print('A:',A)
+    #print(encodepoint(A))
+    print('encodepoint(A)')
+    x = A[0]
+    print('x = A[0]',f'x = {x}')
+    y = A[1]
+    print('y = A[1]',f'y = {y}')
+    bits = [(y >> i) & 1 for i in range(255)] + [x & 1]
+    print('[(y >> i) & 1 for i in range(b-1)] + [x & 1]',bits)
+    join = print_join(bits)
+    encodepoint = b''.join(join)
+    print("b''.join([int2byte(sum([bits[i * 8 + j] << j for j in range(8)])) for i in range(b//8)])",encodepoint)
+    print(binascii.hexlify(encodepoint))
+    print(binascii.hexlify(encodepoint).decode())
+    print('publickey(view):          ',publickey(test_private_view_key))
+    print(test_public_view_key)
+    print(test_public_view_key.encode())
+    print('encodepoint                                                                             ',binascii.unhexlify(test_public_view_key.encode()))
+    all_bytes = bytes(range(256))
+    print('join                                                                          ',[all_bytes[i:i+1] for i in binascii.unhexlify(test_public_view_key.encode())])
+    print('join_int                                                                      ',[i for i in binascii.unhexlify(test_public_view_key.encode())])
+    print('bits                                        ',get_bits([i for i in binascii.unhexlify(test_public_view_key.encode())]))
+
+'''
+#encodepoint(A)
+def encodepoint(P):
+    x = P[0]
+    y = P[1]
+    bits = [(y >> i) & 1 for i in range(b-1)] + [x & 1]
+    return b''.join([int2byte(sum([bits[i * 8 + j] << j for j in range(8)])) for i in range(b//8)])
+'''
+if __name__ == '__main__':
+    print(__file__)
+    #print_all()
+    print('Public View Key:          ',test_public_view_key)
+    sk = binascii.unhexlify(test_private_view_key)
+    print('sk:',sk)
+    a = decodeint(sk)
+    print('a:',a)
+    A = scalarmult(B,a)
+    print_de98(A)
+
