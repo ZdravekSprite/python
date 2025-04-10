@@ -140,6 +140,23 @@ def get_bits(join_int):
         bits_list+=mini_list
     return bits_list
 
+def print_bits(x,y):
+    bits = [(y >> i) & 1 for i in range(255)] + [x & 1]
+    #for i in range(255):
+    #    print((y >> i) & 1,y,y >> i,i)
+    #print([x & 1],x)
+    print('[(y >> i) & 1 for i in range(b-1)] + [x & 1]',bits)
+    return bits
+
+def get_y(bits):
+    y=0
+    multi=1
+    for i in bits[:-1]:
+        y+=multi*i
+        multi*=2
+        #print(y,multi)
+    return y
+
 def print_de98(A):
     print('A:',A)
     #print(encodepoint(A))
@@ -148,21 +165,21 @@ def print_de98(A):
     print('x = A[0]',f'x = {x}')
     y = A[1]
     print('y = A[1]',f'y = {y}')
-    bits = [(y >> i) & 1 for i in range(255)] + [x & 1]
-    print('[(y >> i) & 1 for i in range(b-1)] + [x & 1]',bits)
-    join = print_join(bits)
-    encodepoint = b''.join(join)
-    print("b''.join([int2byte(sum([bits[i * 8 + j] << j for j in range(8)])) for i in range(b//8)])",encodepoint)
-    print(binascii.hexlify(encodepoint))
-    print(binascii.hexlify(encodepoint).decode())
-    print('publickey(view):          ',publickey(test_private_view_key))
-    print(test_public_view_key)
-    print(test_public_view_key.encode())
-    print('encodepoint                                                                             ',binascii.unhexlify(test_public_view_key.encode()))
-    all_bytes = bytes(range(256))
-    print('join                                                                          ',[all_bytes[i:i+1] for i in binascii.unhexlify(test_public_view_key.encode())])
-    print('join_int                                                                      ',[i for i in binascii.unhexlify(test_public_view_key.encode())])
+    bits = print_bits(x,y)
+    #join = print_join(bits)
+    #encodepoint = b''.join(join)
+    #print("b''.join([int2byte(sum([bits[i * 8 + j] << j for j in range(8)])) for i in range(b//8)])",encodepoint)
+    #print(binascii.hexlify(encodepoint))
+    #print(binascii.hexlify(encodepoint).decode())
+    #print('publickey(view):          ',publickey(test_private_view_key))
+    #print(test_public_view_key)
+    #print(test_public_view_key.encode())
+    #print('encodepoint                                                                             ',binascii.unhexlify(test_public_view_key.encode()))
+    #all_bytes = bytes(range(256))
+    #print('join                                                                          ',[all_bytes[i:i+1] for i in binascii.unhexlify(test_public_view_key.encode())])
+    #print('join_int                                                                      ',[i for i in binascii.unhexlify(test_public_view_key.encode())])
     print('bits                                        ',get_bits([i for i in binascii.unhexlify(test_public_view_key.encode())]))
+    print('        y = ',get_y(get_bits([i for i in binascii.unhexlify(test_public_view_key.encode())])))
 
 '''
 #encodepoint(A)
