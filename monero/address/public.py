@@ -84,9 +84,12 @@ def xrecover(y):
     if x % 2 != 0: x = q-x
     return x
 
-By = 4 * inv(5)
-Bx = xrecover(By)
-B = [Bx % q,By % q]
+def getB():
+    By = 4 * inv(5)
+    Bx = xrecover(By)
+    return [Bx % q,By % q]
+
+B = getB()
 
 def publickey(sk):
     sk = binascii.unhexlify(sk)
@@ -160,11 +163,12 @@ def get_y(bits):
 def print_de98(A):
     print('A:',A)
     #print(encodepoint(A))
-    print('encodepoint(A)')
+    #print('encodepoint(A)')
     x = A[0]
-    print('x = A[0]',f'x = {x}')
+    #print('x = A[0]',f'x = {x}')
     y = A[1]
-    print('y = A[1]',f'y = {y}')
+    #print('y = A[1]',f'y = {y}')
+    #print('[x & 1]:',[x & 1])
     bits = print_bits(x,y)
     #join = print_join(bits)
     #encodepoint = b''.join(join)
@@ -178,17 +182,58 @@ def print_de98(A):
     #all_bytes = bytes(range(256))
     #print('join                                                                          ',[all_bytes[i:i+1] for i in binascii.unhexlify(test_public_view_key.encode())])
     #print('join_int                                                                      ',[i for i in binascii.unhexlify(test_public_view_key.encode())])
-    print('bits                                        ',get_bits([i for i in binascii.unhexlify(test_public_view_key.encode())]))
-    print('        y = ',get_y(get_bits([i for i in binascii.unhexlify(test_public_view_key.encode())])))
+    bits_get = get_bits([i for i in binascii.unhexlify(test_public_view_key.encode())])
+    print('bits                                        ',bits_get)
+    #print('        x = ','neparan' if bits_get[-1] else 'paran')
+    #print('        y = ',get_y(bits_get))
+    A_get=['neparan' if bits[-1] else 'paran',get_y(bits_get)]
+    print('A:',A_get)
+    return A_get
 
-'''
-#encodepoint(A)
-def encodepoint(P):
-    x = P[0]
-    y = P[1]
-    bits = [(y >> i) & 1 for i in range(b-1)] + [x & 1]
-    return b''.join([int2byte(sum([bits[i * 8 + j] << j for j in range(8)])) for i in range(b//8)])
-'''
+def print_edwards(P,Q,n=0):
+    x1 = P[0]
+    y1 = P[1]
+    x2 = Q[0]
+    y2 = Q[1]
+    x3 = (x1*y2+x2*y1) * inv(1+d*x1*x2*y1*y2)
+    y3 = (y1*y2+x1*x2) * inv(1-d*x1*x2*y1*y2)
+    if not n: print(x1,y1)
+    if not n: print(x2,y2)
+    if not n: print('x3:',x3,'\nx3//q:',x3//q)
+    if not n: print('y3:',y3,'\ny3//q:',y3//q)
+    if not n: print('[x3 % q,y3 % q]',[x3 % q,y3 % q])
+    return [x3 % q,y3 % q]
+
+def print_scalarmult(P,e,n=0):
+    if not n: print('print_scalarmult(P,e)')
+    n+=1
+    if e == 0:
+        #print('if e == 0: return [0,1]')
+        return [0,1]
+    #print('Q = scalarmult(P,e//2)')
+    Q = print_scalarmult(P,e//2,n)
+    #print('Q = edwards(Q,Q)\n\tQ:',Q)
+    n-=1
+    if not n: print('Q = edwards(Q,Q)\n\tQ old:',Q)
+    Q = print_edwards(Q,Q,n)
+    if not n: print('\tQ new:',Q)
+    if e & 1:
+        if not n: print('if e & 1: Q = edwards(Q,P)\n\te:',e,'\n\tQ:',Q,'\n\tP:',P)
+        Q = print_edwards(Q,P,n)
+        if not n: print('\tQ:',Q)
+    return Q
+
+def print_de97(B,a):
+    print('a:',a)
+    print('B:',B)
+    A = print_scalarmult(B,a)
+    get_A = print_de98(A)
+    print(get_A)
+#    if e == 0: return [0,1]
+    if get_A == ['paran',1]:
+        a = 0
+        print('a:',a)
+
 if __name__ == '__main__':
     print(__file__)
     #print_all()
@@ -196,7 +241,5 @@ if __name__ == '__main__':
     sk = binascii.unhexlify(test_private_view_key)
     print('sk:',sk)
     a = decodeint(sk)
-    print('a:',a)
-    A = scalarmult(B,a)
-    print_de98(A)
+    print_de97(B,a)
 
