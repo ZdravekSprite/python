@@ -6,18 +6,29 @@ from public import publickey
 
 import base58 as _b58
 
+'''
+def calc_address(A: bytes, B: bytes):
+    """
+    Args:
+        A: bytes; public view key
+        B: bytes; public spend key 
+    """
+
+    data = bytearray([18]) + A + B
+    checksum = keccak_256(data).digest()[:4]
+    return base58.encode((data + checksum).hex())
+'''
+
 def encode_addr(version, publicSpendKey, publicViewKey):
     '''Given address version and public spend and view keys, derive address.'''
     data = version + publicSpendKey + publicViewKey
     checksum = cn_fast_hash(data)
     return _b58.encode(data + checksum[0:8])
  
-public_spend_key = publickey(test_private_spend_key)
-public_view_key = publickey(test_private_view_key)
-monero_public_address = encode_addr("12",public_spend_key,public_view_key)
-
-if __name__ == '__main__':
-    print(__file__)
+def test():
+    public_spend_key = publickey(test_private_spend_key)
+    public_view_key = publickey(test_private_view_key)
+    monero_public_address = encode_addr("12",public_spend_key,public_view_key)
     print('Mnemonic Seed:',test_mnemonic_seed)
     print('25 words seed:',words25(" ".join(test_mnemonic_seed.split(" ")[:24])))
     print('Hexadecimal Seed:',test_hexadecimal_seed)
@@ -31,3 +42,7 @@ if __name__ == '__main__':
     print('publickey(view): ',publickey(test_private_view_key))
     print('Public Address:',test_public_address)
     print('encode_addr:   ',monero_public_address)
+
+if __name__ == '__main__':
+    print(__file__)
+    print(bytearray([18]),'12')

@@ -60,4 +60,14 @@ def test5():
 
 if __name__ == '__main__':
     print(__file__)
-    test4()
+    #test4()
+
+    program = "C:\\monero\\monero-wallet-cli.exe"
+    #argument1 = "--restore-deterministic-wallet"
+    #argument2 = "--generate-new-wallet=C:\\monero\\wallets\\donations"
+    #argument3 = "--restore-height=0"
+    argument4 = "--password=donations"
+    test_argument = '--electrum-seed=hookup hijack imagine touchy audio bowling gnaw scenic rapid oncoming shrugged gang fazed unhappy lumber amply altitude duties ozone silk hashing feel tolerant uptight tolerant'
+    #commandList = [program, argument1, test_argument, argument2, argument3, argument4]
+    commandList = [program, test_argument, argument4]
+    subprocess.call(commandList, shell=True)

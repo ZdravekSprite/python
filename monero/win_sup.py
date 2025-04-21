@@ -77,4 +77,4 @@ if __name__ == '__main__':
     #with_popen(commandList)
     #time.sleep(1)
     #muzika()
-    win32api.WinExec("notepad", win32con.SW_SHOWMAXIMIZED)
+    #win32api.WinExec("notepad", win32con.SW_SHOWMAXIMIZED)
