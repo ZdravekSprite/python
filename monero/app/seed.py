@@ -67,7 +67,6 @@ class Seed:
         z2 = ((z ^ 0xFFFFFFFF) >> 0) % len(phrase)
         return phrase_split[z2]
 
-
 if __name__ == '__main__':
     print(__file__)
     print('Test Mnemonic Seed:   ',test_mnemonic_seed)

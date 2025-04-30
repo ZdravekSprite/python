@@ -35,17 +35,41 @@ def edwards(P,Q):
     y3 = (y1*y2+x1*x2) * inv(1-d*x1*x2*y1*y2)
     return [x3 % q,y3 % q]
 
-def scalarmult(P,e):
-    if e == 0: return [0,1]
-    Q = scalarmult(P,e//2)
+B = [15112221349535400772501151409588531511454012693041857206046113283949847762202, 46316835694926478169428394003475163141307993866256225615783033603165251855960]
+
+def scalarmult(P,e,round=0):
+    print('scalarmult(P,e)\te:',e)
+    if P != B: print('\tP:',P)
+    if e == 0:
+        print('if e == 0: return [0,1]',e)
+        return [0,1]
+    print(' '*round,'Q = scalarmult(P,e//2)','P:',P,'e//2:',e//2)
+    Q = scalarmult(P,e//2,round+1)
+    #print(' '*round,'end   Q = scalarmult(P,e//2)','Q:',Q)
+    print(' '*round,'Q = edwards(Q,Q)','Q:',Q)
     Q = edwards(Q,Q)
+    #print(' '*round,'end   Q = edwards(Q,Q)','Q:',Q)
     if e & 1: Q = edwards(Q,P)
+    print('return Q',Q)
     return Q
 
 def encodepoint(P):
     x,y = P
+    #print('P',P)
+    print('\nx',(255-len(bin(x)[2:]))*'0'+bin(x)[2:])
+    #print('y',(255-len(bin(y)[2:]))*'0'+bin(y)[2:])
+    #for i in range(b-1):
+    #    print((y >> i) & 1,end='')
+    print('x & 1',x & 1)
     bits = [(y >> i) & 1 for i in range(b-1)] + [x & 1]
-    return b''.join([int2byte(sum([bits[i * 8 + j] << j for j in range(8)])) for i in range(b//8)])
+    #print('bits',bits,len(bits))
+    end = b''.join([int2byte(sum([bits[i * 8 + j] << j for j in range(8)])) for i in range(b//8)])
+    test = [end[i] >> j & 1 for i in range(32) for j in range(8)]
+    testy = int("".join(reversed([str(b) for b in test[:-1]])),2)
+    print('testy',testy,testy == y)
+    #print('test',test,test == bits)
+    #print('end',end)
+    return end
 
 def publickey(sk):
     sk = binascii.unhexlify(sk)
@@ -53,12 +77,12 @@ def publickey(sk):
         a = sum(2**i * ((ord(chr(sk[int(i//8)])) >> (i%8)) & 1) for i in range(0,b))
     except Exception as ex:
         print(ex,sk,len(sk))
-    B = [15112221349535400772501151409588531511454012693041857206046113283949847762202, 46316835694926478169428394003475163141307993866256225615783033603165251855960]
+    print('\nA = scalarmult(B,a)\tB:',B,'\na',a)
     A = scalarmult(B,a)
-    #print('encodep',encodepoint(A))
-    #end = binascii.hexlify(encodepoint(A)).decode()
-    #print('encodep',binascii.unhexlify(end.encode("utf-8")))
-    return binascii.hexlify(encodepoint(A)).decode()
+    print('\nA:',A,'\nencodep',encodepoint(A))
+    end = binascii.hexlify(encodepoint(A)).decode()
+    print('encodep',binascii.unhexlify(end.encode("utf-8")))
+    return end
 
 class Keys:
     def __init__(self):
