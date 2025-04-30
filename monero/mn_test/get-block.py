@@ -1,3 +1,4 @@
+#pip install monero
 from monero.daemon import Daemon
 from monero.backends.jsonrpc.daemon import JSONRPCDaemon
 import json

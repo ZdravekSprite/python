@@ -4,9 +4,8 @@
 
 import subprocess
 from subprocess import PIPE, STDOUT
-from config import test_argument
 from os_help import file_del, path, isWin
-from monero.address.words import *
+from address.words import *
 
 def getArgument(list):
     return "--electrum-seed="+" ".join(list)

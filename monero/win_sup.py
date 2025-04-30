@@ -1,11 +1,12 @@
 import subprocess
 from subprocess import PIPE, STDOUT
-from config import monerod_path, monero_wallet_cli_path, test_argument
+from config import *
 from os_help import file_del, path
 
 import time
 #pip install keyboard
 #import keyboard
+#pip install pypiwin32
 import win32api, win32con
 
 def callcmd(commandList, shell=True):

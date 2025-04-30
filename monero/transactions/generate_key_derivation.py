@@ -1,3 +1,4 @@
+#pip install monero
 from config import *
 from monero.base58 import _hexToBin as hextobin
 #var der = generate_key_derivation(pub, sec)

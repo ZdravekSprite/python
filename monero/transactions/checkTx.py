@@ -1,7 +1,8 @@
+#pip install monero
 from monero import base58 as cnBase58
 from monero.base58 import _binToHex as bintohex
 from monero import ed25519
-from config import *
+from ..config import *
 #var der = generate_key_derivation(pub, sec)
 from generate_key_derivation import generate_key_derivation
 from derive_public_key import derive_public_key
@@ -141,7 +142,7 @@ function parseExtra(bin){
 
 def checkTx(isFundingTx, debug=True):
     sec = test_private_view_key
-    addr = test_public_address;
+    addr = test_public_address
     typeTag = type[0]
     hash = txHash
 

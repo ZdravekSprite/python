@@ -1,3 +1,4 @@
+#pip install monero
 from monero.daemon import Daemon
 from monero.seed import Seed
 from config import *
