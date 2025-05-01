@@ -80,6 +80,7 @@ def derive_public_key(der, i, spk):
     return binascii.hexlify(k).decode()
 
 def test_transactions_in_block(block_no:int,seed=rnd_seed(),debug=False):
+    check = False
     for t in get_transactions_from_block(block_no):
         if debug: print('hash:\t',t.hash)
         #print(t.__dict__.keys()) #dict_keys(['hash', 'fee', 'height', 'timestamp', 'key', 'blob', 'confirmations', 'output_indices', 'json', 'pubkeys', 'version'])
@@ -98,12 +99,19 @@ def test_transactions_in_block(block_no:int,seed=rnd_seed(),debug=False):
             pubkey = derive_public_key(der, i, spk)
             if pubkey == t.json['vout'][i]['target']['key']:
                 print(block_no,t.hash,t.json['vout'][i])
+                check = True
+            else:
+                print(block_no,t.hash,t.json['vout'][i]['target']['key'],pubkey)
+    return check
 
 if __name__ == '__main__':
     print(__file__)
     #rnd_seed(True)
-    seed = Seed(test_mnemonic_seed)
-    print_seed(seed)
-    for block in test_blocks:
-        print(block)
-        test_transactions_in_block(block,seed)
+    #seed = Seed(test_mnemonic_seed)
+    #print_seed(seed)
+    #for block in test_blocks:
+    #    print(block)
+    #    test_transactions_in_block(block,seed)
+    while not test_transactions_in_block(1):
+        pass
+
