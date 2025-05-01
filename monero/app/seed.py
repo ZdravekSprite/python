@@ -1,4 +1,4 @@
-from config import *
+from ..config import *
 from words import WORDS as wordset
 import binascii
 

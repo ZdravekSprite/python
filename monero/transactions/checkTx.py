@@ -1,13 +1,16 @@
+import sys,os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from config import *
 #pip install monero
 from monero import base58 as cnBase58
 from monero.base58 import _binToHex as bintohex
 from monero import ed25519
-from ..config import *
+
 #var der = generate_key_derivation(pub, sec)
 from generate_key_derivation import generate_key_derivation
+#var pubkey = derive_public_key(der, i, spk)
 from derive_public_key import derive_public_key
 
-#var pubkey = derive_public_key(der, i, spk)
 import re
 dataHashTag=''
 '''
@@ -19,10 +22,6 @@ function hashUpdate(data){
     dataHashTag.value = keccak_256(data);
 }
 '''
-def validate_hex_color(color):
-    pattern = r'^#?([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6})$'
-    return bool(re.match(pattern, color))
-
 def validHex(hex):
     #print('validHex',hex)
     pattern = r"[0-9A-Fa-f]"*len(hex)
@@ -140,6 +139,9 @@ function parseExtra(bin){
 }
 '''
 
+def get_res():
+    return test_res
+
 def checkTx(isFundingTx, debug=True):
     sec = test_private_view_key
     addr = test_public_address
@@ -158,7 +160,7 @@ def checkTx(isFundingTx, debug=True):
         resultsTag += "Your address is the wrong length! Please check it and try again.\n"
         err = 2
     else:
-        addrHex = cnBase58.decode(addr);
+        addrHex = cnBase58.decode(addr)
         if debug:
             print(f'public address: {addr}\naddrHex:        {addrHex}')
             if addr == test_public_address:
@@ -184,9 +186,10 @@ def checkTx(isFundingTx, debug=True):
     if err != 0:
         print("One or more things are wrong with your inputs!")
         return
-    spk = addrHex[2:66];
+    spk = addrHex[2:66]
 
-    res = test_res
+    res = get_res()
+
     #print(res)
     if res['statusText'] != "OK":
         resultsTag = "Failed to get transaction data! Perhaps MoneroBlocks is down?"
@@ -209,6 +212,7 @@ def checkTx(isFundingTx, debug=True):
     for i in range(outputNum):
         pubkey = derive_public_key(der, i, spk)
         amount = res['transaction_data']['vout'][i]['amount']
+        #print(pubkey,res['transaction_data']['vout'][i]['target']['key'])
         if pubkey == res['transaction_data']['vout'][i]['target']['key']:
             tot += amount
             print(f"You own output {i} with pubkey: " + pubkey + " for amount: " + str(amount / 1000000000000));
@@ -307,4 +311,4 @@ function checkTx(isFundingTx){
 if __name__ == '__main__':
     print(__file__)
     #print(validHex(txHash))
-    #checkTx(False)
+    checkTx(True)

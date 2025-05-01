@@ -1,4 +1,4 @@
-from config import test_mnemonic_seed
+from ..config import *
 import binascii
 
 def mn_get_checksum_index(words, prefix_len=3):

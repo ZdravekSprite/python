@@ -3,7 +3,7 @@ from monero.daemon import Daemon
 from monero.backends.jsonrpc.daemon import JSONRPCDaemon
 import json
 from datetime import datetime as dt
-from config import *
+from ..config import *
 #pip install requests
 import requests
 

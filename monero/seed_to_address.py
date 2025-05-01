@@ -1,4 +1,4 @@
-from address.config import *
+from config import *
 from address.words import WORDS as wordset
 
 import binascii

@@ -1,4 +1,4 @@
-from config import *
+from ..config import *
 from hexseed import mn_decode
 from private import cn_fast_hash,sc_reduce32
 from public import publickey

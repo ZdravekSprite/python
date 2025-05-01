@@ -1,7 +1,7 @@
 #pip install monero
 from monero.daemon import Daemon
 from monero.seed import Seed
-from config import *
+from ..config import *
 import json
 #pip install requests
 import requests

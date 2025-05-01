@@ -1,4 +1,4 @@
-from config import test_mnemonic_seed, test_hexadecimal_seed, test_private_view_key
+from ..config import *
 from words25 import words25
 from hexseed import mn_decode
 

@@ -1,4 +1,4 @@
-from config import *
+from ..config import *
 from seed import Seed
 import binascii
 import operator as _oper

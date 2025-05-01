@@ -1,13 +1,16 @@
 cd_keccak = None
 sha3_keccak = None
 
+#from _pysha3 import keccak_256
+
 try:
     from Cryptodome.Hash import keccak as cd_keccak
 except ImportError:
     pass
 if not cd_keccak:
     try:
-        from sha3 import keccak_256 as sha3_keccak
+        #from sha3 import keccak_256 as sha3_keccak
+        from Crypto.Hash import keccak as sha3_keccak
     except ImportError:
         raise ImportError(
             "Could not import 'keccak' from 'Cryptodome.Hash' nor 'keccak_256' from 'sha3'. "

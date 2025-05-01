@@ -1,4 +1,4 @@
-from config import test_mnemonic_seed, test_hexadecimal_seed
+from ..config import *
 from words import WORDS as wordset
 
 def mn_decode(str):

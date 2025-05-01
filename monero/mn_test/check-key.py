@@ -1,4 +1,4 @@
-from config import *
+from ..config import *
 #pip install requests
 import requests
 import json
