@@ -1,5 +1,4 @@
-import dependencies.ed25519_changed as ed25519
-import dependencies.base58
+import ed25519_changed as ed25519
 #from _pysha3 import keccak_256
 
 #pip install pycryptodome

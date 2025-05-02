@@ -31,5 +31,5 @@ def derive_public_key(der, i, spk):
 if __name__ == '__main__':
     print(__file__)
     for i in range(6):
-        k = derive_public_key(binascii.unhexlify(test_der_b), i, test_b_public_spend_key)
+        k = derive_public_key(binascii.unhexlify(test_derived_key.encode()), i, test_public_spend_key.encode())
         print(k)

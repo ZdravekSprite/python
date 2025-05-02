@@ -1,5 +1,8 @@
-from ..config import *
-from words import WORDS as wordset
+import sys,os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from config import *
+from dependencies.words import WORDS as wordset
+
 import binascii
 
 class Seed:

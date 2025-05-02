@@ -1,4 +1,7 @@
-from ..config import *
+import sys,os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from config import *
+
 import binascii
 
 def mn_get_checksum_index(words, prefix_len=3):

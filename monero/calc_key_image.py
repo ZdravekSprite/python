@@ -39,8 +39,8 @@ def calc_key_image(a: bytes, b: bytes, R: bytes, i:int) -> bytes:
 
 if __name__ == '__main__':
     print(__file__)
-    a=test_b_private_view_key #Private view key
-    b=test_b_private_spend_key #Private spend key
-    R=test_b_public_tx_key #Transaction public key (rG) of refferenced output transaction. Stored in field extra[1:33]).hex(). 
+    a=test_private_view_key.encode() #Private view key
+    b=test_private_spend_key.encode() #Private spend key
+    R=test_public_tx_key.encode() #Transaction public key (rG) of refferenced output transaction. Stored in field extra[1:33]).hex(). 
     i=0   #output index of refferenced output
     print(calc_key_image(a, b, R, i))

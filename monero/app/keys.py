@@ -1,4 +1,7 @@
-from ..config import *
+import sys,os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from config import *
+
 from seed import Seed
 import binascii
 import operator as _oper

@@ -1,4 +1,7 @@
-from ..config import *
+import sys,os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from config import *
+
 from hexseed import mn_decode
 from private import cn_fast_hash,sc_reduce32
 from public import publickey

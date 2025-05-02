@@ -1,9 +1,13 @@
+import sys,os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from config import *
+
 #pip install pysha3
 #import sha3
 from hashlib import sha3_256 as sha3
 #import ed25519
+from monero import base58 as _b58
 import binascii
-import base58 as _b58
  
 b = 256
 q = 2**255 - 19

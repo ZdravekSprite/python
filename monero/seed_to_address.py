@@ -1,5 +1,5 @@
 from config import *
-from address.words import WORDS as wordset
+from dependencies.words import WORDS as wordset
 
 import binascii
 import operator as _oper
@@ -202,5 +202,5 @@ def seed_to_addr(seed):
 
 if __name__ == '__main__':
     print(__file__)
-    #print_all()
-    seed_to_addr(test_mnemonic_seed)
+    print_all()
+    #seed_to_addr(test_mnemonic_seed)

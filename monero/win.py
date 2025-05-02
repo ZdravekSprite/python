@@ -5,7 +5,7 @@
 import subprocess
 from subprocess import PIPE, STDOUT
 from os_help import file_del, path, isWin
-from address.words import *
+from dependencies.words import *
 
 def getArgument(list):
     return "--electrum-seed="+" ".join(list)

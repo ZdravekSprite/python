@@ -1,8 +1,10 @@
+import sys,os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from config import *
+
 #pip install monero
 from monero.daemon import Daemon
 from monero.seed import Seed
-from ..config import *
-import json
 #pip install requests
 import requests
 
