@@ -29,9 +29,9 @@ def get_transactions_from_block(block_no:int,debug=False):
     #print(b.__dict__.keys()) # dict_keys(['hash', 'height', 'timestamp', 'version', 'difficulty', 'nonce', 'prev_hash', 'reward', 'orphan', 'transactions', 'blob'])
     b = Daemon().block(height=block_no)
     if debug:
-            for t in b.transactions:
-                #print(t.__dict__.keys()) # dict_keys(['hash', 'fee', 'height', 'timestamp', 'key', 'blob', 'confirmations', 'output_indices', 'json', 'pubkeys', 'version'])
-                print(t.__dict__)
+        for t in b.transactions:
+            #print(t.__dict__.keys()) # dict_keys(['hash', 'fee', 'height', 'timestamp', 'key', 'blob', 'confirmations', 'output_indices', 'json', 'pubkeys', 'version'])
+            print(t.__dict__)
     return b.transactions
 
 def parseExtra(bin):
@@ -61,7 +61,7 @@ def generate_key_derivation(pub, sec):
     shared_secret = ed25519.scalarmult(svk_8, binascii.unhexlify(pub))
     return shared_secret
 
-def derive_public_key(der, i, spk):
+def derive_public_key(der, i, spk,debug=False):
     shared_secret = der
     psk = binascii.unhexlify(spk)
 
@@ -71,12 +71,16 @@ def derive_public_key(der, i, spk):
             varint.encode(i),
         ]
     )
+    if debug: print('hsdata',binascii.hexlify(hsdata).decode())
     Hs_ur = keccak_256(hsdata).digest()
+    if debug: print('Hs_ur',binascii.hexlify(Hs_ur).decode())
     Hs = ed25519.scalar_reduce(Hs_ur)
+    if debug: print('Hs',binascii.hexlify(Hs).decode())
     k = ed25519.edwards_add(
         ed25519.scalarmult_B(Hs),
         psk,
     )
+    if debug: print('k',binascii.hexlify(k).decode())
     return binascii.hexlify(k).decode()
 
 def test_transactions_in_block(block_no:int,seed=rnd_seed(),debug=False):
