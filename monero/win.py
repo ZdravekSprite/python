@@ -4,7 +4,7 @@
 
 import subprocess
 from subprocess import PIPE, STDOUT
-from os_help import file_del, path, isWin
+from helper import file_del, path, isWin
 from dependencies.words import *
 
 def getArgument(list):

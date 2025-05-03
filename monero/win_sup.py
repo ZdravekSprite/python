@@ -1,7 +1,7 @@
 import subprocess
 from subprocess import PIPE, STDOUT
 from config import *
-from os_help import file_del, path
+from helper import file_del, path
 
 def callcmd(commandList, shell=True):
     print(commandList)
