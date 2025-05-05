@@ -22,7 +22,7 @@ def print_R2L():
     print("derived key:       ",test_derived_key,binascii.hexlify(generate_key_derivation(test_pub, test_private_view_key, True)).decode())
     print("\noutputs")
     print("derived_key, output index, public spend key -> derive_public_key(derived_key, output_index, public_spend_key) -> public output key")
-    pubkey = derive_public_key(binascii.unhexlify(test_derived_key.encode()), 0, test_public_spend_key)
+    pubkey = derive_public_key(binascii.unhexlify(test_derived_key.encode()), 0, test_public_spend_key,True)
     print("(output) pub key 0:",test_output_0,pubkey)
     #print("key image 0",key_image_0)
     #print("output 1",test_output_1)
@@ -34,9 +34,12 @@ def print_R2L():
 def print_L2R():
     print("end")
     print("output 0",test_output_0)
+    print("public address:                      ",test_public_address)
+    print("public address -> public view key:   ",base58.decode(test_public_address)[66:130],test_public_view_key)
+    print("public address -> public spend key:  ",base58.decode(test_public_address)[2:66],test_public_spend_key)
     print("start")
 
 if __name__ == '__main__':
     print(__file__)
     print_R2L()
-    #print_L2R()
+    print_L2R()

@@ -3,9 +3,9 @@
 from monero.seed import Seed
 from monero.daemon import Daemon
 from monero.block import Block
-from config import test_seed
+from config import *
 from monero.backends.jsonrpc.daemon import JSONRPCDaemon
-
+from helper_mn import *
 
 def test_seed():
     seed = Seed(phrase_or_hex=test_seed)
@@ -182,4 +182,13 @@ if __name__ == '__main__':
     #    test_block(x)
     #xmrchain_block(795523)
     #test_block(795523)
-    xmrchain_block_json(795523)
+    #xmrchain_block_json(795523)
+    seed = Seed(test_mnemonic_seed)
+    print(seed.public_address())
+    decode = base58.decode(str(seed.public_address()))
+    print(decode)
+    net = decode[:2]
+    public_spend_key = decode[2:66]
+    public_view_key = decode[66:130]
+    print(net,public_spend_key,public_view_key)
+    print('12',seed.public_spend_key(),seed.public_view_key())

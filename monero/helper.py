@@ -1,6 +1,7 @@
 import os
 import csv
 import datetime as dt
+from config import *
 
 def bin2hex(bin):
     "".join(['{:0>2}'.format(hex(e)[2:]) for e in bin])
@@ -46,6 +47,17 @@ def csv_dict_reader(csv_file_path):
             csv_list.append(row)
     return csv_list
 
+def dict_reader(csv_file_path):
+    with open(csv_file_path, newline='') as csvfile:
+        reader = csv.DictReader(csvfile)
+    return reader
+
+def dict_writer(csv_file_path,dict_rows):
+    with open(csv_file_path, 'w', newline='') as csvfile:
+        writer = csv.DictWriter(csvfile, fieldnames=dict_rows.fieldnames)
+        writer.writeheader()
+        writer.writerows(dict_rows)
+
 def csv_dict_writer(csv_file_path,csv_list,fieldnames=[]): #fieldnames = ['first_name', 'last_name']
     with open(csv_file_path, 'w', newline='') as csvfile:
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
@@ -67,3 +79,15 @@ def isWin():
     else:
         print(os.uname())
         return False
+
+def files_in_dir(dir):
+    return next(os.walk(dir), (None, None, []))[2]
+
+def log_files(start:str):
+    return [file for file in files_in_dir(path('',['logs'])) if file[:len(start)] == start]
+
+def time_print(prefix,data_list):
+    print(prefix,dt.datetime.now().strftime("%Y-%m-%d %H:%M:%S"), " ".join(data_list), " "*10, end='\r')
+
+if __name__ == '__main__':
+    print(__file__)

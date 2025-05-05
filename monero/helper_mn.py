@@ -6,6 +6,7 @@ from monero import base58
 from monero.keccak import keccak_256
 import binascii
 import varint
+from config import *
 
 def print_seed(seed:Seed):
     print(seed.phrase)
@@ -24,23 +25,31 @@ def rnd_seed(debug=False):
     if debug: print_seed(seed)
     return seed
 
-def parseExtra(bin):
+def parseExtra(bin,debug=False):
     extra = {
         'pub': False,
         'paymentId': False
     }
     if bin[0] == 1: #pubkey is tag 1
         extra['pub'] = base58._binToHex(bin[1: 33]) #pubkey is 32 bytes
-        #print(bin,len(bin))
+        if debug: print(bin,len(bin))
         if len(bin)>35 and (bin[33] == 2 and bin[35] == 0 or bin[35] == 1):
             extra['paymentId'] = base58._binToHex(bin[36:36 + bin[34] - 1])
     elif bin[0] == 2:
+        if debug:
+            print(bin,len(bin))
+            print(bin[-33])
+            print(bin[-32:])
         if bin[2] == 0 or bin[2] == 1:
             extra['paymentId'] = base58._binToHex(bin[3: 3 + bin[1] - 1])
         #second byte of nonce is nonce payload length; payload length + nonce tag byte + payload length byte should be the location of the pubkey tag
         if bin[2 + bin[1]] == 1:
             offset = 2 + bin[1]
             extra['pub'] = base58._binToHex(bin[offset + 1: offset + 1 + 32])
+        elif bin[-33] == 1:
+            extra['pub'] = base58._binToHex(bin[-32:])
+    else:
+        if debug: print(extra,bin)
     return extra
 
 def generate_key_derivation(pub, sec, debug=False):
@@ -61,6 +70,8 @@ def generate_key_derivation(pub, sec, debug=False):
 
 def derive_public_key(der, i, spk,debug=False):
     shared_secret = der
+    if debug:
+        print('shared_secret:            ',binascii.hexlify(shared_secret).decode(),shared_secret)
     psk = binascii.unhexlify(spk)
 
     hsdata = b"".join(
@@ -69,14 +80,35 @@ def derive_public_key(der, i, spk,debug=False):
             varint.encode(i),
         ]
     )
-    if debug: print('hsdata',binascii.hexlify(hsdata).decode())
+    if debug:
+        print('hsdata:                   ',binascii.hexlify(hsdata).decode(),hsdata)
+        print('keccak_256(shared_secret):',keccak_256(shared_secret).hexdigest())
+        print('keccak_256(hsdata):       ',keccak_256(hsdata).hexdigest())
     Hs_ur = keccak_256(hsdata).digest()
-    if debug: print('Hs_ur',binascii.hexlify(Hs_ur).decode())
+    if debug: print('Hs_ur:             ',binascii.hexlify(Hs_ur).decode(),Hs_ur)
     Hs = ed25519.scalar_reduce(Hs_ur)
-    if debug: print('Hs',binascii.hexlify(Hs).decode())
+    if debug: print('Hs:                ',binascii.hexlify(Hs).decode(),Hs)
     k = ed25519.edwards_add(
         ed25519.scalarmult_B(Hs),
         psk,
     )
-    if debug: print('k',binascii.hexlify(k).decode())
+    if debug: print('k:                 ',binascii.hexlify(k).decode(),k)
     return binascii.hexlify(k).decode()
+
+def check_output(output_row,address_row,debug=False):
+    #output_row block_no,transaction_hash,pub,output_no,output_key
+    #address_row address,hex,block,outputs
+    #seed = Seed(test_mnemonic_seed)
+    #print_seed(seed)
+    addr = Seed(address_row['hex'])
+    pub = output_row['pub']
+    if debug: print('pub: ',pub,test_pub)
+    sec = addr.secret_view_key()
+    if debug: print('sec: ',sec,test_sec)
+    der = generate_key_derivation(pub, sec)
+    if debug: print('der: ',der,test_der)
+    spk = base58.decode(address_row['address'])[2:66]
+    if debug: print(spk)
+    pubkey = derive_public_key(der, int(output_row['output_no']), spk)
+    if debug: print(pubkey,output_row['output_key'])
+    return pubkey == output_row['output_key']
