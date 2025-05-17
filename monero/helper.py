@@ -3,6 +3,12 @@ import csv
 import datetime as dt
 from config import *
 
+def int2hexstr(n:int,c=64):
+    return format(n, f'0{c}x')
+
+def int2binstr(n:int,c=42):
+    return format(n, f'0{c}b')
+
 def bin2hex(bin):
     "".join(['{:0>2}'.format(hex(e)[2:]) for e in bin])
 
@@ -47,6 +53,17 @@ def csv_dict_reader(csv_file_path):
             csv_list.append(row)
     return csv_list
 
+def dict_csv_dict_reader(csv_file_path):
+    csv_dict = {}
+    with open(csv_file_path, newline='') as csvfile:
+        reader = csv.DictReader(csvfile)
+        for row in reader:
+            if row['address'] in csv_dict.keys():
+                if csv_dict[row['address']] != row:
+                    print('CHANGE old:',csv_dict[row['address']],'new:',row)
+            csv_dict[row['address']] = row
+    return csv_dict
+
 def dict_reader(csv_file_path):
     with open(csv_file_path, newline='') as csvfile:
         reader = csv.DictReader(csvfile)
@@ -66,6 +83,8 @@ def csv_dict_writer(csv_file_path,csv_list,fieldnames=[]): #fieldnames = ['first
             writer.writerow(row) #writer.writerow({'first_name': 'Baked', 'last_name': 'Beans'})
 
 def csv_dict_adder(csv_file_path,csv_list,fieldnames=[]): #fieldnames = ['first_name', 'last_name']
+    if not os.path.isfile(csv_file_path):
+        csv_dict_writer(csv_file_path,[],fieldnames)
     with open(csv_file_path, 'a', newline='') as csvfile:
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
         for row in csv_list:
@@ -91,3 +110,5 @@ def time_print(prefix,data_list):
 
 if __name__ == '__main__':
     print(__file__)
+    print(int2binstr(10))
+    print(int2hexstr(100))

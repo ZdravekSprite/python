@@ -107,7 +107,7 @@ if __name__ == '__main__':
     #headers = {"Authorization": f"Token {token}"}
     #link = 'http://localhost:3000/transactions'
     #response = requests.post(link, json=json, headers=headers)
-    json_post = test_json_post
+    #json_post = test_json_post
 
     json_post = {
         "private": kvB,

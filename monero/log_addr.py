@@ -83,8 +83,10 @@ def log_addreses():
 
 def rearenge_addreses():
     count = 0
-    for addr_file in log_files('addr_'):
-        csv_file_path = path(addr_file,['logs'])
+    #for addr_file in log_files('addr_'):
+    for addr_file in ['addreses_3378000.csv']:
+        #csv_file_path = path(addr_file,['logs'])
+        csv_file_path = path(addr_file)
         with open(csv_file_path, newline='') as csvfile:
             reader = csv.DictReader(csvfile)
             #new_fieldnames = ['address','hex','block','outputs']
@@ -105,10 +107,28 @@ def rearenge_addreses():
                 csv_dict_adder(new_csv_file_path,[row],reader.fieldnames)
                 print('now:  ',dt.datetime.now().strftime("%Y-%m-%d %H:%M:%S"), reader.line_num, count, new_csv_file_path, ' '*10, end='\r')
 
+def rearenge_addreses_x():
+    csv_file_path = path("3378000.csv")
+    new_csv_file_path = path("addreses_3378000.csv")
+    with open(csv_file_path, newline='') as csvfile:
+        reader = csv.reader(csvfile)
+        new_fieldnames = ['address','hex','block','outputs']
+        for row in reader:
+            seed = Seed(" ".join(row[2:]))
+            new_row = {
+                'address':row[0],
+                'hex':seed.hex,
+                'block':3378000,
+                'outputs':0
+            }
+            csv_dict_adder(new_csv_file_path,[new_row],new_fieldnames)
+            print('now:  ',dt.datetime.now().strftime("%Y-%m-%d %H:%M:%S"), reader.line_num, new_csv_file_path, ' '*10, end='\r')
+
 if __name__ == '__main__':
     print(__file__)
     print('start:',dt.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
     #log_outputs()
     #log_addreses()
+    #rearenge_addreses_x()
     rearenge_addreses()
     print('end:  ',dt.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))

@@ -1,6 +1,5 @@
 from config import *
 from helper_mn import *
-from helper import *
 
 def get_transactions_from_block(block_no:int,debug=False):
     #print(b.__dict__.keys()) # dict_keys(['hash', 'height', 'timestamp', 'version', 'difficulty', 'nonce', 'prev_hash', 'reward', 'orphan', 'transactions', 'blob'])
@@ -45,20 +44,29 @@ def test_if_loged(address:str):
             #address_row address,hex,block,outputs
             if row['address'] == address: return True
 
-if __name__ == '__main__':
-    print(__file__)
-    #rnd_seed(True)
-    #seed = Seed(test_mnemonic_seed)
-    #print_seed(seed)
-    #for block in test_blocks:
-    #    print(block)
-    #    test_transactions_in_block(block,seed)
-    #while not test_transactions_in_block(1):
-    #    pass
-    #for addr in real_address:
-    #    print(test_if_loged(addr))
-    print('start:',dt.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
-    target_block = 1
+def test_address_rows(af_rows,target_block,target_block_rows):
+    af_new_rows={}
+    for af_row in af_rows:
+        #address_row address,hex,block,outputs
+        if af_row['block'] == '': af_row['block']=-1
+        if int(af_row['block'])+1==target_block:
+            for target_row in target_block_rows:
+                #time_print('now: ',[target_row['block_no'],target_row['output_no'],af_row['hex']])
+                if check_output(target_row,af_row):
+                    af_row['outputs']=target_row['outputs']+1
+            af_row['block']=target_row['block_no']
+        #af_new_rows.append(af_row)
+        if af_row['address'] in af_new_rows.keys():
+            print('overwrithed',af_new_rows[af_row['address']],'with',af_row)
+        af_new_rows[af_row['address']] = af_row
+        #print(af_row)
+    #af_rows.line_num=0
+    #print(list(af_rows),af_rows.__dict__)
+    return sorted(af_new_rows.values(), key=lambda d: d['address'])
+
+af_fieldnames = ['address','hex','block','outputs']
+
+def test_loged_addreses(target_block = 0, adress_start = ''):
     target_block_rows = []
     for of in log_files('outputs')[:1]:
         of_path = path(of,['logs'])
@@ -73,37 +81,15 @@ if __name__ == '__main__':
                     target_block_rows.append(of_row)
                 else:
                     print()
-                    for af in log_files('address_'):
+                    for af in log_files('address_'+adress_start):
                         af_path = path(af,['logs'])
-                        time_print('now: ',[af_path,' '*60])
+                        time_print('now: ',[str(target_block),af_path,' '*60])
                         #af_test_path = path(af,['test_logs'])
                         with open(af_path, newline='') as csv2file:
                             af_rows = csv.DictReader(csv2file)
                             #print(list(af_rows))
-                            af_new_rows=[]
                             af_fieldnames = af_rows.fieldnames
-                            for af_row in af_rows:
-                                #address_row address,hex,block,outputs
-                                if af_row['block'] == '': af_row['block']=0
-                                if int(af_row['block'])+1==target_block:
-                                    for target_row in target_block_rows:
-                                        #time_print('now: ',[target_row['block_no'],target_row['output_no'],af_row['hex']])
-                                        if check_output(target_row,af_row):
-                                            print(target_row,af_row)
-                                            c_fieldnames = ['block_no','transaction_hash','pub','output_no','output_key','address','hex']
-                                            confirm_row = target_row
-                                            confirm_row['address']=af_row['address']
-                                            confirm_row['hex']=af_row['hex']
-                                            csv_file_path = path(f'confirmed.csv',['logs'])
-                                            if not os.path.isfile(csv_file_path):
-                                                csv_dict_writer(csv_file_path,[],c_fieldnames)
-                                            csv_dict_adder(csv_file_path,[confirm_row],c_fieldnames)
-                                            af_row['outputs']=target_row['outputs']+1
-                                    af_row['block']=target_row['block_no']
-                                af_new_rows.append(af_row)
-                                #print(af_row)
-                            #af_rows.line_num=0
-                            #print(list(af_rows),af_rows.__dict__)
+                            af_new_rows=test_address_rows(af_rows,target_block,target_block_rows)
                         with open(af_path, 'w', newline='') as csv3file:
                             writer = csv.DictWriter(csv3file, fieldnames=af_fieldnames)
                             writer.writeheader()
@@ -112,4 +98,57 @@ if __name__ == '__main__':
                         #print(af_rows)
                     target_block+=1
                     target_block_rows=[]
+
+def test_address(seed,target_block_rows,target_block):
+        csv_row_dict = {
+            'hex':seed.hex,
+            'address':str(seed.public_address()),
+            'block':'-1',
+            'outputs':0
+        }
+        for target_row in target_block_rows:
+            #print(target_row,csv_row_dict)
+            if check_output(target_row,csv_row_dict):
+                csv_row_dict['outputs']=target_row['outputs']+1
+        csv_row_dict['block']=target_block
+        if not os.path.isfile(af_path):
+            csv_dict_writer(af_path,[],af_fieldnames)
+        #print(af_path,target_row,csv_row_dict)
+        #rows_dict[str(seed.public_address())] = csv_row_dict
+        #print('write',len(rows_dict.values()))
+        csv_dict_adder(af_path,[csv_row_dict],af_fieldnames)
+
+def test_rnd_address(count,target_block_rows,target_block):
+    seed = rnd_seed()
+    af_path = path(f'address_{str(seed.public_address())[:4]}.csv',['logs'])
+    rows_dict = dict_csv_dict_reader(af_path)
+    #print('read',len(rows_dict.values()))
+    if str(seed.public_address()) not in rows_dict.keys():
+        count+=1
+        time_print('now: ',[str(count)])
+        test_address(seed,target_block_rows,target_block)
+    return count
+
+def test_rnd_addreses(target_block = 0):
+    target_block_rows = [first_out_dict]
+    count=0
+    while True:
+        count = test_rnd_address(count,target_block_rows,target_block)
+
+if __name__ == '__main__':
+    print(__file__)
+    #rnd_seed(True)
+    #seed = Seed(test_mnemonic_seed)
+    #print_seed(seed)
+    #for block in test_blocks:
+    #    print(block)
+    #    test_transactions_in_block(block,seed)
+    #while not test_transactions_in_block(1):
+    #    pass
+    #for addr in real_address:
+    #    print(test_if_loged(addr))
+    #c:/dev/python/.venv/Scripts/python.exe c:/dev/python/monero/proba.py
+    print('start:',dt.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+    #test_loged_addreses(1,'42AM')
+    test_rnd_addreses()
     print('end:  ',dt.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),' '*10)

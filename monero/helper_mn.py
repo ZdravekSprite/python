@@ -7,6 +7,7 @@ from monero.keccak import keccak_256
 import binascii
 import varint
 from config import *
+from helper import *
 
 def print_seed(seed:Seed):
     print(seed.phrase)
@@ -72,6 +73,7 @@ def derive_public_key(der, i, spk,debug=False):
     shared_secret = der
     if debug:
         print('shared_secret:            ',binascii.hexlify(shared_secret).decode(),shared_secret)
+        print('keccak_256(shared_secret):',keccak_256(shared_secret).hexdigest())
     psk = binascii.unhexlify(spk)
 
     hsdata = b"".join(
@@ -82,17 +84,25 @@ def derive_public_key(der, i, spk,debug=False):
     )
     if debug:
         print('hsdata:                   ',binascii.hexlify(hsdata).decode(),hsdata)
-        print('keccak_256(shared_secret):',keccak_256(shared_secret).hexdigest())
         print('keccak_256(hsdata):       ',keccak_256(hsdata).hexdigest())
     Hs_ur = keccak_256(hsdata).digest()
-    if debug: print('Hs_ur:             ',binascii.hexlify(Hs_ur).decode(),Hs_ur)
+    if debug:
+        print('Hs_ur:                    ',binascii.hexlify(Hs_ur).decode(),Hs_ur)
     Hs = ed25519.scalar_reduce(Hs_ur)
-    if debug: print('Hs:                ',binascii.hexlify(Hs).decode(),Hs)
+    if debug:
+        print('Hs:                       ',binascii.hexlify(Hs).decode(),Hs)
+        print(format(int(binascii.hexlify(Hs).decode(),16), '0>42b'))
+        print(base58._hexToBin(binascii.hexlify(Hs).decode()))
+        print('ed25519.scalarmult_B(Hs): ',binascii.hexlify(ed25519.scalarmult_B(Hs)).decode(),ed25519.scalarmult_B(Hs))
+        print(format(int(binascii.hexlify(ed25519.scalarmult_B(Hs)).decode(),16), '0>42b'))
+        print(base58._hexToBin(binascii.hexlify(ed25519.scalarmult_B(Hs)).decode()))
     k = ed25519.edwards_add(
         ed25519.scalarmult_B(Hs),
         psk,
     )
-    if debug: print('k:                 ',binascii.hexlify(k).decode(),k)
+    if debug:
+        print('k:                        ',binascii.hexlify(k).decode(),k)
+        #print(':                         ',ed25519.nacl.bindings.crypto_box_beforenm(k,psk))
     return binascii.hexlify(k).decode()
 
 def check_output(output_row,address_row,debug=False):
@@ -111,4 +121,51 @@ def check_output(output_row,address_row,debug=False):
     if debug: print(spk)
     pubkey = derive_public_key(der, int(output_row['output_no']), spk)
     if debug: print(pubkey,output_row['output_key'])
+
+    if pubkey == output_row['output_key']:
+        print(output_row,address_row)
+        c_fieldnames = ['block_no','transaction_hash','pub','output_no','output_key','address','hex']
+        confirm_row = output_row
+        confirm_row['address']=address_row['address']
+        confirm_row['hex']=address_row['hex']
+        csv_file_path = path(f'confirmed.csv',['logs'])
+        if not os.path.isfile(csv_file_path):
+            csv_dict_writer(csv_file_path,[],c_fieldnames)
+        csv_dict_adder(csv_file_path,[confirm_row],c_fieldnames)
+
     return pubkey == output_row['output_key']
+
+def confirm_check():
+    confirm_path = path(f'confirmed.csv',['logs'])
+    with open(confirm_path, newline='') as csvfile:
+        reader = csv.DictReader(csvfile)
+        for row in reader:
+            addr = Seed(row['hex'])
+            pub = row['pub']
+            sec = addr.secret_view_key()
+            der = generate_key_derivation(pub, sec)
+            spk = base58.decode(row['address'])[2:66]
+            pubkey = derive_public_key(der, int(row['output_no']), spk)
+
+            if pubkey == row['output_key']:
+                print(row)
+                c_fieldnames = ['block_no','transaction_hash','pub','output_no','output_key','address','hex']
+                confirm_row = row
+                csv_file_path = path(f'confirmed_new.csv',['logs'])
+                if not os.path.isfile(csv_file_path):
+                    csv_dict_writer(csv_file_path,[],c_fieldnames)
+                csv_dict_adder(csv_file_path,[confirm_row],c_fieldnames)
+
+if __name__ == '__main__':
+    print(__file__)
+    #print("derived_key, output index, public spend key -> derive_public_key(derived_key, output_index, public_spend_key) -> public output key")
+    #pubkey = derive_public_key(binascii.unhexlify(test_derived_key.encode()), 0, test_public_spend_key,True)
+    #print("(output) pub key 0:       ",test_output_0,pubkey)
+    for af in log_files('address_'):
+        af_path = path(af,['logs'])
+        time_print('now: ',[af_path,' '*60])
+        #af_test_path = path(af,['test_logs'])
+        with open(af_path, newline='') as csv2file:
+            af_rows = csv.DictReader(csv2file)
+            for row in af_rows:
+                if int(row['outputs'])>0: print(row)
