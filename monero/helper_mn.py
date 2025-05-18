@@ -161,8 +161,7 @@ if __name__ == '__main__':
     #print("derived_key, output index, public spend key -> derive_public_key(derived_key, output_index, public_spend_key) -> public output key")
     #pubkey = derive_public_key(binascii.unhexlify(test_derived_key.encode()), 0, test_public_spend_key,True)
     #print("(output) pub key 0:       ",test_output_0,pubkey)
-    for af in log_files('address_'):
-        af_path = path(af,['logs'])
+    for af_path in address_files():
         time_print('now: ',[af_path,' '*60])
         #af_test_path = path(af,['test_logs'])
         with open(af_path, newline='') as csv2file:

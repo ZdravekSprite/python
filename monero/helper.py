@@ -103,7 +103,20 @@ def files_in_dir(dir):
     return next(os.walk(dir), (None, None, []))[2]
 
 def log_files(start:str):
-    return [file for file in files_in_dir(path('',['logs'])) if file[:len(start)] == start]
+    return [file for file in files_in_dir(path('',['logs'])) if file[:len(start)].lower() == start.lower()]
+
+def address_files(start='4'):
+    return [path(file,['address_csv']) for file in files_in_dir(path('',['address_csv'])) if file[:len(start)].lower() == start.lower()]
+
+def test_if_loged(address:str):
+    print(address)
+    for f in address_files(address[:2]):
+        time_print('now: ',[f])
+        csv = csv_dict_reader(f)
+        for row in csv:
+            #address_row address,hex,block,outputs
+            if row['address'] == address: return True
+
 
 def time_print(prefix,data_list):
     print(prefix,dt.datetime.now().strftime("%Y-%m-%d %H:%M:%S"), " ".join(data_list), " "*10, end='\r')

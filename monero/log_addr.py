@@ -83,7 +83,7 @@ def log_addreses():
 
 def rearenge_addreses():
     count = 0
-    #for addr_file in log_files('addr_'):
+    #for addr_file in address_files():
     for addr_file in ['addreses_3378000.csv']:
         #csv_file_path = path(addr_file,['logs'])
         csv_file_path = path(addr_file)
@@ -121,8 +121,41 @@ def rearenge_addreses_x():
                 'block':3378000,
                 'outputs':0
             }
-            csv_dict_adder(new_csv_file_path,[new_row],new_fieldnames)
+            #csv_dict_adder(new_csv_file_path,[new_row],new_fieldnames)
             print('now:  ',dt.datetime.now().strftime("%Y-%m-%d %H:%M:%S"), reader.line_num, new_csv_file_path, ' '*10, end='\r')
+
+def test_if_real_found():
+    for addr in real_address:
+        print(addr)
+        for af_path in address_files(addr[:4]):
+            if addr in dict_csv_dict_reader(af_path).keys():
+                print(addr,af_path,dict_csv_dict_reader(af_path)[addr])
+
+def addr_count():
+    count = 0
+    for af_path in address_files():
+        count += len(dict_csv_dict_reader(af_path).keys())
+        time_print('now: ',[af_path,str(count)])
+    print()
+    return count
+
+def max_count():
+    count=1
+    for i in range(24):
+        count = count*(1626-i)
+        print('total: ',len(str(count)),count)
+    print()
+    return count
+
+def out_count():
+    count = 0
+    for of in log_files('outputs'):
+        of_path = path(of,['logs'])
+        count += len(csv_dict_reader(of_path))
+        time_print('now: ',[of_path,str(count)])
+    print()
+    return count
+
 
 if __name__ == '__main__':
     print(__file__)
@@ -130,5 +163,10 @@ if __name__ == '__main__':
     #log_outputs()
     #log_addreses()
     #rearenge_addreses_x()
-    rearenge_addreses()
+    #rearenge_addreses()
+    #test_if_real_found()
+    #addr_now = addr_count()
+    out_now = out_count()
+    max = max_count()
+    #print('%:    ',(100*addr_now/max))
     print('end:  ',dt.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))

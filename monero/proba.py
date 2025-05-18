@@ -35,15 +35,6 @@ def test_transactions_in_block(block_no:int,seed=rnd_seed(),debug=False):
                 print(block_no,t.hash,t.json['vout'][i]['target']['key'],pubkey)
     return check
 
-def test_if_loged(address:str):
-    print(address)
-    for f in log_files(f'addr_{address[:2]}'):
-        time_print('now: ',[f])
-        csv = csv_dict_reader(path(f,['logs']))
-        for row in csv:
-            #address_row address,hex,block,outputs
-            if row['address'] == address: return True
-
 def test_address_rows(af_rows,target_block,target_block_rows):
     af_new_rows={}
     for af_row in af_rows:
@@ -81,8 +72,7 @@ def test_loged_addreses(target_block = 0, adress_start = ''):
                     target_block_rows.append(of_row)
                 else:
                     print()
-                    for af in log_files('address_'+adress_start):
-                        af_path = path(af,['logs'])
+                    for af_path in address_files(adress_start):
                         time_print('now: ',[str(target_block),af_path,' '*60])
                         #af_test_path = path(af,['test_logs'])
                         with open(af_path, newline='') as csv2file:
@@ -100,23 +90,18 @@ def test_loged_addreses(target_block = 0, adress_start = ''):
                     target_block_rows=[]
 
 def test_address(seed,target_block_rows,target_block):
-        csv_row_dict = {
-            'hex':seed.hex,
-            'address':str(seed.public_address()),
-            'block':'-1',
-            'outputs':0
-        }
-        for target_row in target_block_rows:
-            #print(target_row,csv_row_dict)
-            if check_output(target_row,csv_row_dict):
-                csv_row_dict['outputs']=target_row['outputs']+1
-        csv_row_dict['block']=target_block
-        if not os.path.isfile(af_path):
-            csv_dict_writer(af_path,[],af_fieldnames)
-        #print(af_path,target_row,csv_row_dict)
-        #rows_dict[str(seed.public_address())] = csv_row_dict
-        #print('write',len(rows_dict.values()))
-        csv_dict_adder(af_path,[csv_row_dict],af_fieldnames)
+    csv_row_dict = {
+        'hex':seed.hex,
+        'address':str(seed.public_address()),
+        'block':'-1',
+        'outputs':0
+    }
+    for target_row in target_block_rows:
+        #print(target_row,csv_row_dict)
+        if check_output(target_row,csv_row_dict):
+            csv_row_dict['outputs']=target_row['outputs']+1
+    csv_row_dict['block']=target_block
+    return csv_row_dict
 
 def test_rnd_address(count,target_block_rows,target_block):
     seed = rnd_seed()
@@ -125,8 +110,15 @@ def test_rnd_address(count,target_block_rows,target_block):
     #print('read',len(rows_dict.values()))
     if str(seed.public_address()) not in rows_dict.keys():
         count+=1
-        time_print('now: ',[str(count)])
-        test_address(seed,target_block_rows,target_block)
+        if not count%100: time_print('now:  ',[str(count)])
+        csv_row_dict = test_address(seed,target_block_rows,target_block)
+
+        if not os.path.isfile(af_path):
+            csv_dict_writer(af_path,[],af_fieldnames)
+        #print(af_path,target_row,csv_row_dict)
+        #rows_dict[str(seed.public_address())] = csv_row_dict
+        #print('write',len(rows_dict.values()))
+        csv_dict_adder(af_path,[csv_row_dict],af_fieldnames)
     return count
 
 def test_rnd_addreses(target_block = 0):
