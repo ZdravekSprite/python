@@ -4,13 +4,14 @@ from helper_mn import *
 def print_R2L():
     print("start\n")
     print("account")
+    test_seed = Seed(test_mnemonic_seed)
     print("seed:              ",test_mnemonic_seed)
-    print("hex:               ",test_hexadecimal_seed)
-    print("secret spend key:  ",test_private_spend_key)
-    print("secret view key:   ",test_private_view_key)
-    print("public spend key:  ",test_public_spend_key)
-    print("public view key:   ",test_public_view_key)
-    print("public address:    ",test_public_address)
+    print("hex:               ",test_seed.hex_seed())
+    print("secret spend key:  ",test_seed.secret_spend_key())
+    print("secret view key:   ",test_seed.secret_view_key())
+    print("public spend key:  ",test_seed.public_spend_key())
+    print("public view key:   ",test_seed.public_view_key())
+    print("public address:    ",test_seed.public_address())
     #print("\nblock")
     print("\ntransaction")
     #print("extra:             ","".join(['{:0>2}'.format(hex(e)[2:]) for e in test_extra[1:33]]))
@@ -34,9 +35,13 @@ def print_R2L():
 def print_L2R():
     print("end")
     print("output 0",test_output_0)
-    print("public address:                      ",test_public_address)
-    print("public address -> public view key:   ",base58.decode(test_public_address)[66:130],test_public_view_key)
-    print("public address -> public spend key:  ",base58.decode(test_public_address)[2:66],test_public_spend_key)
+    print("public address:                         ",test_public_address)
+    print("public address -> 12:                   ",base58.decode(test_public_address)[:2])
+    print("public address -> public spend key:     ",base58.decode(test_public_address)[2:66],test_public_spend_key)
+    #public spend key = binascii.hexlify(scalarmult_B(binascii.unhexlify(self.secret_spend_key()))).decode()
+    print("public address -> public view key:      ",base58.decode(test_public_address)[66:130],test_public_view_key)
+    #public view key = binascii.hexlify(scalarmult_B(binascii.unhexlify(self.secret_view_key()))).decode()
+    print("public address -> keccak_256(data)[0:8]:",base58.decode(test_public_address)[130:],keccak_256(binascii.unhexlify(base58.decode(test_public_address)[:130])).hexdigest()[0:8])
     print("start")
 
 nono = [1,3,4,6,11,12,13,18,20,21,22,24,25,26,30,31,36,37,38,39,41,42,44,48,49,50,52,53,56,57,58,59,64,65,66,67,68,72,73,74,75,76,78,79,82,84,88,89,95,96,97,99,
@@ -177,7 +182,7 @@ def get_point():
 if __name__ == '__main__':
     print(__file__)
     #print_R2L()
-    #print_L2R()
+    print_L2R()
     #'''
     #print("psk",reverse_psk,binascii.unhexlify(reverse_psk.encode()))
     #print("ed25519.scalarmult_B(Hs)",reverse_scalarmult_B_Hs_,binascii.unhexlify(reverse_scalarmult_B_Hs_.encode()))
@@ -189,5 +194,5 @@ if __name__ == '__main__':
     # 1 1 6e648d7cd6734185af29b14e8f9ed3895feaa910fd48d0ccac58d59881a0c889 49932074562489669313413961350771397933001745920199112567476327251487209080969
     # 0 1 3beba241a1214ad12eed6ab900068c317c6555b9a28222f43d21c41af7cafb08 27102786978909325265319153054973297061474139513353416270410144421497843415816
     # 1 0 3beba241a1214ad12eed6ab900068c317c6555b9a28222f43d21c41af7cafb08 27102786978909325265319153054973297061474139513353416270410144421497843415816
-    edwards_loop(0,3)
+    #edwards_loop(0,3)
 

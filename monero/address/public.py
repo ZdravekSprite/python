@@ -5,8 +5,11 @@ from config import *
 from words25 import words25
 from hexseed import mn_decode
 from private import cn_fast_hash,sc_reduce32
+
 import binascii
 import operator as _oper
+
+from monero.seed import Seed
 
 int2byte = _oper.methodcaller("to_bytes", 1, "big")
 
@@ -56,26 +59,51 @@ def inv(x):
 
 d = -121665 * inv(121666)
 
-def edwards(P,Q):
-    x1 = P[0]
-    y1 = P[1]
-    x2 = Q[0]
-    y2 = Q[1]
+def edwards(P,Q,debug=False):
+    x1,y1 = P
+    x2,y2 = Q
     x3 = (x1*y2+x2*y1) * inv(1+d*x1*x2*y1*y2)
     y3 = (y1*y2+x1*x2) * inv(1-d*x1*x2*y1*y2)
+    if debug:
+        print('x1:                              ',x1)
+        print('x2:                              ',x2)
+        print('x3:                              ',x3)
+        print('y1:                              ',y1)
+        print('y2:                              ',y2)
+        print('y3:                              ',y3)
+        print('q:                               ',q)
+        print('x3q:                             ',x3 % q)
+        print('y3q:                             ',y3 % q)
     return [x3 % q,y3 % q]
 
-def scalarmult(P,e):
+def scalarmult(P,e,debug=False):
     if e == 0: return [0,1]
-    Q = scalarmult(P,e//2)
+    Q = scalarmult(P,e//2,debug)
     Q = edwards(Q,Q)
-    if e & 1: Q = edwards(Q,P)
+    if e & 1:
+        if debug:
+            print('e & 1:                           ',e)
+            print('Q:                               ',Q)
+        Q = edwards(Q,P,True)
+        if debug:
+            print('Q:                               ',Q)
+    if debug:
+        print('scalarmult(P,e)')
+        print('B:                               ',B)
+        print('P:                               ',P)
+        print('e:                               ',e)
+        print('Q:                               ',Q)
+        print()
     return Q
 
-def encodepoint(P):
+def encodepoint(P,debug=False):
     x = P[0]
     y = P[1]
     bits = [(y >> i) & 1 for i in range(b-1)] + [x & 1]
+    if debug:
+        print('encodepoint(P)')
+        print('P=(x,y):                         ',P)
+        print('bits:                            ',''.join([str(b) for b in bits]),len(bits))
     return b''.join([int2byte(sum([bits[i * 8 + j] << j for j in range(8)])) for i in range(b//8)])
 
 l = 2 ** 252 + 27742317777372353535851937790883648493
@@ -94,47 +122,38 @@ def getB():
 
 B = getB()
 
-def publickey(sk):
+def publickey(sk,debug=False):
     sk = binascii.unhexlify(sk)
     try:
         a = decodeint(sk)
     except Exception as ex:
         print(ex,sk,len(sk))
-    A = scalarmult(B,a)
+    if debug:
+        print('publickey(sk)')
+        print('sk:                              ',binascii.hexlify(sk))
+        print('binascii.unhexlify(sk):          ',sk)
+        print('B:                               ',B)
+        print('a = decodeint(sk):               ',a)
+    A = scalarmult(B,a,debug)
+    if debug:
+        print('B:                               ',B)
+        print('a = decodeint(sk):               ',a)
+        print('A = scalarmult(B,a):             ',A)
+        print('encodepoint(A):                  ',encodepoint(A,debug))
+        print('binascii.hexlify(encodepoint(A)):',binascii.hexlify(encodepoint(A)))
     return binascii.hexlify(encodepoint(A)).decode()
 
-def print_all():
-    print('Mnemonic Seed:            ',test_mnemonic_seed)
-    print('25 words seed:            ',words25(" ".join(test_mnemonic_seed.split(" ")[:24])))
-    print('Hexadecimal Seed:         ',test_hexadecimal_seed)
-    print('mn_decode:                ',mn_decode(test_mnemonic_seed))
-    print('Private Spend Key:        ',test_private_spend_key)
-    print('Private View Key:         ',test_private_view_key)
-    print('cn_fast_hash:             ',cn_fast_hash(test_hexadecimal_seed))
-    print('sc_reduce32(cn_fast_hash):',sc_reduce32(cn_fast_hash(test_hexadecimal_seed)))
-    print('Public Spend Key:         ',test_public_spend_key)
-    print('publickey(spend):         ',publickey(test_private_spend_key))
-    print('Public View Key:          ',test_public_view_key)
-    print('publickey(view):          ',publickey(test_private_view_key))
+def depublickey(pk,debug=False):
+    pk = binascii.unhexlify(pk)
+    bits = get_bits([i for i in pk])
+    A_get=['neparan' if bits[-1] else 'paran',get_y(bits)]
 
-def print_int2byte(i,bits):
-    sum_bits = []
-    for j in range(8):
-        #print(i,j,bits[i * 8 + j] << j,bits[i * 8 + j],i * 8 + j)
-        sum_bits.append(bits[i * 8 + j] << j)
-    #print(sum(sum_bits),sum_bits)
-    #sum_bits = sum([bits[i * 8 + j] << j for j in range(8)])
-    return int2byte(sum(sum_bits))
-
-def print_join(bits):
-    #join = [int2byte(sum([bits[i * 8 + j] << j for j in range(8)])) for i in range(32)]
-    join=[]
-    for i in range(32):
-        #join.append(int2byte(sum([bits[i * 8 + j] << j for j in range(8)])))
-        join.append(print_int2byte(i,bits))
-    print('[sum([bits[i * 8 + j] << j for j in range(8)]) for i in range(b//8)]          ',[sum([bits[i * 8 + j] << j for j in range(8)]) for i in range(b//8)])
-    print('[int2byte(sum([bits[i * 8 + j] << j for j in range(8)])) for i in range(b//8)]',join)
-    return join
+    if debug:
+        print('depublickey(pk)')
+        print('pk:                              ',binascii.hexlify(pk))
+        print('binascii.unhexlify(pk):          ',pk)
+        print('bits:                            ',''.join([str(b) for b in bits]),len(bits))
+        print('A*:                              ',A_get)
 
 def get_bits(join_int):
     bits_list=[]
@@ -146,14 +165,6 @@ def get_bits(join_int):
         bits_list+=mini_list
     return bits_list
 
-def print_bits(x,y):
-    bits = [(y >> i) & 1 for i in range(255)] + [x & 1]
-    #for i in range(255):
-    #    print((y >> i) & 1,y,y >> i,i)
-    #print([x & 1],x)
-    print('[(y >> i) & 1 for i in range(b-1)] + [x & 1]',bits)
-    return bits
-
 def get_y(bits):
     y=0
     multi=1
@@ -163,86 +174,59 @@ def get_y(bits):
         #print(y,multi)
     return y
 
-def print_de98(A):
-    print('A:',A)
-    #print(encodepoint(A))
-    #print('encodepoint(A)')
-    x = A[0]
-    #print('x = A[0]',f'x = {x}')
-    y = A[1]
-    #print('y = A[1]',f'y = {y}')
-    #print('[x & 1]:',[x & 1])
-    bits = print_bits(x,y)
-    #join = print_join(bits)
-    #encodepoint = b''.join(join)
-    #print("b''.join([int2byte(sum([bits[i * 8 + j] << j for j in range(8)])) for i in range(b//8)])",encodepoint)
-    #print(binascii.hexlify(encodepoint))
-    #print(binascii.hexlify(encodepoint).decode())
-    #print('publickey(view):          ',publickey(test_private_view_key))
-    #print(test_public_view_key)
-    #print(test_public_view_key.encode())
-    #print('encodepoint                                                                             ',binascii.unhexlify(test_public_view_key.encode()))
-    #all_bytes = bytes(range(256))
-    #print('join                                                                          ',[all_bytes[i:i+1] for i in binascii.unhexlify(test_public_view_key.encode())])
-    #print('join_int                                                                      ',[i for i in binascii.unhexlify(test_public_view_key.encode())])
-    bits_get = get_bits([i for i in binascii.unhexlify(test_public_view_key.encode())])
-    print('bits                                        ',bits_get)
-    #print('        x = ','neparan' if bits_get[-1] else 'paran')
-    #print('        y = ',get_y(bits_get))
-    A_get=['neparan' if bits[-1] else 'paran',get_y(bits_get)]
-    print('A:',A_get)
-    return A_get
-
-def print_edwards(P,Q,n=0):
-    x1 = P[0]
-    y1 = P[1]
-    x2 = Q[0]
-    y2 = Q[1]
+'''
+def scalarmult(P,e):
+    if e == 0: return [0,1]
+    Q = scalarmult(P,e//2)
+    Q = edwards(Q,Q)
+    if e & 1: Q = edwards(Q,P) # P = B
+    return Q
+def edwards(P,Q):
+    x1,y1 = P
+    x2,y2 = Q
     x3 = (x1*y2+x2*y1) * inv(1+d*x1*x2*y1*y2)
     y3 = (y1*y2+x1*x2) * inv(1-d*x1*x2*y1*y2)
-    if not n: print(x1,y1)
-    if not n: print(x2,y2)
-    if not n: print('x3:',x3,'\nx3//q:',x3//q)
-    if not n: print('y3:',y3,'\ny3//q:',y3//q)
-    if not n: print('[x3 % q,y3 % q]',[x3 % q,y3 % q])
     return [x3 % q,y3 % q]
+'''
+def print_all():
+    print('Mnemonic Seed:            ',test_mnemonic_seed)
+    print('25 words seed:            ',words25(" ".join(test_mnemonic_seed.split(" ")[:24])))
+    test_seed = Seed(test_mnemonic_seed)
+    print('Hexadecimal Seed:         ',test_seed.hex_seed())
+    print('mn_decode:                ',mn_decode(test_mnemonic_seed))
+    print('Private Spend Key:        ',test_seed.secret_spend_key())
+    print('Private View Key:         ',test_seed.secret_view_key())
+    print('cn_fast_hash:             ',cn_fast_hash(test_seed.hex_seed()))
+    print('sc_reduce32(cn_fast_hash):',sc_reduce32(cn_fast_hash(test_seed.hex_seed())))
+    print('Public Spend Key:         ',test_seed.public_spend_key())
+    print('publickey(spend):         ',publickey(test_seed.secret_spend_key()))
+    print('Public View Key:          ',test_seed.public_view_key())
+    print('publickey(view):          ',publickey(test_seed.secret_view_key()))
 
-def print_scalarmult(P,e,n=0):
-    if not n: print('print_scalarmult(P,e)')
-    n+=1
-    if e == 0:
-        #print('if e == 0: return [0,1]')
-        return [0,1]
-    #print('Q = scalarmult(P,e//2)')
-    Q = print_scalarmult(P,e//2,n)
-    #print('Q = edwards(Q,Q)\n\tQ:',Q)
-    n-=1
-    if not n: print('Q = edwards(Q,Q)\n\tQ old:',Q)
-    Q = print_edwards(Q,Q,n)
-    if not n: print('\tQ new:',Q)
-    if e & 1:
-        if not n: print('if e & 1: Q = edwards(Q,P)\n\te:',e,'\n\tQ:',Q,'\n\tP:',P)
-        Q = print_edwards(Q,P,n)
-        if not n: print('\tQ:',Q)
-    return Q
+def print_reverse_view():
+    test_seed = Seed(test_mnemonic_seed)
+    print('Private View Key:         ',test_seed.secret_view_key())
+    print('publickey(view):          ',publickey(test_seed.secret_view_key(),True))
+    print('Public View Key:          ',test_seed.public_view_key())
+    print('----------------')
+    print('Public View Key:          ',test_seed.public_view_key())
+    print('depublickey(view):        ',depublickey(test_seed.public_view_key(),True))
+    print('Private View Key:         ',test_seed.secret_view_key())
 
-def print_de97(B,a):
-    print('a:',a)
-    print('B:',B)
-    A = print_scalarmult(B,a)
-    get_A = print_de98(A)
-    print(get_A)
-#    if e == 0: return [0,1]
-    if get_A == ['paran',1]:
-        a = 0
-        print('a:',a)
+def print_reverse_spend():
+    test_seed = Seed(test_mnemonic_seed)
+    print("seed:                         ",test_mnemonic_seed)
+    print('mn_decode(seed):              ',mn_decode(test_mnemonic_seed))
+    print("hex:                          ",test_seed.hex_seed())
+    print("Private Spend Key:            ",test_seed.secret_spend_key())
+    print('publickey(spend):             ',publickey(test_seed.secret_spend_key(),True))
+    print("Public Spend Key:             ",test_seed.public_spend_key())
+    print('----------------')
+    print('Public Spend Key:             ',test_seed.public_spend_key())
+    print('depublickey(spend):           ',depublickey(test_seed.public_spend_key(),True))
+    print('Private Spend Key:            ',test_seed.secret_spend_key())
 
 if __name__ == '__main__':
     print(__file__)
     #print_all()
-    print('Public View Key:          ',test_public_view_key)
-    sk = binascii.unhexlify(test_private_view_key)
-    print('sk:',sk)
-    a = decodeint(sk)
-    print_de97(B,a)
-
+    print_reverse_spend()

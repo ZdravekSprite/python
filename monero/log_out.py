@@ -100,6 +100,15 @@ def test_check_address_from_chan(start_block,debug=False):
                         csv_dict_writer(csv_file_path,[],fieldnames)
                     if not debug: csv_dict_adder(csv_file_path,[csv_row_dict],fieldnames)
 
+def out_count():
+    count = 0
+    for of in log_files('outputs'):
+        of_path = path(of,['logs'])
+        count += len(csv_dict_reader(of_path))
+        time_print('now: ',[of_path,str(count)])
+    print()
+    return count
+
 if __name__ == '__main__':
     print(__file__)
     print('start:',dt.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
