@@ -2,28 +2,34 @@ import sys,os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from config import *
 
+from monero.seed import Seed
 from words25 import words25
 from hexseed import mn_decode
 
+from binascii import hexlify, unhexlify
+
+def sc_reduce32(hex):
+    input = unhexlify(hex)
+    output = hexlify(input)
+    return output
+
+import nacl.bindings
 #pip install pycryptodome
 from Crypto.Hash import keccak
-def cn_fast_hash(str):
+
+def scalar_reduce(v):
+    return nacl.bindings.crypto_core_ed25519_scalar_reduce(v + (64 - len(v)) * b"\0")
+
+def secret_spend_key(hex):
+    a = unhexlify(hex)
+    return hexlify(scalar_reduce(a)).decode()
+
+def secret_view_key(hex):
+    b = scalar_reduce(unhexlify(hex))
     k = keccak.new(digest_bits=256)
-    k.update(bytearray.fromhex(str))
-    return k.hexdigest()
+    k.update(b)
+    return hexlify(scalar_reduce(k.digest())).decode()
 
-l = 2 ** 252 + 27742317777372353535851937790883648493
-
-def reverse_byte_order(hex):
-    if(len(hex)%2==1): hex = '0' + hex
-    return "".join(reversed([hex[i:i+2] for i in range(0, len(hex), 2)]))
-
-def sc_reduce32(key):
-    reverse = reverse_byte_order("%x" % int((int(reverse_byte_order(key), 16) % l)))
-    if len(reverse) == 62:
-        reverse += "00"
-    return reverse
-    #return reverse_byte_order("%x" % int((int(reverse_byte_order(key), 16) % l)))
 
 '''
 var privSk = sc_reduce32(hs);
@@ -58,10 +64,14 @@ var privVk = sc_reduce32(cn_fast_hash(privSk));
 
 if __name__ == '__main__':
     print(__file__)
-    print('Mnemonic Seed:',test_mnemonic_seed)
-    print('25 words seed:',words25(" ".join(test_mnemonic_seed.split(" ")[:24])))
-    print('Hexadecimal Seed:',test_hexadecimal_seed)
-    print('mn_decode:       ',mn_decode(test_mnemonic_seed))
-    print('Private View Key:             ',test_private_view_key)
-    print('cn_fast_hash:                 ',cn_fast_hash(test_hexadecimal_seed))
-    print('sc_reduce32(cn_fast_hash):    ',sc_reduce32(cn_fast_hash(test_hexadecimal_seed)))
+    seed = Seed(test_mnemonic_seed)
+    seed = Seed()
+    print('Mnemonic Seed:',seed.phrase)
+    print('25 words seed:',words25(" ".join(seed.phrase.split(" ")[:24])))
+    print('Hexadecimal Seed:        ',seed.hex)
+    print('mn_decode:               ',mn_decode(seed.phrase))
+    print()
+    print('Private View Key:                      ',seed.secret_view_key())
+    print('secret_view_key(hex):                  ',secret_view_key(seed.hex))
+    print('Private Spend Key:                     ',seed.secret_spend_key())
+    print('secret_spend_key(hex):                 ',secret_spend_key(seed.hex))
