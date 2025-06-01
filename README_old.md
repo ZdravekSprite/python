@@ -5,13 +5,13 @@
 ### Create virtual environment
 
 ```cmd
-python -m venv ve
+python -m venv .venv
 ```
 
 ### Activate virtual environment
 
 ```cmd
-.\ve\Scripts\activate
+.\.venv\Scripts\activate
 ```
 
 ### Install and start Jupyter

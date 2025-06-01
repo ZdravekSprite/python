@@ -56,8 +56,6 @@ def test_address_rows(af_rows,target_block,target_block_rows):
     #print(list(af_rows),af_rows.__dict__)
     return sorted(af_new_rows.values(), key=lambda d: d['address'])
 
-af_fieldnames = ['address','hex','block','outputs']
-
 def test_loged_addreses(target_block = 0, adress_start = ''):
     target_block_rows = []
     for of in log_files('outputs')[:1]:
@@ -89,52 +87,6 @@ def test_loged_addreses(target_block = 0, adress_start = ''):
                         #print(af_rows)
                     target_block+=1
                     target_block_rows=[]
-
-def test_address(seed,target_block_rows):
-    csv_row_dict = {
-        'hex':seed.hex,
-        'address':str(seed.public_address()),
-        'block':'-1',
-        'outputs':0
-    }
-    for target_row in target_block_rows:
-        #print(target_row,csv_row_dict)
-        if check_output(target_row,csv_row_dict):
-            csv_row_dict['outputs']=target_row['outputs']+1
-    csv_row_dict['block']=target_row['block_no']
-    return csv_row_dict
-
-def test_rnd_address(count,target_block_rows):
-    seed = rnd_seed()
-    af_path = path(f'{str(seed.public_address())[:4]}.csv',['address_csv'])
-    rows_dict = dict_csv_dict_reader(af_path)
-    #print('read',len(rows_dict.values()))
-    if str(seed.public_address()) not in rows_dict.keys():
-        count+=1
-        if not count%100: time_print('now:  ',[str(count)])
-        csv_row_dict = test_address(seed,target_block_rows)
-
-        if not os.path.isfile(af_path):
-            csv_dict_writer(af_path,[],af_fieldnames)
-        #print(af_path,target_row,csv_row_dict)
-        #rows_dict[str(seed.public_address())] = csv_row_dict
-        #print('write',len(rows_dict.values()))
-        csv_dict_adder(af_path,[csv_row_dict],af_fieldnames)
-    return count
-
-first_out_dict = {
-    'block_no': 0,
-    'transaction_hash': "c88ce9783b4f11190d7b9c17a69c1c52200f9faaee8e98dd07e6811175177139",
-    'pub': "7767aafcde9be00dcfd098715ebcf7f410daebc582fda69d24a28e9d0bc890d1",
-    'output_no': 0,
-    'output_key': "9b2e4c0281c0b02e7c53291a94d1d0cbff8883f8024f5142ee494ffbbd088071"
-}
-
-def test_rnd_addreses():
-    target_block_rows = [first_out_dict]
-    count=0
-    while True:
-        count = test_rnd_address(count,target_block_rows)
 
 if __name__ == '__main__':
     print(__file__)

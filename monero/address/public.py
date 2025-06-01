@@ -4,7 +4,7 @@ from config import *
 
 from words25 import words25
 from hexseed import mn_decode
-from private import cn_fast_hash,sc_reduce32
+from private import sc_reduce32
 
 import binascii
 import operator as _oper
@@ -84,7 +84,7 @@ def scalarmult(P,e,debug=False):
         if debug:
             print('e & 1:                           ',e)
             print('Q:                               ',Q)
-        Q = edwards(Q,P,True)
+        Q = edwards(Q,P)
         if debug:
             print('Q:                               ',Q)
     if debug:
@@ -188,6 +188,13 @@ def edwards(P,Q):
     y3 = (y1*y2+x1*x2) * inv(1-d*x1*x2*y1*y2)
     return [x3 % q,y3 % q]
 '''
+#pip install pycryptodome
+from Crypto.Hash import keccak
+def cn_fast_hash(str):
+    k = keccak.new(digest_bits=256)
+    k.update(bytearray.fromhex(str))
+    return k.hexdigest()
+
 def print_all():
     print('Mnemonic Seed:            ',test_mnemonic_seed)
     print('25 words seed:            ',words25(" ".join(test_mnemonic_seed.split(" ")[:24])))
@@ -228,5 +235,5 @@ def print_reverse_spend():
 
 if __name__ == '__main__':
     print(__file__)
-    #print_all()
-    print_reverse_spend()
+    print_all()
+    #print_reverse_spend()
