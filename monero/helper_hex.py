@@ -16,6 +16,11 @@ from Crypto.Hash import keccak
 def scalar_reduce(v):
     return nacl.bindings.crypto_core_ed25519_scalar_reduce(v + (64 - len(v)) * b"\0")
 
+def scalar_reduce_keccak_256(data):
+    k256 = keccak.new(digest_bits=256)
+    k256.update(data)
+    return scalar_reduce(k256.digest())
+
 def generate_random_hex(n_bytes=32):
     """Generate a secure and random hexadecimal string. 32 bytes by default, but arguments can override.
 

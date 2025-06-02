@@ -9,9 +9,7 @@ def secret_spend_key(hex_):
 
 def secret_view_key(hex_):
     b = scalar_reduce(unhexlify(hex_))
-    k256 = keccak.new(digest_bits=256)
-    k256.update(b)
-    return hexlify(scalar_reduce(k256.digest())).decode()
+    return hexlify(scalar_reduce_keccak_256(b)).decode()
 
 def public_spend_key(hex_):
     return hexlify(scalarmult_B(unhexlify(secret_spend_key(hex_)))).decode()
