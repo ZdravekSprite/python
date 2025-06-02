@@ -82,4 +82,7 @@ def csv_dict_adder(csv_file_path,csv_list,fieldnames=[]): #fieldnames = ['first_
 def files_in_dir(dir):
     return next(os.walk(dir), (None, None, []))[2]
 
+def folders_in_dir(dir):
+    return next(os.walk(dir), (None, [], None))[1]
+
 
