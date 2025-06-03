@@ -3,6 +3,7 @@ import csv
 import datetime as dt
 from slow import *
 from helper_hex import *
+from helper_file import *
 from monero import base58
 from config import *
 
@@ -34,55 +35,57 @@ def format(from_path,to_path):
         print("now: ",dt.datetime.now().strftime("%Y-%m-%d %H:%M:%S"), file, str(count), " "*10, end='\r')
     print()
 
-def check_slow(
-        hex_,
-        pub = "7767aafcde9be00dcfd098715ebcf7f410daebc582fda69d24a28e9d0bc890d1",
-        no = 0,
-        key = "9b2e4c0281c0b02e7c53291a94d1d0cbff8883f8024f5142ee494ffbbd088071"
-    ):
-    sec = secret_view_key(hex_)
-    der = generate_key_derivation(pub, sec)
-    spk = base58.decode(public_address(hex_))[2:66]
-    pubkey = derive_public_key(der, no, spk)
-    return pubkey == key
+class AddressSlow():
+    def __init__(self, hex_=''):
+        self.hex_ = hex_ if len(hex_)==64 else generate_random_hex()
+    
+    def check_slow(
+            self,
+            pub = "7767aafcde9be00dcfd098715ebcf7f410daebc582fda69d24a28e9d0bc890d1",
+            no = 0,
+            key = "9b2e4c0281c0b02e7c53291a94d1d0cbff8883f8024f5142ee494ffbbd088071"
+        ):
+        hex_ = self.hex_
+        sec = secret_view_key(hex_)
+        der = generate_key_derivation(pub, sec)
+        spk = base58.decode(public_address(hex_))[2:66]
+        pubkey = derive_public_key(der, no, spk)
+        return pubkey == key
 
-def check_fast(
-        unhexlify_hex,
-        unhexlify_pub = b'wg\xaa\xfc\xde\x9b\xe0\r\xcf\xd0\x98q^\xbc\xf7\xf4\x10\xda\xeb\xc5\x82\xfd\xa6\x9d$\xa2\x8e\x9d\x0b\xc8\x90\xd1',
-        variant_no = b'\x00',
-        unhexlify_key = b'\x9b.L\x02\x81\xc0\xb0.|S)\x1a\x94\xd1\xd0\xcb\xff\x88\x83\xf8\x02OQB\xeeIO\xfb\xbd\x08\x80q'
-    ):
-    '''
-    unhexlify_hex = unhexlify(hex_)
-    unhexlify_pub = unhexlify(pub)
-    print(unhexlify_pub)
-    variant_no = variant_encode(no)
-    print(variant_no)
-    unhexlify_key = unhexlify(key)
-    print(unhexlify_key)
-    '''
+    def public_address(self):
+        hex_ = self.hex_
+        netbyte = (18, 53, 24)[0]
+        data = "{:x}{:s}{:s}".format(
+            netbyte, public_spend_key(hex_), public_view_key(hex_)
+        )
+        k256 = keccak.new(digest_bits=256)
+        k256.update(unhexlify(data))
+        checksum = k256.hexdigest()
+        return str(base58.encode(data + checksum[0:8]))
 
-    b = scalar_reduce(unhexlify_hex)
-    svk = scalar_reduce_keccak_256(b)
-    svk_2 = scalar_add(svk, svk)
-    svk_4 = scalar_add(svk_2, svk_2)
-    svk_8 = scalar_add(svk_4, svk_4)
-    der = scalarmult(svk_8, unhexlify_pub)
-    spk = scalarmult_B(scalar_reduce(unhexlify_hex))
-    hsdata = b"".join([der,variant_no])
-    Hs = scalar_reduce_keccak_256(hsdata)
+    def address_file(self):
+        return self.public_address()[:4].lower()+".csv"
 
-    k = edwards_add(
-        scalarmult_B(Hs),
-        spk
-    )
-    return k == unhexlify_key
-
-def rnd_check(debug = False):
-    hex_ = generate_random_hex()
-    check = check_fast(unhexlify(hex_))
-    addr = public_address(hex_)
-    if debug: print(hex_,check,addr)
+def rnd_check(to_path, debug = False):
+    addr = AddressSlow()
+    file_path = os.path.sep.join([to_path]+[addr.address_file()])
+    the_file_path = os.path.sep.join([to_path]+["zero.csv"])
+    real_path = os.path.sep.join([to_path]+["real.csv"])
+    data = csv_reader(file_path)
+    notin = True
+    hex_ = addr.hex_
+    if addr.public_address() in real_address:
+        csv_adder(real_path,[[addr.public_address(),addr.hex_]])
+    if [addr.hex_] not in data:
+        check = addr.check_slow()
+        if check:
+            csv_writer(the_file_path,[[addr.hex_]])
+        else:
+            csv_adder(file_path,[[addr.hex_]])
+    else:
+        check = False
+        notin = False
+    if debug: print(hex_,check,file_path,notin)
     return check
 
 if __name__ == '__main__':
@@ -92,14 +95,29 @@ if __name__ == '__main__':
     #from_path = "c:\\monero\\address_csv"
     #format(from_path,to_path)
     '''
+    test_addr = AddressSlow(test_address_row['hex'])
     print(
         test_address_row['hex'],
-        check_fast(
-            unhexlify(test_address_row['hex']),
-            unhexlify(test_output_row['pub']),
-            variant_encode(test_output_row['output_no']),
-            unhexlify(test_output_row['output_key']),
-            ))
+        test_addr.check_slow(
+            test_output_row['pub'],
+            test_output_row['output_no'],
+            test_output_row['output_key']
+            ),
+        test_addr.public_address(),
+        test_addr.address_file()
+        )
     '''
-    rnd_check(True)
+    count = 0
+    temp_count = 0
+    start_time = dt.datetime.now()
+    while not rnd_check(to_path):
+        count+=1
+        temp_count+=1
+        if not count%100:
+            now_time = dt.datetime.now()
+            delta = now_time - start_time
+            print('now',dt.datetime.now().strftime("%Y-%m-%d %H:%M:%S"), count,int(temp_count//delta.total_seconds()), " "*10, end='\r')
+            temp_count = 0
+            start_time = dt.datetime.now()
+    print()
     print('end:  ',dt.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),' '*10)

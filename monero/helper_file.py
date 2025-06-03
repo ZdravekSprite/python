@@ -34,6 +34,15 @@ def csv_writer(csv_file_path,csv_list):
         for row in csv_list:
             writer.writerow(row)
 
+def csv_adder(csv_file_path,csv_list):
+    if not os.path.isfile(csv_file_path):
+        with open(csv_file_path, 'w', newline='') as csvfile:
+            pass
+    with open(csv_file_path, 'a', newline='') as csvfile:
+        writer = csv.writer(csvfile, delimiter=' ', quotechar='|', quoting=csv.QUOTE_MINIMAL)
+        for row in csv_list:
+            writer.writerow(row)
+
 def csv_dict_reader(csv_file_path):
     csv_list = []
     with open(csv_file_path, newline='') as csvfile:

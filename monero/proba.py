@@ -102,5 +102,5 @@ if __name__ == '__main__':
     #    print(test_if_loged(addr))
     #c:/dev/python/.venv/Scripts/python.exe c:/dev/python/monero/proba.py
     print('start:',dt.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
-    test_loged_addreses(5)
+    test_loged_addreses(6)
     print('end:  ',dt.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),' '*10)

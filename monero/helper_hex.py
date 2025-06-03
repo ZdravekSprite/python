@@ -16,10 +16,13 @@ from Crypto.Hash import keccak
 def scalar_reduce(v):
     return nacl.bindings.crypto_core_ed25519_scalar_reduce(v + (64 - len(v)) * b"\0")
 
-def scalar_reduce_keccak_256(data):
+def keccak_256(unhexlify_data):
     k256 = keccak.new(digest_bits=256)
-    k256.update(data)
-    return scalar_reduce(k256.digest())
+    k256.update(unhexlify_data)
+    return k256
+
+def scalar_reduce_keccak_256(data):
+    return scalar_reduce(keccak_256(data).digest())
 
 def generate_random_hex(n_bytes=32):
     """Generate a secure and random hexadecimal string. 32 bytes by default, but arguments can override.
@@ -78,3 +81,26 @@ def variant_encode(number):
             buf += bytes((towrite,))
             break
     return buf
+
+def check_fast(
+        unhexlify_hex,
+        unhexlify_pub = b'wg\xaa\xfc\xde\x9b\xe0\r\xcf\xd0\x98q^\xbc\xf7\xf4\x10\xda\xeb\xc5\x82\xfd\xa6\x9d$\xa2\x8e\x9d\x0b\xc8\x90\xd1',
+        variant_no = b'\x00',
+        unhexlify_key = b'\x9b.L\x02\x81\xc0\xb0.|S)\x1a\x94\xd1\xd0\xcb\xff\x88\x83\xf8\x02OQB\xeeIO\xfb\xbd\x08\x80q'
+    ):
+
+    b = scalar_reduce(unhexlify_hex)
+    svk = scalar_reduce_keccak_256(b)
+    svk_2 = scalar_add(svk, svk)
+    svk_4 = scalar_add(svk_2, svk_2)
+    svk_8 = scalar_add(svk_4, svk_4)
+    der = scalarmult(svk_8, unhexlify_pub)
+    spk = scalarmult_B(scalar_reduce(unhexlify_hex))
+    hsdata = b"".join([der,variant_no])
+    Hs = scalar_reduce_keccak_256(hsdata)
+
+    k = edwards_add(
+        scalarmult_B(Hs),
+        spk
+    )
+    return k == unhexlify_key
