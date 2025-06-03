@@ -103,5 +103,4 @@ if __name__ == '__main__':
     #c:/dev/python/.venv/Scripts/python.exe c:/dev/python/monero/proba.py
     print('start:',dt.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
     test_loged_addreses(5)
-    #test_rnd_addreses()
     print('end:  ',dt.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),' '*10)

@@ -16,14 +16,17 @@ def test_address(seed,target_block_rows):
     csv_row_dict['block']=target_row['block_no']
     return csv_row_dict
 
-def test_rnd_address(count,target_block_rows):
+def test_rnd_address(count,target_block_rows,start_time):
     seed = rnd_seed()
-    af_path = path(f'{str(seed.public_address())[:4]}.csv',['address_csv'])
-    rows_dict = dict_csv_dict_reader(af_path)
+    af_path = path(f'{str(seed.public_address())[:4]}.csv'.lower(),['address_csv'])
+    rows_dict = dict_csv_dict_reader(af_path,af_fieldnames)
     #print('read',len(rows_dict.values()))
     if str(seed.public_address()) not in rows_dict.keys():
         count+=1
-        if not count%100: time_print('now:  ',[str(count)])
+        if not count%100:
+            now_time = dt.datetime.now()
+            delta = now_time - start_time
+            time_print('now:  ',[str(count),str(int(count//delta.total_seconds()))])
         csv_row_dict = test_address(seed,target_block_rows)
 
         if not os.path.isfile(af_path):
@@ -34,12 +37,16 @@ def test_rnd_address(count,target_block_rows):
         csv_dict_adder(af_path,[csv_row_dict],af_fieldnames)
     return count
 
-def test_rnd_addreses(blocks):
-    target_block_rows = get_transactions(blocks)
-    print(target_block_rows)
+def test_rnd_addreses(blocks=0, debuge = False):
+    if blocks == 0:
+        target_block_rows = [first_out_dict]
+    else:
+        target_block_rows = get_transactions(blocks)
+    if debuge: print(target_block_rows)
     count=0
+    start_time = dt.datetime.now()
     while True:
-        count = test_rnd_address(count,target_block_rows)
+        count = test_rnd_address(count,target_block_rows,start_time)
 
 def get_transactions(block_no:int,debug=False):
     target_block_rows = []
@@ -67,8 +74,8 @@ def test_if_addr_loged(addr):
 if __name__ == '__main__':
     print(__file__)
     print('start:',dt.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
-    #test_rnd_addreses(5)
-    seed = rnd_seed()
-    addr = str(seed.public_address())
-    print(test_if_addr_loged(addr)[0])
+    test_rnd_addreses()
+    #seed = rnd_seed()
+    #addr = str(seed.public_address())
+    #print(test_if_addr_loged(addr)[0])
     print('end:  ',dt.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),' '*10)

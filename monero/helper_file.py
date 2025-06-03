@@ -42,8 +42,12 @@ def csv_dict_reader(csv_file_path):
             csv_list.append(row)
     return csv_list
 
-def dict_csv_dict_reader(csv_file_path):
+def dict_csv_dict_reader(csv_file_path,fieldnames=[]):
     csv_dict = {}
+    if not os.path.exists(csv_file_path):
+        with open(csv_file_path, 'w', newline='') as csvfile:
+            writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+            writer.writeheader()
     with open(csv_file_path, newline='') as csvfile:
         reader = csv.DictReader(csvfile)
         for row in reader:
