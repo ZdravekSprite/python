@@ -23,6 +23,8 @@ def test_rnd_address(count,target_block_rows,start_time):
     #print('read',len(rows_dict.values()))
     if str(seed.public_address()) not in rows_dict.keys():
         count+=1
+        if str(seed.public_address()) in real_address:
+            print('\nreal',str(seed.public_address()))
         if not count%100:
             now_time = dt.datetime.now()
             delta = now_time - start_time
