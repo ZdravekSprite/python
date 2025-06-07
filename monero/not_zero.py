@@ -81,8 +81,9 @@ def dict_write(dict_path,dict_):
 def merge_dict(from_path,to_path):
     from_files = next(os.walk(from_path), (None, None, []))[2]
     count=0
+    start_time = dt.datetime.now()
     for file in from_files:
-
+        delta_count = 0
         path_to_dict, path_to_zero = paths_to(to_path,file)
         zero_list = create_zero_list(path_to_zero)
         csv_dict = create_addr_dict(path_to_dict)
@@ -99,17 +100,22 @@ def merge_dict(from_path,to_path):
                 csv_dict = add_row_to_dict(csv_dict, row)
                 if row['hex'] not in zero_list:
                     count+=1
+                    delta_count+=1
                     zero_append_list.append([row['hex']])
         zero_append(path_to_zero,zero_append_list)
         dict_write(path_to_dict,csv_dict)
-        print("now: ",dt.datetime.now().strftime("%Y-%m-%d %H:%M:%S"), file, count, " "*10, end='\r')
+        now_time = dt.datetime.now()
+        delta = now_time - start_time
+        print("now: ",dt.datetime.now().strftime("%Y-%m-%d %H:%M:%S"), file, count, int(delta_count//delta.total_seconds()), " "*10, end='\r')
+        start_time = dt.datetime.now()
     print()
 
 def merge_zero(from_path,to_path):
     from_files = next(os.walk(from_path), (None, None, []))[2]
     count=0
+    start_time = dt.datetime.now()
     for file in from_files:
-
+        delta_count = 0
         path_to_dict, path_to_zero = paths_to(to_path,file)
         zero_list = create_zero_list(path_to_zero)
         csv_dict = create_addr_dict(path_to_dict)
@@ -123,19 +129,22 @@ def merge_zero(from_path,to_path):
         with open(path_from_zero, newline='') as csvfile:
             reader = csv.reader(csvfile)
             for row in reader:
-                dict_row = {
-                    'address':str(public_address(row[0])),
-                    'hex':row[0],
-                    'block':'0',
-                    'outputs':'0'
-                }
-                csv_dict = add_row_to_dict(csv_dict, dict_row)
                 if row[0] not in zero_list:
                     count+=1
+                    dict_row = {
+                        'address':str(public_address(row[0])),
+                        'hex':row[0],
+                        'block':'0',
+                        'outputs':'0'
+                    }
+                    csv_dict = add_row_to_dict(csv_dict, dict_row)
                     zero_append_list.append(row[0])
         zero_append(path_to_zero,zero_append_list)
         dict_write(path_to_dict,csv_dict)
-        print("now: ",dt.datetime.now().strftime("%Y-%m-%d %H:%M:%S"), file, count, " "*10, end='\r')
+        now_time = dt.datetime.now()
+        delta = now_time - start_time
+        print("now: ",dt.datetime.now().strftime("%Y-%m-%d %H:%M:%S"), file, count, int(delta_count//delta.total_seconds()), " "*10, end='\r')
+        start_time = dt.datetime.now()
     print()
 
 def format(from_path,to_path):
@@ -221,12 +230,12 @@ def rnd_check(to_path, debug = False):
 
 if __name__ == '__main__':
     print(__file__)
-    from_dict_path = "c:\\monero\\address_csv_1" #"c:\\monero\\address_csv"
-    from_zero_path = "c:\\monero\\not_zero_1" #"c:\\monero\\address_csv"
+    from_dict_path = "c:\\monero\\address_csv_1"
+    from_zero_path = "c:\\monero\\not_zero_1"
     to_path = "c:\\monero"
     count=0
     print('start:',dt.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
-    #merge_dict(from_dict_path,to_path)
+    merge_dict(from_dict_path,to_path)
     #merge_zero(from_zero_path,to_path)
     #format(from_path,to_path)
     '''

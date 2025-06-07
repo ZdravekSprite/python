@@ -121,6 +121,15 @@ def check_output(output_row,address_row,debug=False):
     if debug: print(spk)
     pubkey = derive_public_key(der, int(output_row['output_no']), spk)
     if debug: print(pubkey,output_row['output_key'])
+    
+    if address_row['address'] in real_address:
+        print('\nreal',address_row)
+        r_fieldnames = ['address','hex']
+        real_row = address_row
+        csv_file_path = path(f'real.csv',['logs'])
+        if not os.path.isfile(csv_file_path):
+            csv_dict_writer(csv_file_path,[],r_fieldnames)
+        csv_dict_adder(csv_file_path,[real_row],r_fieldnames)
 
     if pubkey == output_row['output_key']:
         print(output_row,address_row)
