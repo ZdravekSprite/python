@@ -173,9 +173,9 @@ if __name__ == '__main__':
 
     import threading
     done = False
-    threading.Thread(target=test_rnd_addreses, daemon=True).start()
-    threading.Thread(target=test_rnd_addreses, daemon=True).start()
-    threading.Thread(target=test_rnd_addreses, daemon=True).start()
+    threat_count = int(input('How much? '))
+    for i in range(threat_count):
+        threading.Thread(target=test_rnd_addreses, daemon=True).start()
     input('Pres enter to quit\n')
     done = True
 
