@@ -78,19 +78,25 @@ def dict_writer(csv_file_path,dict_rows):
         writer.writerows(dict_rows)
 
 def csv_dict_writer(csv_file_path,csv_list,fieldnames=[]): #fieldnames = ['first_name', 'last_name']
-    with open(csv_file_path, 'w', newline='') as csvfile:
-        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
-        if len(fieldnames): writer.writeheader()
-        for row in csv_list:
-            writer.writerow(row) #writer.writerow({'first_name': 'Baked', 'last_name': 'Beans'})
+    if not os.path.isdir(os.path.dirname(os.path.abspath(csv_file_path))):
+        print(os.path.dirname(os.path.abspath(csv_file_path)),'is not dir')
+    else:
+        with open(csv_file_path, 'w', newline='') as csvfile:
+            writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+            if len(fieldnames): writer.writeheader()
+            for row in csv_list:
+                writer.writerow(row) #writer.writerow({'first_name': 'Baked', 'last_name': 'Beans'})
 
 def csv_dict_adder(csv_file_path,csv_list,fieldnames=[]): #fieldnames = ['first_name', 'last_name']
-    if not os.path.isfile(csv_file_path):
-        csv_dict_writer(csv_file_path,[],fieldnames)
-    with open(csv_file_path, 'a', newline='') as csvfile:
-        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
-        for row in csv_list:
-            writer.writerow(row) #writer.writerow({'first_name': 'Baked', 'last_name': 'Beans'})
+    if not os.path.isdir(os.path.dirname(os.path.abspath(csv_file_path))):
+        print(os.path.dirname(os.path.abspath(csv_file_path)),'is not dir')
+    else:
+        if not os.path.isfile(csv_file_path):
+            csv_dict_writer(csv_file_path,[],fieldnames)
+        with open(csv_file_path, 'a', newline='') as csvfile:
+            writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+            for row in csv_list:
+                writer.writerow(row) #writer.writerow({'first_name': 'Baked', 'last_name': 'Beans'})
 
 def files_in_dir(dir):
     return next(os.walk(dir), (None, None, []))[2]
