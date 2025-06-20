@@ -6,10 +6,18 @@
 python -m venv ve
 ```
 
+```zsh
+python3 -m venv ve
+```
+
 ## Activate virtual environment
 
 ```cmd
 .\ve\Scripts\activate
+```
+
+```zsh
+source ./ve/bin/activate
 ```
 
 ## Install requirements
@@ -18,6 +26,12 @@ python -m venv ve
 python -m pip install --upgrade pip
 pip install notebook
 pip install ultralytics
+```
+
+```zsh
+python -m pip install --upgrade pip
+pip install ultralytics
+pip install -U ultralytics
 ```
 
 ## bat
@@ -50,3 +64,20 @@ labelImg datasets\custom\train\images datasets\class\predefined_classes.txt data
 git add . & git commit -am "sql 0.8.0"
 git push
 ```
+
+```bash
+sudo apt update
+sudo apt upgrade
+python3 -m venv ve
+```
+
+### camera
+
+#sudo add-apt-repository ppa:pj-assis/ppa
+sudo apt-get update
+sudo apt-get install guvcview
+
+### git
+
+git config --global user.email "you@example.com"
+git config --global user.name "Your Name"

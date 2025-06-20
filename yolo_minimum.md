@@ -1,0 +1,1 @@
+yolo predict model=yolov8s.pt source="test.mp4"
