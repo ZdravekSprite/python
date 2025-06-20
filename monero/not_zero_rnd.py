@@ -98,7 +98,7 @@ def test_rnd_address_fast(count,target_block_rows,start_time):
         if not count%100:
             now_time = dt.datetime.now()
             delta = now_time - start_time
-            time_print('now:  ',[str(count),str(int(count//delta.total_seconds()))])
+            time_print('now:  ',[f"{count:,}",str(int(count//delta.total_seconds()))])
         csv_row_dict = {
             'hex':seed.hex,
             'address':str(seed.public_address()),
