@@ -77,6 +77,7 @@ def merge_addr(from_path,to_path):
             csv_dict = csv_dict_new
         except Exception as ex:
             err = True
+            print(ex)
         delta_count = len(csv_dict)
 
         path_from_dict = os.path.sep.join([from_path,file])
@@ -85,6 +86,7 @@ def merge_addr(from_path,to_path):
             csv_dict = csv_dict_new
         except Exception as ex:
             err = True
+            print(ex)
         dict_write(path_to_dict,csv_dict)
 
         delta_count = len(csv_dict)-delta_count
@@ -108,9 +110,9 @@ if __name__ == '__main__':
 
     #from_dict_path = "/home/zdravek/projects/python/monero/address_csv/"
     #merge_addr(from_dict_path,to_path)
-    #from_dict_path = "/home/zdravek/projects/monero/address_csv_1/"
-    #merge_addr(from_dict_path,to_path)
-    from_dict_path = "/home/zdravek/projects/monero/address_csv_2/"
+    from_dict_path = "/home/zdravek/projects/monero/address_csv_1/"
     merge_addr(from_dict_path,to_path)
+    #from_dict_path = "/home/zdravek/projects/monero/address_csv_2/"
+    #merge_addr(from_dict_path,to_path)
 
     print('end:  ',dt.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),' '*10)
