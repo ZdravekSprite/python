@@ -8,10 +8,9 @@ def path(file,dirs=[]):
 def file_del(file, debug=False):
     if os.path.exists(file):
         os.remove(file)
-        print(f"{file} deleted")
+        if debug: print(f"{file} deleted")
     else:
         if debug: print(f"{file} does not exist")
-        pass
 
 def file_read(file):
     if os.path.exists(path(file)):

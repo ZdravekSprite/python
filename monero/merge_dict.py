@@ -2,10 +2,11 @@ import os
 import csv
 import datetime as dt
 from config import real_address
+from helper_file import file_del
 
 af_fieldnames = ['address','hex','block','outputs']
 
-def add_row_to_dict(dict_,row_):
+def add_row_to_dict(dict_,row_,debug=False):
     if row_['address'] in dict_.keys():
         if dict_[row_['address']] != row_:
             print('DIFFER:',dict_[row_['address']]['hex'],dict_[row_['address']]['address'],
@@ -29,7 +30,7 @@ def add_row_to_dict(dict_,row_):
                   'new:',row_['block'],row_['outputs'],
                   " "*10)
         else:
-            print('SAME:',row_," "*10, end='\r')
+            if debug: print('SAME:',row_," "*10, end='\r')
     else:
         dict_[row_['address']] = row_
     return dict_
@@ -52,6 +53,7 @@ def dict_write(dict_path,dict_):
 def merge_addr(from_path,to_path):
     from_files = next(os.walk(from_path), (None, None, []))[2]
     count=0
+    files_count=len(from_files)
     start_time = dt.datetime.now()
     for file in from_files:
         
@@ -60,29 +62,47 @@ def merge_addr(from_path,to_path):
             with open(path_to_dict.lower(), 'w', newline='') as csvfile:
                 writer = csv.DictWriter(csvfile, fieldnames=af_fieldnames)
                 writer.writeheader()
-        
+        err = False
         csv_dict = {}
-        csv_dict = create_addr_dict(path_to_dict,csv_dict)
+        try:
+            csv_dict_new = create_addr_dict(path_to_dict,csv_dict)
+            csv_dict = csv_dict_new
+        except Exception as ex:
+            err = True
         delta_count = len(csv_dict)
 
         path_from_dict = os.path.sep.join([from_path,file])
-        csv_dict = create_addr_dict(path_from_dict,csv_dict)
+        try:
+            csv_dict_new = create_addr_dict(path_from_dict,csv_dict)
+            csv_dict = csv_dict_new
+        except Exception as ex:
+            err = True
         dict_write(path_to_dict,csv_dict)
 
         delta_count = len(csv_dict)-delta_count
         count+=len(csv_dict)
         now_time = dt.datetime.now()
         delta = now_time - start_time
-        print("now: ",dt.datetime.now().strftime("%Y-%m-%d %H:%M:%S"), file, count, int(delta_count//delta.total_seconds()), " "*10, end='\r')
+        print("now: ",files_count,dt.datetime.now().strftime("%Y-%m-%d %H:%M:%S"), file, f"{count:,}", int(delta_count//delta.total_seconds()), " "*10, end='\r')
         start_time = dt.datetime.now()
+        if not err:
+            file_del(path_from_dict)
+            files_count-=1
     print()
 
 if __name__ == '__main__':
     print(__file__)
     from_dict_path = "c:\\monero\\address_csv_1"
+    from_dict_path = "/home/zdravek/projects/monero/address_csv_1/"
     to_path = "c:\\monero"
+    to_path = "/home/zdravek/projects/monero/"
     print('start:',dt.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
 
+    #from_dict_path = "/home/zdravek/projects/python/monero/address_csv/"
+    #merge_addr(from_dict_path,to_path)
+    #from_dict_path = "/home/zdravek/projects/monero/address_csv_1/"
+    #merge_addr(from_dict_path,to_path)
+    from_dict_path = "/home/zdravek/projects/monero/address_csv_2/"
     merge_addr(from_dict_path,to_path)
 
     print('end:  ',dt.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),' '*10)
