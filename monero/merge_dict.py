@@ -35,10 +35,18 @@ def add_row_to_dict(dict_,row_,debug=False):
         dict_[row_['address']] = row_
     return dict_
 
+def de_x00(addr):
+    while True:
+        if addr[0]=='\00':
+            addr = addr[1:]
+        else:
+            return addr
+        
 def create_addr_dict(dict_path,csv_dict):
     with open(dict_path, newline='') as csvfile:
         reader = csv.DictReader(csvfile, fieldnames=af_fieldnames)
         for row in reader:
+            if row['address'][0]=='\00': row['address'] = de_x00(row['address'])
             if row['address'] in real_address: print('real',row)
             if row['address'] != 'address': csv_dict = add_row_to_dict(csv_dict, row)
     return csv_dict
