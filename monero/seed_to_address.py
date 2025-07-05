@@ -128,7 +128,7 @@ def encode_block(data, buf, index):
 
     while num > 0:
         num,remainder = split_int(num,58)
-        buf[index+i] = __alphabet[remainder];
+        buf[index+i] = __alphabet[remainder]
         i -= 1
 
     return buf
