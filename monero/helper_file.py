@@ -103,4 +103,13 @@ def files_in_dir(dir):
 def folders_in_dir(dir):
     return next(os.walk(dir), (None, [], None))[1]
 
+def file_name(address):
+    name = ''
+    for c in range(4):
+        name+=format(ord(address[c]),f'02x')
+    name += '_'+address[:4]
+    return name
 
+if __name__ == '__main__':
+    print(__file__)
+    print(file_name('47LicRFuuhU2jxUk1XxSqnhcnLNMjgHX35ELKZ2ZoUJWd36dG7oNw955X9rt2HEri3XVioRkdGtFvRBbm1CiuSgZSY2Ka79'))
