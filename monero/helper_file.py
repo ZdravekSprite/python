@@ -110,6 +110,25 @@ def file_name(address):
     name += '_'+address[:4]
     return name
 
+def addr_csv_file_path(folder,address,fieldnames=[]):
+    name = file_name(address)
+    if not os.path.isdir(folder):
+        os.mkdir(folder)
+    sub_folder = os.path.sep.join([folder,address[:2]])
+    if not os.path.isdir(sub_folder):
+        os.mkdir(sub_folder)
+    csv_file_path = os.path.sep.join([sub_folder,name+'.csv'])
+    if not os.path.isfile(csv_file_path):
+        with open(csv_file_path, 'w', newline='') as csvfile:
+            writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+            writer.writeheader()
+    return csv_file_path
+
 if __name__ == '__main__':
     print(__file__)
-    print(file_name('47LicRFuuhU2jxUk1XxSqnhcnLNMjgHX35ELKZ2ZoUJWd36dG7oNw955X9rt2HEri3XVioRkdGtFvRBbm1CiuSgZSY2Ka79'))
+    address = '47LicRFuuhU2jxUk1XxSqnhcnLNMjgHX35ELKZ2ZoUJWd36dG7oNw955X9rt2HEri3XVioRkdGtFvRBbm1CiuSgZSY2Ka79'
+    file_name_1 = file_name(address)
+    print(file_name_1)
+    SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+    file_path_1 = addr_csv_file_path(SCRIPT_DIR,address)
+    print(file_path_1)
