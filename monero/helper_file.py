@@ -114,13 +114,16 @@ def file_name(address,part=6):
     name += '_'+address[:part]
     return name
 
-def addr_csv_file_path(folder,address,fieldnames=[]):
+def addr_csv_file_path(folder,address,fieldnames=[],part=6):
     name = file_name(address)
     if not os.path.isdir(folder):
         os.mkdir(folder)
-    sub_folder = os.path.sep.join([folder,address[:2]])
-    if not os.path.isdir(sub_folder):
-        os.mkdir(sub_folder)
+    sub_folders = [address[i:i + 2] for i in range(0, len(address[:part]), 2)]
+    sub_folder = folder
+    for sub_f in sub_folders:
+        sub_folder = os.path.sep.join([sub_folder,file_name(sub_f,len(sub_f))])
+        if not os.path.isdir(sub_folder):
+            os.mkdir(sub_folder)
     csv_file_path = os.path.sep.join([sub_folder,name+'.csv'])
     if not os.path.isfile(csv_file_path):
         with open(csv_file_path, 'w', newline='') as csvfile:
@@ -135,5 +138,5 @@ if __name__ == '__main__':
     #print(file_name_1)
     SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
     file_path_1 = addr_csv_file_path(SCRIPT_DIR,address)
-    #print(file_path_1)
-    print(files_path_in_dir(SCRIPT_DIR))
+    print(file_path_1)
+    #print(files_path_in_dir(SCRIPT_DIR))
