@@ -52,10 +52,13 @@ def merge_files(from_path,to_path):
 if __name__ == '__main__':
     print(__file__)
     to_path = "c:\\monero"
+    to_path = "/home/zdravek/projects/monero/address_csv_new/"
     print('start:',dt.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
 
     from_path = "c:\\monero\\address_csv_2"
-
+    from_path = "/home/zdravek/projects/monero/address_csv/"
     merge_files(from_path,to_path)
+    #from_path = "/home/zdravek/projects/monero/address_csv_1/"
+    #merge_files(from_path,to_path)
 
     print('end:  ',dt.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),' '*10)

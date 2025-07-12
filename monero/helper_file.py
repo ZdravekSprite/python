@@ -100,14 +100,18 @@ def csv_dict_adder(csv_file_path,csv_list,fieldnames=[]): #fieldnames = ['first_
 def files_in_dir(dir):
     return next(os.walk(dir), (None, None, []))[2]
 
+def files_path_in_dir(dir):
+    files = files_in_dir(dir)
+    return [os.path.sep.join([dir,file]) for file in files]
+
 def folders_in_dir(dir):
     return next(os.walk(dir), (None, [], None))[1]
 
-def file_name(address):
+def file_name(address,part=6):
     name = ''
-    for c in range(4):
+    for c in range(part):
         name+=format(ord(address[c]),f'02x')
-    name += '_'+address[:4]
+    name += '_'+address[:part]
     return name
 
 def addr_csv_file_path(folder,address,fieldnames=[]):
@@ -128,7 +132,8 @@ if __name__ == '__main__':
     print(__file__)
     address = '47LicRFuuhU2jxUk1XxSqnhcnLNMjgHX35ELKZ2ZoUJWd36dG7oNw955X9rt2HEri3XVioRkdGtFvRBbm1CiuSgZSY2Ka79'
     file_name_1 = file_name(address)
-    print(file_name_1)
+    #print(file_name_1)
     SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
     file_path_1 = addr_csv_file_path(SCRIPT_DIR,address)
-    print(file_path_1)
+    #print(file_path_1)
+    print(files_path_in_dir(SCRIPT_DIR))
