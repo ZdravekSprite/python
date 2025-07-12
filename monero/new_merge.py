@@ -3,6 +3,7 @@ import csv
 import datetime as dt
 from helper_file import *
 from config import real_address
+from helper import time_print
 
 af_fieldnames = ['address','hex','block','outputs']
 
@@ -30,10 +31,13 @@ def merge_files(from_path,to_path):
     print(from_path)
     print(to_path)
     from_files = files_in_dir(from_path)
+    file_count = len(from_files)
     for file in from_files:
+        file_count-=1
         if file[:1] != "_":
             from_file_path = os.path.sep.join([from_path,file])
-            print(from_file_path)
+            #print(from_file_path)
+            time_print('now:  ',[from_file_path,str(file_count)])
             with open(from_file_path, newline='') as csvfile:
                 reader = csv.DictReader(csvfile, fieldnames=af_fieldnames)
                 for row in reader:
@@ -59,9 +63,9 @@ if __name__ == '__main__':
     print('start:',dt.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
 
     from_path = "c:\\monero\\address_csv_2"
-    from_path = "/home/zdravek/projects/monero/address_csv/"
+    from_path = "/home/zdravek/projects/monero/address_csv"
     merge_files(from_path,to_path)
-    #from_path = "/home/zdravek/projects/monero/address_csv_1/"
-    #merge_files(from_path,to_path)
+    from_path = "/home/zdravek/projects/monero/address_csv_1"
+    merge_files(from_path,to_path)
 
     print('end:  ',dt.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),' '*10)

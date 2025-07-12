@@ -5,7 +5,7 @@ import binascii
 import varint
 
 from config import first_out_dict, real_address
-from helper_file import path, csv_dict_writer, csv_dict_adder
+from helper_file import path, csv_dict_writer, csv_dict_adder, addr_csv_file_path
 from helper import time_print
 
 #pip install monero
@@ -91,7 +91,6 @@ def test_address(csv_row_dict,target_block_rows):
 
 def test_rnd_address_fast(count,target_block_rows,start_time):
     seed = rnd_seed()
-    af_path = path(f'{str(seed.public_address())[:4]}.csv'.lower(),['address_csv'])
     #if str(seed.public_address()) not in rows_dict.keys():
     if True:
         count+=1
@@ -109,8 +108,13 @@ def test_rnd_address_fast(count,target_block_rows,start_time):
         }
         csv_row_dict = test_address(csv_row_dict,target_block_rows)
 
-        if not os.path.isfile(af_path):
-            csv_dict_writer(af_path,[],af_fieldnames)
+        #af_path = path(f'{str(seed.public_address())[:4]}.csv'.lower(),['address_csv'])
+        #to_path = "/home/zdravek/projects/monero/address_csv_new/"
+        SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+        to_path = os.path.sep.join([SCRIPT_DIR]+['address_csv'])
+        af_path = addr_csv_file_path(to_path,str(seed.public_address()),af_fieldnames)
+        #if not os.path.isfile(af_path):
+        #    csv_dict_writer(af_path,[],af_fieldnames)
         csv_dict_adder(af_path,[csv_row_dict],af_fieldnames)
     return count
 
