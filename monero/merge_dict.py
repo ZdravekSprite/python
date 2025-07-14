@@ -2,7 +2,7 @@ import os
 import csv
 import datetime as dt
 from config import real_address
-from helper_file import file_del
+from helper_file import file_del, path, csv_dict_adder
 
 af_fieldnames = ['address','hex','block','outputs']
 
@@ -42,12 +42,15 @@ def de_x00(addr):
         else:
             return addr
         
-def create_addr_dict(dict_path,csv_dict):
+def create_addr_dict(dict_path,csv_dict={}):
     with open(dict_path, newline='') as csvfile:
         reader = csv.DictReader(csvfile, fieldnames=af_fieldnames)
         for row in reader:
             if row['address'][0]=='\00': row['address'] = de_x00(row['address'])
-            if row['address'] in real_address: print('real',row)
+            if row['address'] in real_address:
+                print('real',row)
+                csv_file_path = path('real.csv',['logs'])
+                csv_dict_adder(csv_file_path,[row],fieldnames=af_fieldnames)
             if row['address'] != 'address': csv_dict = add_row_to_dict(csv_dict, row)
     return csv_dict
 
