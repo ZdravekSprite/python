@@ -114,14 +114,15 @@ def file_name(address,part=6):
     name += '_'+address[:part]
     return name
 
-def addr_csv_file_path(folder,address,fieldnames=[],part=6):
-    name = file_name(address)
+def addr_csv_file_path(folder,address,fieldnames=[],part=5):
+    name = file_name(address,part)
     if not os.path.isdir(folder):
         os.mkdir(folder)
     sub_folder = os.path.sep.join([folder,address[:2]])
     if not os.path.isdir(sub_folder):
         os.mkdir(sub_folder)
-    sub_folders = [address[i:i + 2] for i in range(2, len(address[:part-2]), 2)]
+    #sub_folders = [address[i:i + 2] for i in range(2, len(address[:part-2]), 2)]
+    sub_folders = [address[:i+1] for i in range(2, len(address[:part-1]))]
     for sub_f in sub_folders:
         sub_folder = os.path.sep.join([sub_folder,file_name(sub_f,len(sub_f))])
         if not os.path.isdir(sub_folder):
