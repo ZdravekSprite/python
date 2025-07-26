@@ -12,6 +12,15 @@ def file_del(file, debug=False):
     else:
         if debug: print(f"{file} does not exist")
 
+def dir_del(folder, debug=False):
+    if (len(files_in_dir(folder))+len(folders_in_dir(folder))) == 0:
+        os.rmdir(folder)
+        if debug: print(f"{folder} deleted")
+        return True
+    else:
+        if debug: print(f"{folder} not deleted")
+        return False
+
 def file_read(file):
     if os.path.exists(path(file)):
         return open(path(file),"r",encoding="utf-8")

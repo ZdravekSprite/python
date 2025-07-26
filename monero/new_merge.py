@@ -58,12 +58,11 @@ def create_addr_dict_with_files(dict_path,to_path,csv_files_dict={}):
     return csv_files_dict
 
 def merge_files(from_path,to_path):
-    print(from_path)
-    print(to_path)
     from_files = files_in_dir(from_path)
     #import random
     #random.shuffle(from_files)
     files_count = len(from_files)
+    print("now: ",files_count,dt.datetime.now().strftime("%Y-%m-%d %H:%M:%S"), from_path,">",to_path, " "*20, end='\r')
     start_time = dt.datetime.now()
     for file in from_files:
         if file[:1] != "_":
@@ -108,7 +107,7 @@ def merge_files(from_path,to_path):
             #rename_file_path = os.path.sep.join([from_path,"_"+file])
             #os.rename(from_file_path, rename_file_path)
             delta = dt.datetime.now() - start_time
-            print("now: ",files_count,dt.datetime.now().strftime("%Y-%m-%d %H:%M:%S"), file, delta.total_seconds(),len(new_csv_files_dict), " "*20, end='\r')
+            print("now: ",files_count,dt.datetime.now().strftime("%Y-%m-%d %H:%M:%S"), file, delta.total_seconds(),int(delta.total_seconds()*files_count/60),"min", " "*20, end='\r')
             start_time = dt.datetime.now()
             file_del(from_file_path)
             #exit()
@@ -116,21 +115,28 @@ def merge_files(from_path,to_path):
 
 def merge_files_and_folders(from_path,to_path):
     merge_files(from_path,to_path)
+    print(from_path,">",to_path, " "*40)
     folders = folders_in_dir(from_path)
     for folder in folders:
-        print(os.path.sep.join([from_path,folder]))
+        #print(os.path.sep.join([from_path,folder]))
+        merge_files_and_folders(os.path.sep.join([from_path,folder]),to_path)
+    dir_del(from_path)
 
 if __name__ == '__main__':
     print(__file__)
-    to_path = "C:\\dev\\python\\monero\\address_csv" #"C:\\monero\\address_csv"
+    to_path = "C:\\monero" #"C:\\dev\\python\\monero\\address_csv" #"C:\\monero\\address_csv"
     #to_path = "/home/zdravek/projects/monero/address_csv_new/"
     print('start:',dt.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
 
-    from_path = "C:\\monero\\address_csv" #"C:\\dev\\python\\monero\\address_csv"
+    #from_path = "/home/zdravek/projects/monero/address_csv_1"
+    from_path = "d:\\monero\\42"
+    #merge_files_and_folders(from_path,to_path)
+    #from_path = "c:\\monero\\address_csv"
+    #merge_files_and_folders(from_path,to_path)
+    #from_path = "d:\\monero\\test"
+    #from_path = "D:\\3438_48"
     #from_path = "/home/zdravek/projects/monero/address_csv"
     #merge_files(from_path,to_path)
     merge_files_and_folders(from_path,to_path)
-    #from_path = "/home/zdravek/projects/monero/address_csv_1"
-    #merge_files(from_path,to_path)
 
     print('end:  ',dt.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),' '*10)
