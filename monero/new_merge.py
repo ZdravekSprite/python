@@ -115,7 +115,7 @@ def merge_files(from_path,to_path):
 
 def merge_files_and_folders(from_path,to_path):
     merge_files(from_path,to_path)
-    print(from_path,">",to_path, " "*40)
+    print(dt.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),from_path,">",to_path, " "*30)
     folders = folders_in_dir(from_path)
     for folder in folders:
         #print(os.path.sep.join([from_path,folder]))
@@ -128,12 +128,12 @@ if __name__ == '__main__':
     #to_path = "/home/zdravek/projects/monero/address_csv_new/"
     print('start:',dt.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
 
-    #from_path = "/home/zdravek/projects/monero/address_csv_1"
-    from_path = "d:\\monero\\42"
+    #from_path = "/home/zdravek/projects/monero/address_csv_new/"
+    from_path = "C:\\monero\\usb\\41"
     #merge_files_and_folders(from_path,to_path)
     #from_path = "c:\\monero\\address_csv"
     #merge_files_and_folders(from_path,to_path)
-    #from_path = "d:\\monero\\test"
+    #from_path = "d:\\monero\\42"
     #from_path = "D:\\3438_48"
     #from_path = "/home/zdravek/projects/monero/address_csv"
     #merge_files(from_path,to_path)
