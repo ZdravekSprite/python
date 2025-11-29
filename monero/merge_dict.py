@@ -8,6 +8,10 @@ af_fieldnames = ['address','hex','block','outputs']
 
 def add_row_to_dict(dict_,row_,debug=False):
     if row_['address'] in dict_.keys():
+        if len(row_['address']) != 95:
+            exit
+        if len(row_['block']) != 64:
+            exit
         if dict_[row_['address']] != row_:
             print('DIFFER:',dict_[row_['address']]['hex'],dict_[row_['address']]['address'],
                   'old:',dict_[row_['address']]['block'],dict_[row_['address']]['outputs'],

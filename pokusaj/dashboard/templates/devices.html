@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Device Dashboard</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+body { font-family: Arial; padding:20px; background:#f4f4f4; overflow-x:hidden;}
+.chart-container{
+    width:100%;
+    max-height:250px;
+    background:#fff;
+    padding-bottom:40px!important;
+    border:1px solid #ccc;
+    border-radius:5px;
+    box-sizing: border-box;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+canvas{ max-width:100%; max-height:100%; width:100%; height:100%; }
+table{width:100%;border-collapse:collapse;background:white;margin-top:20px;}
+th,td{padding:8px;border-bottom:1px solid #ccc; vertical-align:top;}
+th{background:#eee;cursor:pointer;}
+#syncBox{padding:10px; background:#fff; border:1px solid #ccc; margin-bottom:20px;}
+#progressBar{height:20px; width:0%; background:#4caf50;}
+button {padding:5px 10px; cursor:pointer;}
+button:disabled {background:#ccc; cursor:default;}
+#statusFilter {padding:5px; margin-left:10px;}
+#modelFilter {padding:5px; margin-left:10px;}
+#deviceModal {display:none; position:fixed; top:0; left:0; width:100%; height:100%;
+    background: rgba(0,0,0,0.5); justify-content:center; align-items:center;}
+#deviceModalContent {background:white; padding:20px; max-width:900px; width:90%; max-height:85%; overflow:auto;
+    border-radius:5px; position:relative;}
+#modalClose {position:absolute; top:10px; right:15px; cursor:pointer; font-size:20px;}
+td table {border-collapse: collapse; width:100%;}
+td table td, td table th { border:1px solid #ccc; padding:4px; font-size:13px; }
+td table th { background:#eee; }
+</style>
+</head>
+<body>
+
+<h1>📡 Device Dashboard</h1>
+
+<!-- SYNC STATUS -->
+<div id="syncBox">
+<h3>Status učitavanja:</h3>
+<div id="syncText">Učitavanje...</div>
+<div style="width:100%;background:#eee;height:20px;margin-top:10px;">
+<div id="progressBar"></div>
+</div>
+</div>
+
+<!-- CHARTOVI -->
+<div style="display:flex; gap:20px; flex-wrap:wrap; padding-bottom:20px;">
+
+  <div class="chart-container" style="flex:1 1 25%; flex-direction: column; padding:15px; box-sizing:border-box; max-width:none;">
+    <h3 style="text-align:center;">Status uređaja</h3>
+    <canvas id="statusChart"></canvas>
+  </div>
+
+  <div class="chart-container" style="flex:2 1 40%; flex-direction: column; padding:15px; box-sizing:border-box; max-width:none;">
+    <h3 style="text-align:center;">Trend ažuriranja uređaja</h3>
+    <canvas id="trendChart"></canvas>
+  </div>
+
+  <div class="chart-container" style="flex:1 1 25%; flex-direction: column; padding:15px; box-sizing:border-box; max-width:none;">
+    <h3 style="text-align:center;">Uređaji po modelu</h3>
+    <canvas id="modelChart"></canvas>
+  </div>
+
+</div>
+
+<h2>Uređaji</h2>
+
+<!-- Filteri -->
+<label for="statusFilter">Filter po statusu:</label>
+<select id="statusFilter" onchange="applyStatusFilter()">
+    <option value="all">Svi statusi</option>
+</select>
+
+<label for="modelFilter">Filter po modelu:</label>
+<select id="modelFilter" onchange="applyModelFilter()">
+    <option value="all">Svi modeli</option>
+</select>
+
+<!-- TABLICA -->
+<table id="deviceTable">
+<thead>
+<tr>
+<th onclick="sortTable(0)">IMEI</th>
+<th onclick="sortTable(1)">Model</th>
+<th onclick="sortTable(2)">Status</th>
+<th onclick="sortTable(3)">Opis</th>
+<th onclick="sortTable(4)">Ažurirano</th>
+<th onclick="sortTable(5)">Firmware</th>
+</tr>
+</thead>
+<tbody></tbody>
+</table>
+
+<div id="pagination" style="margin-top:10px;"></div>
+
+<!-- MODAL -->
+<div id="deviceModal">
+    <div id="deviceModalContent">
+        <span id="modalClose">&times;</span>
+        <h3>Detalji uređaja</h3>
+        <div id="modalContent"></div>
+    </div>
+</div>
+
+<script>
+let deviceData = [];
+let filteredData = [];
+let currentPage = 1;
+const rowsPerPage = 20;
+
+// ==================== JSON TABLE ====================
+function generateJsonTable(data) {
+    function buildTable(obj) {
+        let html = `<table><thead><tr><th>Ključ</th><th>Vrijednost</th></tr></thead><tbody>`;
+        if (Array.isArray(obj)) {
+            obj.forEach((value,index)=>{ html += `<tr><td>${index}</td><td>${format(value)}</td></tr>`; });
+        } else if (typeof obj === "object" && obj !== null) {
+            for (let key in obj) { html += `<tr><td>${key}</td><td>${format(obj[key])}</td></tr>`; }
+        }
+        html += "</tbody></table>"; return html;
+    }
+    function format(value){
+        if (value === null) return "<i>null</i>";
+        if (typeof value === "string") return value.replace(/\n/g,"<br>");
+        if (typeof value === "number" || typeof value === "boolean") return value;
+        if (typeof value === "object") return buildTable(value);
+        return String(value);
+    }
+    return buildTable(data);
+}
+
+// ==================== MODAL ====================
+function showDeviceDetails(dev){
+    const modal = document.getElementById("deviceModal");
+    const content = document.getElementById("modalContent");
+    let raw = {};
+    try { raw = JSON.parse(dev.raw_json); } catch (e) {}
+    content.innerHTML = `<b>IMEI:</b> ${dev.imei}<br>
+<b>Model:</b> ${dev.model || ""}<br>
+<b>Status:</b> ${dev.activity_status || ""}<br>
+<b>Firmware:</b> ${dev.current_firmware || ""}<br>
+<b>Opis:</b> ${dev.description || ""}<br>
+<b>Ažurirano:</b> ${dev.updated_at}<br><br>
+<h3>Raw JSON</h3>${generateJsonTable(raw)}`;
+    modal.style.display = "flex";
+}
+
+document.getElementById("modalClose").onclick = () => {
+    document.getElementById("deviceModal").style.display = "none";
+};
+window.onclick = e => {
+    if(e.target === document.getElementById("deviceModal")){
+        document.getElementById("deviceModal").style.display = "none";
+    }
+};
+
+// ==================== TABLE ====================
+function loadTable(){
+    fetch("/api/devices").then(r=>r.json()).then(data=>{
+        deviceData = data; filteredData = data.slice();
+        populateStatusFilter();
+        populateModelFilter();
+        currentPage = 1;
+        displayFilteredPage();
+    });
+}
+
+function populateStatusFilter(){
+    const select = document.getElementById("statusFilter");
+    select.innerHTML = '<option value="all">Svi statusi</option>';
+    const statuses = [...new Set(deviceData.map(d => d.activity_status).filter(s => s))];
+    statuses.forEach(s => { select.innerHTML += `<option value="${s}">${s}</option>`; });
+}
+
+function populateModelFilter() {
+    const select = document.getElementById("modelFilter");
+    select.innerHTML = '<option value="all">Svi modeli</option>';
+    const models = [...new Set(deviceData.map(d => d.model).filter(m => m))];
+    models.forEach(m => { select.innerHTML += `<option value="${m}">${m}</option>`; });
+}
+
+function applyFilters() {
+    const statusFilter = document.getElementById("statusFilter").value;
+    const modelFilter = document.getElementById("modelFilter").value;
+    
+    // Filtriraj prema statusu i modelu
+    filteredData = deviceData.filter(d => 
+        (statusFilter === "all" || d.activity_status === statusFilter) &&
+        (modelFilter === "all" || d.model === modelFilter)
+    );
+    
+    currentPage = 1; // Vratiti na prvu stranicu nakon primjene filtera
+    displayFilteredPage();
+}
+
+function applyStatusFilter() {
+    applyFilters(); // Pozivamo funkciju koja uzima u obzir oba filtera
+}
+
+function applyModelFilter() {
+    applyFilters(); // Pozivamo funkciju koja uzima u obzir oba filtera
+}
+
+function displayFilteredPage(){
+    const tbody = document.querySelector("#deviceTable tbody"); 
+    tbody.innerHTML="";
+    const start = (currentPage-1)*rowsPerPage;
+    const pageItems = filteredData.slice(start,start+rowsPerPage);
+    pageItems.forEach(dev => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `<td>${dev.imei}</td>
+                        <td>${dev.model || ""}</td>
+                        <td>${dev.activity_status || ""}</td>
+                        <td>${dev.description || ""}</td>
+                        <td>${dev.updated_at}</td>
+                        <td>${dev.current_firmware || ""}</td>`;
+        tr.onclick = () => showDeviceDetails(dev); 
+        tbody.appendChild(tr);
+    });
+    setupPagination();
+}
+
+function setupPagination(){
+    const pageCount = Math.ceil(filteredData.length / rowsPerPage);
+    const div = document.getElementById("pagination");
+    div.innerHTML = `<button onclick="prevPage()" ${currentPage === 1 ? "disabled" : ""}>Prev</button>
+                    <b> ${currentPage} / ${pageCount} </b>
+                    <button onclick="nextPage()" ${currentPage === pageCount ? "disabled" : ""}>Next</button>`;
+}
+
+function prevPage() { if (currentPage > 1) { currentPage--; displayFilteredPage(); } }
+function nextPage() { const max = Math.ceil(filteredData.length / rowsPerPage); if (currentPage < max) { currentPage++; displayFilteredPage(); } }
+
+// ==================== SYNC STATUS ====================
+function loadSyncStatus(){
+    fetch("/api/sync-status").then(r=>r.json()).then(s=>{
+        const txt=document.getElementById("syncText");
+        const bar=document.getElementById("progressBar");
+        if(s.running){
+            let pct=Math.min(100,(s.current_page/(s.total_pages||s.current_page+1))*100);
+            bar.style.width=pct+"%";
+            txt.innerHTML=`Učitavanje uređaja... stranica ${s.current_page} od ${s.total_pages}`;
+        } else {
+            bar.style.width="100%";
+            txt.innerHTML=`Zadnji sync: ${s.last_sync}<br>
+Sljedeći sync: ${s.next_sync ? new Date(s.next_sync*1000).toLocaleTimeString() : "N/A"}`;
+        }
+    });
+}
+
+// ==================== CHARTS ====================
+function loadStatusChart(){
+    fetch("/api/status-stats").then(r=>r.json()).then(data=>{
+        new Chart(document.getElementById("statusChart"),{ type:"pie",
+            data:{ labels:data.labels, datasets:[{ data:data.counts,
+            backgroundColor:["#4caf50","#ff9800","#f44336","#2196f3","#9c27b0"] }] },
+            options:{ responsive:true, maintainAspectRatio:true, plugins:{ legend:{ position:'right' } } } });
+    });
+}
+
+function loadTrendChart(){
+    fetch("/api/update-trend").then(r=>r.json()).then(data=>{
+        new Chart(document.getElementById("trendChart"),{ type:"line",
+            data:{ labels:data.labels, datasets:[{ label:"Ažuriranja", data:data.counts,
+            borderColor:"#2196f3", fill:false }] },
+            options:{ responsive:true, maintainAspectRatio:true } });
+    });
+}
+
+function loadModelChart(){
+    fetch("/api/model-stats").then(r=>r.json()).then(data=>{
+        const colors = data.labels.map(()=>`hsl(${Math.random()*360},70%,60%)`);
+        new Chart(document.getElementById("modelChart"),{ type:"pie",
+            data:{ labels:data.labels, datasets:[{ data:data.counts, backgroundColor:colors }] },
+            options:{ responsive:true, maintainAspectRatio:true, plugins:{ legend:{ position:'right' } } } });
+    });
+}
+
+// ==================== INIT ====================
+loadTable();
+loadStatusChart();
+loadTrendChart();
+loadModelChart();
+loadSyncStatus();
+setInterval(loadTable,300000);
+setInterval(loadSyncStatus,20000);
+
+// ==================== TABLE SORT ====================
+function sortTable(n){
+    const table=document.getElementById("deviceTable");
+    let switching=true, dir="asc";
+    while(switching){
+        switching=false;
+        const rows=table.rows;
+        for(let i=1;i<rows.length-1;i++){
+            let x=rows[i].cells[n].innerText.toLowerCase();
+            let y=rows[i+1].cells[n].innerText.toLowerCase();
+            let shouldSwitch=false;
+            if(dir==="asc" && x>y) shouldSwitch=true;
+            else if(dir==="desc" && x<y) shouldSwitch=true;
+            if(shouldSwitch){ rows[i].parentNode.insertBefore(rows[i+1],rows[i]); switching=true; }
+        }
+        if(!switching && dir==="asc") dir="desc", switching=true;
+    }
+}
+</script>
+
+</body>
+</html>

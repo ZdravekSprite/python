@@ -24,6 +24,7 @@ yolov7
 CustomDataset/kinetics_classnames.json
 __pycache__
 */__pycache__
+config.py
 
 */run/*
 */pyvenv.cfg

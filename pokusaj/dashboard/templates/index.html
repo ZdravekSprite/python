@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="hr">
+<head>
+<meta charset="UTF-8">
+<title>Dashboard - SIM & Device</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+    body { font-family: Arial, sans-serif; padding: 20px; background: #f4f4f4; }
+    h1 { text-align: center; }
+    .chart-container {
+        width: 100%;
+        max-height: 250px;
+        background: #fff;
+        padding-bottom: 40px !important;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        box-sizing: border-box;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 20px 0;
+    }
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        background: white;
+        margin-top: 20px;
+    }
+    th, td {
+        padding: 8px;
+        border-bottom: 1px solid #ccc;
+        vertical-align: top;
+    }
+    th {
+        background: #eee;
+        cursor: pointer;
+    }
+    #syncBox {
+        padding: 10px;
+        background: #fff;
+        border: 1px solid #ccc;
+        margin-bottom: 20px;
+    }
+    #simProgressBar {
+        height: 20px;
+        width: 0%;
+        background: #4caf50;
+    }
+    #devProgressBar {
+        height: 20px;
+        width: 0%;
+        background: #4caf50;
+    }
+    button {
+        padding: 5px 10px;
+        cursor: pointer;
+    }
+    button:disabled {
+        background: #ccc;
+        cursor: default;
+    }
+</style>
+</head>
+<body>
+
+<h1>📡 SIM & Device Dashboard</h1>
+
+<!-- SYNC STATUS -->
+<div id="syncBox">
+    <h3>Status SIM učitavanja:</h3>
+    <div id="simSyncText">Učitavanje...</div>
+    <div style="width:100%; background:#eee; height:20px; margin-top:10px;">
+        <div id="simProgressBar"></div>
+    </div>
+    <h3>Status učitavanja uređaja:</h3>
+    <div id="devSyncText">Učitavanje...</div>
+    <div style="width:100%; background:#eee; height:20px; margin-top:10px;">
+        <div id="devProgressBar"></div>
+    </div>
+</div>
+
+<script>
+
+// ==================== SYNC STATUS ====================
+function loadSyncStatus(){
+    fetch("/api/sync-status").then(r=>r.json()).then(s=>{
+        const simTxt=document.getElementById("simSyncText");
+        const simBar=document.getElementById("simProgressBar");
+        if(s.sim_running){
+            let pct=Math.min(100,(s.sim_current_page/(s.sim_total_pages||s.sim_current_page+1))*100);
+            simBar.style.width=pct+"%";
+            simTxt.innerHTML=`Učitavanje SIM... stranica ${s.sim_current_page} od ${s.sim_total_pages}`;
+        } else {
+            simBar.style.width="100%";
+            simTxt.innerHTML=`Zadnji sync: ${s.sim_last_sync}<br>
+Sljedeći sync: ${s.sim_next_sync ? new Date(s.sim_next_sync*1000).toLocaleTimeString() : "N/A"}`;
+        }
+        const devTxt=document.getElementById("devSyncText");
+        const devBar=document.getElementById("devProgressBar");
+        if(s.dev_running){
+            let pct=Math.min(100,(s.dev_current_page/(s.dev_total_pages||s.dev_current_page+1))*100);
+            devBar.style.width=pct+"%";
+            devTxt.innerHTML=`Učitavanje uređaja... stranica ${s.dev_current_page} od ${s.dev_total_pages}`;
+        } else {
+            devBar.style.width="100%";
+            devTxt.innerHTML=`Zadnji sync: ${s.dev_last_sync}<br>
+Sljedeći sync: ${s.dev_next_sync ? new Date(s.dev_next_sync*1000).toLocaleTimeString() : "N/A"}`;
+        }
+    });
+}
+
+// ==================== INIT ====================
+loadSyncStatus();
+setInterval(loadSyncStatus,20000);
+
+</script>
+
+</body>
+</html>

@@ -4,8 +4,11 @@ import threading
 import binascii
 import varint
 
-from config import first_out_dict, real_address
-from helper_file import path, csv_dict_writer, csv_dict_adder, addr_csv_file_path
+from CSVHandler import CSVHandler
+from pathlib import Path
+
+from config import REAL_ADDRESSES as real_address
+from helper_file import path, csv_dict_adder, addr_csv_file_path
 from helper import time_print
 
 #pip install monero
@@ -16,14 +19,14 @@ from monero.keccak import keccak_256
 
 af_fieldnames = ['address','hex','block','outputs']
 
-def rnd_seed(debug=False):
+def rnd_seed():
     #print(Seed().__dict__.keys()) # dict_keys(['phrase', 'hex', 'word_list', '_ed_pub_spend_key', '_ed_pub_view_key'])
     seed = Seed()
     seed.public_spend_key()
     seed.public_view_key()
     return seed
 
-def generate_key_derivation(pub, sec, debug=False):
+def generate_key_derivation(pub, sec):
     svk = binascii.unhexlify(sec)
     svk_2 = ed25519.scalar_add(svk, svk)
     svk_4 = ed25519.scalar_add(svk_2, svk_2)
@@ -31,7 +34,7 @@ def generate_key_derivation(pub, sec, debug=False):
     shared_secret = ed25519.scalarmult(svk_8, binascii.unhexlify(pub))
     return shared_secret
 
-def derive_public_key(der, i, spk,debug=False):
+def derive_public_key(der, i, spk):
     shared_secret = der
     psk = binascii.unhexlify(spk)
 
@@ -56,12 +59,10 @@ def check_output(output_row,address_row):
     pub = output_row['pub']
     sec = address_row['svk']
     der = generate_key_derivation(pub, sec)
-    #spk = base58.decode(address_row['address'])[2:66]
     spk = address_row['psk']
-    #print(spk,address_row['psk'])
     pubkey = derive_public_key(der, int(output_row['output_no']), spk)
-    del address_row['svk']
-    del address_row['psk']
+    #del address_row['svk']
+    #del address_row['psk']
     
     if address_row['address'] in real_address:
         print('\nreal',address_row)
@@ -83,6 +84,7 @@ def check_output(output_row,address_row):
     return pubkey == output_row['output_key']
 
 def test_address(csv_row_dict,target_block_rows):
+    target_row={}
     for target_row in target_block_rows:
         if check_output(target_row,csv_row_dict):
             csv_row_dict['outputs']=target_row['outputs']+1
@@ -108,20 +110,19 @@ def test_rnd_address_fast(count,target_block_rows,start_time):
         }
         csv_row_dict = test_address(csv_row_dict,target_block_rows)
 
-        #af_path = path(f'{str(seed.public_address())[:4]}.csv'.lower(),['address_csv'])
-        #to_path = "/home/zdravek/projects/monero/address_csv_new/"
         SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
         to_path = os.path.sep.join([SCRIPT_DIR]+['address_csv'])
-        to_path = "C:\\monero\\address_csv"
+        #to_path = SOURCE_FOLDER
         af_path = addr_csv_file_path(to_path,str(seed.public_address()),af_fieldnames)
-        #if not os.path.isfile(af_path):
-        #    csv_dict_writer(af_path,[],af_fieldnames)
+        del csv_row_dict['svk']
+        del csv_row_dict['psk']
         csv_dict_adder(af_path,[csv_row_dict],af_fieldnames)
     return count
 
 def test_rnd_addreses(blocks=0, debuge = False):
     if blocks == 0:
-        target_block_rows = [first_out_dict]
+        #target_block_rows = [first_out_dict]
+        target_block_rows = CSVHandler(Path("logs/outputs.csv")).read_all()
     else:
         return False
         #target_block_rows = get_transactions(blocks)
